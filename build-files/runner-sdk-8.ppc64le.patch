@@ -16,21 +16,19 @@ index 9db5faca..706cafce 100644
    <!-- Set TRACE/DEBUG vars -->
    <PropertyGroup>
 diff --git a/src/Misc/externals.sh b/src/Misc/externals.sh
-index 2a0db24a..b09b1793 100755
+index 2a0db24a..7908b2f5 100755
 --- a/src/Misc/externals.sh
 +++ b/src/Misc/externals.sh
-@@ -177,3 +177,13 @@ fi
+@@ -177,3 +177,11 @@ fi
  if [[ "$PACKAGERUNTIME" == "linux-arm" ]]; then
      acquireExternalTool "$NODE_URL/v${NODE20_VERSION}/node-v${NODE20_VERSION}-linux-armv7l.tar.gz" node20 fix_nested_dir
  fi
 +
 +if [[ "$PACKAGERUNTIME" == "linux-ppc64le" ]]; then
-+    acquireExternalTool "$NODE_URL/v${NODE16_VERSION}/node-v${NODE16_VERSION}-linux-ppc64le.tar.gz" node16 fix_nested_dir
 +    acquireExternalTool "$NODE_URL/v${NODE20_VERSION}/node-v${NODE20_VERSION}-linux-ppc64le.tar.gz" node20 fix_nested_dir
 +fi
 +
 +if [[ "$PACKAGERUNTIME" == "linux-s390x" ]]; then
-+    acquireExternalTool "$NODE_URL/v${NODE16_VERSION}/node-v${NODE16_VERSION}-linux-s390x.tar.gz" node16 fix_nested_dir
 +    acquireExternalTool "$NODE_URL/v${NODE20_VERSION}/node-v${NODE20_VERSION}-linux-s390x.tar.gz" node20 fix_nested_dir
 +fi
 \ No newline at end of file
