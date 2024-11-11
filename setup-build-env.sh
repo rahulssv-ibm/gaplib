@@ -33,7 +33,7 @@ build_image_in_container() {
       msg "Check the BUILD_PREREQS_PATH specification" >&2
       return 3
   fi
-  local PATCH_FILE="${PATCH_FILE:-runner-sdk-8.patch}"
+  local PATCH_FILE="${PATCH_FILE:-runner-sdk-8.${ARCH}.patch}"
 
   local BUILD_CONTAINER
   BUILD_CONTAINER="gha-builder-$(date +%s)"

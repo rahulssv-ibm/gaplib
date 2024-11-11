@@ -48,8 +48,8 @@ patch_runner() {
     cd /tmp
     git clone -q ${RUNNERREPO}
     cd runner
-    # git checkout main -b build
-    git checkout v2.320.0 -b build
+    git checkout main -b build
+    # git checkout v2.320.0 -b build
     git apply /home/ubuntu/runner-sdk-8.patch
     sed -i'' -e /version/s/8......\"$/8.0.100\"/ src/global.json
     return $?
