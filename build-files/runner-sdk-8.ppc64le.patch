@@ -1,18 +1,18 @@
 diff --git a/.devcontainer/devcontainer.json b/.devcontainer/devcontainer.json
-index 032387b..cd86211 100644
+index d3aa5d77..0e120f77 100644
 --- a/.devcontainer/devcontainer.json
 +++ b/.devcontainer/devcontainer.json
 @@ -4,7 +4,7 @@
    "features": {
      "ghcr.io/devcontainers/features/docker-in-docker:1": {},
      "ghcr.io/devcontainers/features/dotnet": {
--      "version": "6.0.421"
+-      "version": "8.0.403"
 +      "version": "8.0.110"
      },
      "ghcr.io/devcontainers/features/node:1": {
-       "version": "16"
+       "version": "20"
 diff --git a/src/Directory.Build.props b/src/Directory.Build.props
-index 9db5fac..706cafc 100644
+index 9db5faca..706cafce 100644
 --- a/src/Directory.Build.props
 +++ b/src/Directory.Build.props
 @@ -44,6 +44,12 @@
@@ -29,11 +29,11 @@ index 9db5fac..706cafc 100644
    <!-- Set TRACE/DEBUG vars -->
    <PropertyGroup>
 diff --git a/src/Misc/externals.sh b/src/Misc/externals.sh
-index e057ecb..7349615 100755
+index 2a0db24a..b09b1793 100755
 --- a/src/Misc/externals.sh
 +++ b/src/Misc/externals.sh
-@@ -190,3 +190,13 @@ if [[ "$PACKAGERUNTIME" == "linux-arm" ]]; then
-     acquireExternalTool "$NODE_URL/v${NODE16_VERSION}/node-v${NODE16_VERSION}-linux-armv7l.tar.gz" node16 fix_nested_dir
+@@ -177,3 +177,13 @@ fi
+ if [[ "$PACKAGERUNTIME" == "linux-arm" ]]; then
      acquireExternalTool "$NODE_URL/v${NODE20_VERSION}/node-v${NODE20_VERSION}-linux-armv7l.tar.gz" node20 fix_nested_dir
  fi
 +
@@ -48,7 +48,7 @@ index e057ecb..7349615 100755
 +fi
 \ No newline at end of file
 diff --git a/src/Misc/layoutroot/config.sh b/src/Misc/layoutroot/config.sh
-index 14cc6ba..9b5b8e6 100755
+index 14cc6bab..9b5b8e6f 100755
 --- a/src/Misc/layoutroot/config.sh
 +++ b/src/Misc/layoutroot/config.sh
 @@ -20,25 +20,29 @@ then
@@ -99,7 +99,7 @@ index 14cc6ba..9b5b8e6 100755
  
      if ! [ -x "$(command -v ldconfig)" ]; then
 diff --git a/src/Runner.Common/Constants.cs b/src/Runner.Common/Constants.cs
-index 383ec7a..7047d01 100644
+index 2c20d1b1..63957a5d 100644
 --- a/src/Runner.Common/Constants.cs
 +++ b/src/Runner.Common/Constants.cs
 @@ -58,7 +58,9 @@ namespace GitHub.Runner.Common
@@ -125,20 +125,12 @@ index 383ec7a..7047d01 100644
              public static readonly Architecture PlatformArchitecture = Architecture.X64;
  #endif
 diff --git a/src/Runner.Common/Runner.Common.csproj b/src/Runner.Common/Runner.Common.csproj
-index 329a024..e2796ff 100644
+index 6c463562..e2796ffa 100644
 --- a/src/Runner.Common/Runner.Common.csproj
 +++ b/src/Runner.Common/Runner.Common.csproj
-@@ -1,12 +1,15 @@
- <Project Sdk="Microsoft.NET.Sdk">
- 
-   <PropertyGroup>
--    <TargetFramework>net6.0</TargetFramework>
-+    <TargetFramework>net8.0</TargetFramework>
-     <OutputType>Library</OutputType>
-     <RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-arm64;linux-arm;osx-x64;osx-arm64;win-arm64</RuntimeIdentifiers>
+@@ -7,6 +7,9 @@
      <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
--    <NoWarn>NU1701;NU1603</NoWarn>
-+    <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
+     <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
      <Version>$(Version)</Version>
 +    <SelfContained>true</SelfContained>
 +    <SelfContained Condition="'$(PackageRuntime)' == 'linux-s390x'">false</SelfContained>
@@ -146,24 +138,8 @@ index 329a024..e2796ff 100644
    </PropertyGroup>
  
    <ItemGroup>
-@@ -15,11 +18,11 @@
-   </ItemGroup>
- 
-   <ItemGroup>
--    <PackageReference Include="Microsoft.Win32.Registry" Version="4.4.0" />
-+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
--    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.4.0" />
--    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0" />
--    <PackageReference Include="System.Threading.Channels" Version="4.4.0" />
-+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
-+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
-+    <PackageReference Include="System.Threading.Channels" Version="8.0.0" />
-   </ItemGroup>
- 
-   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 diff --git a/src/Runner.Common/Util/VarUtil.cs b/src/Runner.Common/Util/VarUtil.cs
-index 97273a1..78f7870 100644
+index 97273a1a..78f78701 100644
 --- a/src/Runner.Common/Util/VarUtil.cs
 +++ b/src/Runner.Common/Util/VarUtil.cs
 @@ -53,6 +53,10 @@ namespace GitHub.Runner.Common.Util
@@ -177,37 +153,11 @@ index 97273a1..78f7870 100644
                      default:
                          throw new NotSupportedException(); // Should never reach here.
                  }
-diff --git a/src/Runner.Listener/Configuration/RSAEncryptedFileKeyManager.cs b/src/Runner.Listener/Configuration/RSAEncryptedFileKeyManager.cs
-index 15291be..a404a67 100644
---- a/src/Runner.Listener/Configuration/RSAEncryptedFileKeyManager.cs
-+++ b/src/Runner.Listener/Configuration/RSAEncryptedFileKeyManager.cs
-@@ -1,4 +1,5 @@
- ﻿#if OS_WINDOWS
-+#pragma warning disable CA1416
- using System.IO;
- using System.Security.Cryptography;
- using System.Text;
-@@ -84,4 +85,5 @@ namespace GitHub.Runner.Listener.Configuration
-         }
-     }
- }
-+#pragma warning restore CA1416
- #endif
 diff --git a/src/Runner.Listener/Runner.Listener.csproj b/src/Runner.Listener/Runner.Listener.csproj
-index 3cd72ec..b2bb082 100644
+index afd52812..ecc1c74d 100644
 --- a/src/Runner.Listener/Runner.Listener.csproj
 +++ b/src/Runner.Listener/Runner.Listener.csproj
-@@ -1,14 +1,17 @@
- <Project Sdk="Microsoft.NET.Sdk">
- 
-   <PropertyGroup>
--    <TargetFramework>net6.0</TargetFramework>
-+    <TargetFramework>net8.0</TargetFramework>
-     <OutputType>Exe</OutputType>
-     <RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-arm64;linux-arm;osx-x64;osx-arm64;win-arm64</RuntimeIdentifiers>
-     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
--    <NoWarn>NU1701;NU1603</NoWarn>
-+    <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
+@@ -10,6 +10,9 @@
      <Version>$(Version)</Version>
      <PredefinedCulturesOnly>false</PredefinedCulturesOnly>
      <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
@@ -217,37 +167,11 @@ index 3cd72ec..b2bb082 100644
    </PropertyGroup>
  
    <ItemGroup>
-@@ -18,11 +21,11 @@
-   </ItemGroup>
- 
-   <ItemGroup>
--    <PackageReference Include="Microsoft.Win32.Registry" Version="4.4.0" />
-+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
--    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.4.0" />
--    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.4.0" />
--    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.4.0" />
-+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
-+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.0" />
-   </ItemGroup>
- 
-   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 diff --git a/src/Runner.PluginHost/Runner.PluginHost.csproj b/src/Runner.PluginHost/Runner.PluginHost.csproj
-index df30f34..48fca51 100644
+index 81a8d2e4..0bfdc45c 100644
 --- a/src/Runner.PluginHost/Runner.PluginHost.csproj
 +++ b/src/Runner.PluginHost/Runner.PluginHost.csproj
-@@ -1,14 +1,17 @@
- ﻿<Project Sdk="Microsoft.NET.Sdk">
- 
-   <PropertyGroup>
--    <TargetFramework>net6.0</TargetFramework>
-+    <TargetFramework>net8.0</TargetFramework>
-     <OutputType>Exe</OutputType>
-     <RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-arm64;linux-arm;osx-x64;osx-arm64;win-arm64</RuntimeIdentifiers>
-     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
--    <NoWarn>NU1701;NU1603</NoWarn>
-+    <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
+@@ -10,6 +10,9 @@
      <Version>$(Version)</Version>
      <PredefinedCulturesOnly>false</PredefinedCulturesOnly>
      <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
@@ -258,20 +182,12 @@ index df30f34..48fca51 100644
  
    <ItemGroup>
 diff --git a/src/Runner.Plugins/Runner.Plugins.csproj b/src/Runner.Plugins/Runner.Plugins.csproj
-index 39245a3..bbd3416 100644
+index a786cf1c..600ea167 100644
 --- a/src/Runner.Plugins/Runner.Plugins.csproj
 +++ b/src/Runner.Plugins/Runner.Plugins.csproj
-@@ -1,12 +1,15 @@
- ﻿<Project Sdk="Microsoft.NET.Sdk">
- 
-   <PropertyGroup>
--    <TargetFramework>net6.0</TargetFramework>
-+    <TargetFramework>net8.0</TargetFramework>
-     <OutputType>Library</OutputType>
-     <RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-arm64;linux-arm;osx-x64;osx-arm64;win-arm64</RuntimeIdentifiers>
+@@ -8,6 +8,9 @@
      <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
--    <NoWarn>NU1701;NU1603</NoWarn>
-+    <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
+     <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
      <Version>$(Version)</Version>
 +    <SelfContained>true</SelfContained>
 +    <SelfContained Condition="'$(PackageRuntime)' == 'linux-s390x'">false</SelfContained>
@@ -280,20 +196,12 @@ index 39245a3..bbd3416 100644
  
    <ItemGroup>
 diff --git a/src/Runner.Sdk/Runner.Sdk.csproj b/src/Runner.Sdk/Runner.Sdk.csproj
-index 202e866..cc8a211 100644
+index 55dbf126..d40524f0 100644
 --- a/src/Runner.Sdk/Runner.Sdk.csproj
 +++ b/src/Runner.Sdk/Runner.Sdk.csproj
-@@ -1,12 +1,15 @@
- ﻿<Project Sdk="Microsoft.NET.Sdk">
- 
-   <PropertyGroup>
--    <TargetFramework>net6.0</TargetFramework>
-+    <TargetFramework>net8.0</TargetFramework>
-     <OutputType>Library</OutputType>
-     <RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-arm64;linux-arm;osx-x64;osx-arm64;win-arm64</RuntimeIdentifiers>
+@@ -8,6 +8,9 @@
      <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
--    <NoWarn>NU1701;NU1603</NoWarn>
-+    <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
+     <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
      <Version>$(Version)</Version>
 +    <SelfContained>true</SelfContained>
 +    <SelfContained Condition="'$(PackageRuntime)' == 'linux-s390x'">false</SelfContained>
@@ -301,34 +209,11 @@ index 202e866..cc8a211 100644
    </PropertyGroup>
  
    <ItemGroup>
-@@ -14,9 +17,9 @@
-   </ItemGroup>
- 
-   <ItemGroup>
--    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0" />
--    <PackageReference Include="Microsoft.Win32.Registry" Version="4.4.0" />
--    <PackageReference Include="System.Threading.Channels" Version="4.4.0" />
-+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
-+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-+    <PackageReference Include="System.Threading.Channels" Version="8.0.0" />
-   </ItemGroup>
- 
-   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 diff --git a/src/Runner.Worker/Runner.Worker.csproj b/src/Runner.Worker/Runner.Worker.csproj
-index eee59b8..c21eef7 100644
+index 53c1610d..d3382973 100644
 --- a/src/Runner.Worker/Runner.Worker.csproj
 +++ b/src/Runner.Worker/Runner.Worker.csproj
-@@ -1,14 +1,17 @@
- <Project Sdk="Microsoft.NET.Sdk">
- 
-   <PropertyGroup>
--    <TargetFramework>net6.0</TargetFramework>
-+    <TargetFramework>net8.0</TargetFramework>
-     <OutputType>Exe</OutputType>
-     <RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-arm64;linux-arm;osx-x64;osx-arm64;win-arm64</RuntimeIdentifiers>
-     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
--    <NoWarn>NU1701;NU1603</NoWarn>
-+    <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
+@@ -10,6 +10,9 @@
      <Version>$(Version)</Version>
      <PredefinedCulturesOnly>false</PredefinedCulturesOnly>
      <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
@@ -338,57 +223,21 @@ index eee59b8..c21eef7 100644
    </PropertyGroup>
  
    <ItemGroup>
-@@ -18,9 +21,9 @@
-   </ItemGroup>
- 
-   <ItemGroup>
--    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.4.0" />
--    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.4.0" />
--    <PackageReference Include="System.Threading.Channels" Version="4.4.0" />
-+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
-+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.0" />
-+    <PackageReference Include="System.Threading.Channels" Version="8.0.0" />
-     <PackageReference Include="YamlDotNet.Signed" Version="5.3.0" />
-   </ItemGroup>
- 
-diff --git a/src/Sdk/Common/Common/Exceptions/PropertyExceptions.cs b/src/Sdk/Common/Common/Exceptions/PropertyExceptions.cs
-index 34c97b7..7236765 100644
---- a/src/Sdk/Common/Common/Exceptions/PropertyExceptions.cs
-+++ b/src/Sdk/Common/Common/Exceptions/PropertyExceptions.cs
-@@ -34,6 +34,7 @@ namespace GitHub.Services.Common
- 
-         public String PropertyName { get; set; }
- 
-+        [Obsolete]
-         [SecurityCritical]
-         public override void GetObjectData(SerializationInfo info, StreamingContext context)
-         {
-diff --git a/src/Sdk/Common/Common/VssException.cs b/src/Sdk/Common/Common/VssException.cs
-index 7cead78..5f8fb8c 100644
---- a/src/Sdk/Common/Common/VssException.cs
-+++ b/src/Sdk/Common/Common/VssException.cs
-@@ -127,6 +127,7 @@ namespace GitHub.Services.Common
-             EventId = (int)info.GetValue("m_eventId", typeof(int));
-         }
- 
-+        [Obsolete]
-         [SecurityCritical]
-         public override void GetObjectData(SerializationInfo info, StreamingContext context)
-         {
 diff --git a/src/Sdk/Sdk.csproj b/src/Sdk/Sdk.csproj
-index ff1cb85..6aa3f98 100644
+index 7ba73949..3d222e9c 100644
 --- a/src/Sdk/Sdk.csproj
 +++ b/src/Sdk/Sdk.csproj
-@@ -1,26 +1,29 @@
+@@ -1,21 +1,27 @@
  <Project Sdk="Microsoft.NET.Sdk">
  
      <PropertyGroup>
--        <TargetFramework>net6.0</TargetFramework>
 +        <TargetFramework>net8.0</TargetFramework>
+         <TargetFramework>net8.0</TargetFramework>
          <OutputType>Library</OutputType>
          <RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-arm64;linux-arm;osx-x64;osx-arm64;win-arm64</RuntimeIdentifiers>
+         <!-- <SelfContained>true</SelfContained> -->
          <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
--        <NoWarn>NU1701;NU1603</NoWarn>
+         <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
 +        <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
          <Version>$(Version)</Version>
          <DefineConstants>TRACE</DefineConstants>
@@ -401,48 +250,13 @@ index ff1cb85..6aa3f98 100644
  
      <ItemGroup>
          <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
--        <PackageReference Include="Microsoft.Win32.Registry" Version="4.4.0" />
+         <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
 +        <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
          <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
--        <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
--        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.1" />
--        <PackageReference Include="System.Security.Cryptography.Cng" Version="4.4.0" />
--        <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.4.0" />
--        <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.4.0" />
-+        <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
-+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />
-+        <PackageReference Include="System.Security.Cryptography.Cng" Version="5.0.0" />
-+        <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0" />
-+        <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
-         <PackageReference Include="Minimatch" Version="2.0.0" />
-         <PackageReference Include="YamlDotNet.Signed" Version="5.3.0" />
-         <PackageReference Include="System.Net.Http" Version="4.3.4" />
-diff --git a/src/Sdk/WebApi/WebApi/OAuth/VssOAuthExceptions.cs b/src/Sdk/WebApi/WebApi/OAuth/VssOAuthExceptions.cs
-index 5ebf86f..34ec103 100644
---- a/src/Sdk/WebApi/WebApi/OAuth/VssOAuthExceptions.cs
-+++ b/src/Sdk/WebApi/WebApi/OAuth/VssOAuthExceptions.cs
-@@ -85,6 +85,7 @@ namespace GitHub.Services.OAuth
-             set;
-         }
- 
-+        [Obsolete]
-         public override void GetObjectData(SerializationInfo info, StreamingContext context)
-         {
-             base.GetObjectData(info, context);
-diff --git a/src/Sdk/WebApi/WebApi/VssServiceResponseException.cs b/src/Sdk/WebApi/WebApi/VssServiceResponseException.cs
-index e4aa84a..8dc275c 100644
---- a/src/Sdk/WebApi/WebApi/VssServiceResponseException.cs
-+++ b/src/Sdk/WebApi/WebApi/VssServiceResponseException.cs
-@@ -24,6 +24,7 @@ namespace GitHub.Services.WebApi
-             HttpStatusCode = (HttpStatusCode)info.GetInt32("HttpStatusCode");
-         }
- 
-+        [Obsolete]
-         [SecurityCritical]
-         public override void GetObjectData(SerializationInfo info, StreamingContext context)
-         {
+         <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
+         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
 diff --git a/src/Test/L0/ConstantGenerationL0.cs b/src/Test/L0/ConstantGenerationL0.cs
-index f3c1b8f..9a1c5aa 100644
+index f3c1b8f9..9a1c5aa0 100644
 --- a/src/Test/L0/ConstantGenerationL0.cs
 +++ b/src/Test/L0/ConstantGenerationL0.cs
 @@ -20,6 +20,8 @@ namespace GitHub.Runner.Common.Tests
@@ -455,7 +269,7 @@ index f3c1b8f..9a1c5aa 100644
                  "osx-arm64"
              };
 diff --git a/src/Test/L0/Listener/SelfUpdaterL0.cs b/src/Test/L0/Listener/SelfUpdaterL0.cs
-index 26ba65e..f4ed842 100644
+index 26ba65e7..f4ed8429 100644
 --- a/src/Test/L0/Listener/SelfUpdaterL0.cs
 +++ b/src/Test/L0/Listener/SelfUpdaterL0.cs
 @@ -1,4 +1,4 @@
@@ -480,7 +294,7 @@ index 26ba65e..f4ed842 100644
  }
  #endif
 diff --git a/src/Test/L0/Listener/SelfUpdaterV2L0.cs b/src/Test/L0/Listener/SelfUpdaterV2L0.cs
-index 5115a6b..30af481 100644
+index 5115a6bb..30af481b 100644
 --- a/src/Test/L0/Listener/SelfUpdaterV2L0.cs
 +++ b/src/Test/L0/Listener/SelfUpdaterV2L0.cs
 @@ -1,4 +1,4 @@
@@ -490,7 +304,7 @@ index 5115a6b..30af481 100644
  using System.Collections.Generic;
  using System.IO;
 diff --git a/src/Test/L0/Worker/StepHostL0.cs b/src/Test/L0/Worker/StepHostL0.cs
-index f6b5889..e78f2b7 100644
+index 47a5d334..6dbdfbb8 100644
 --- a/src/Test/L0/Worker/StepHostL0.cs
 +++ b/src/Test/L0/Worker/StepHostL0.cs
 @@ -31,7 +31,7 @@ namespace GitHub.Runner.Common.Tests.Worker
@@ -503,59 +317,33 @@ index f6b5889..e78f2b7 100644
          [Trait("Level", "L0")]
          [Trait("Category", "Worker")]
 diff --git a/src/Test/Test.csproj b/src/Test/Test.csproj
-index 1beddbf..efd5787 100644
+index aebe2420..efd57870 100644
 --- a/src/Test/Test.csproj
 +++ b/src/Test/Test.csproj
-@@ -1,9 +1,12 @@
- <Project Sdk="Microsoft.NET.Sdk">
-     <PropertyGroup>
--        <TargetFramework>net6.0</TargetFramework>
-+        <TargetFramework>net8.0</TargetFramework>
+@@ -4,6 +4,9 @@
          <RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-arm64;linux-arm;osx-x64;osx-arm64;win-arm64</RuntimeIdentifiers>
          <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
--        <NoWarn>NU1701;NU1603;NU1603;xUnit2013;</NoWarn>
-+        <NoWarn>NU1701;NU1603;NU1603;xUnit2013;SYSLIB0050;SYSLIB0051</NoWarn>
+         <NoWarn>NU1701;NU1603;NU1603;xUnit2013;SYSLIB0050;SYSLIB0051</NoWarn>
 +        <SelfContained>true</SelfContained>
 +        <SelfContained Condition="'$(PackageRuntime)' == 'linux-s390x'">false</SelfContained>
 +        <SelfContained Condition="'$(PackageRuntime)' == 'linux-ppc64le'">false</SelfContained>
      </PropertyGroup>
  
      <ItemGroup>
-@@ -15,13 +18,13 @@
-     </ItemGroup>
- 
-     <ItemGroup>
--        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
-+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-         <PackageReference Include="xunit" Version="2.7.1" />
--        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
-+        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.8" />
-         <PackageReference Include="System.Buffers" Version="4.5.1" />
--        <PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
-+        <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
-         <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
--        <PackageReference Include="Moq" Version="4.11.0" />
-+        <PackageReference Include="Moq" Version="4.20.70" />
-     </ItemGroup>
- 
-     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 diff --git a/src/dev.sh b/src/dev.sh
-index 71c8063..aac43b0 100755
+index 795c135a..c1fbfa52 100755
 --- a/src/dev.sh
 +++ b/src/dev.sh
-@@ -17,10 +17,8 @@ LAYOUT_DIR="$SCRIPT_DIR/../_layout"
+@@ -17,7 +17,7 @@ LAYOUT_DIR="$SCRIPT_DIR/../_layout"
  DOWNLOAD_DIR="$SCRIPT_DIR/../_downloads/netcore2x"
  PACKAGE_DIR="$SCRIPT_DIR/../_package"
  DOTNETSDK_ROOT="$SCRIPT_DIR/../_dotnetsdk"
--DOTNETSDK_VERSION="6.0.421"
+-DOTNETSDK_VERSION="8.0.403"
 +DOTNETSDK_VERSION="8.0.110"
  DOTNETSDK_INSTALLDIR="$DOTNETSDK_ROOT/$DOTNETSDK_VERSION"
--DOTNET8SDK_VERSION="8.0.303"
--DOTNET8SDK_INSTALLDIR="$DOTNETSDK_ROOT/$DOTNET8SDK_VERSION"
  RUNNER_VERSION=$(cat runnerversion)
  
- pushd "$SCRIPT_DIR"
-@@ -56,6 +54,8 @@ elif [[ "$CURRENT_PLATFORM" == 'linux' ]]; then
+@@ -54,6 +54,8 @@ elif [[ "$CURRENT_PLATFORM" == 'linux' ]]; then
          case $CPU_NAME in
              armv7l) RUNTIME_ID="linux-arm";;
              aarch64) RUNTIME_ID="linux-arm64";;
@@ -564,7 +352,7 @@ index 71c8063..aac43b0 100755
          esac
      fi
  elif [[ "$CURRENT_PLATFORM" == 'darwin' ]]; then
-@@ -82,7 +82,7 @@ if [[ "$CURRENT_PLATFORM" == 'windows' ]]; then
+@@ -80,7 +82,7 @@ if [[ "$CURRENT_PLATFORM" == 'windows' ]]; then
          exit 1
      fi
  elif [[ "$CURRENT_PLATFORM" == 'linux' ]]; then
@@ -573,45 +361,7 @@ index 71c8063..aac43b0 100755
         echo "Failed: Can't build $RUNTIME_ID package $CURRENT_PLATFORM" >&2
         exit 1
      fi
-@@ -127,19 +127,6 @@ function build ()
- {
-     heading "Building ..."
-     dotnet msbuild -t:Build -p:PackageRuntime="${RUNTIME_ID}" -p:BUILDCONFIG="${BUILD_CONFIG}" -p:RunnerVersion="${RUNNER_VERSION}" ./dir.proj || failed build
--
--    # Build TestDotNet8Compatibility
--    heading "Building .NET 8 compatibility test"
--    echo "Prepend ${DOTNET8SDK_INSTALLDIR} to %PATH%"         # Prepend .NET 8 SDK to PATH
--    PATH_BAK=$PATH
--    export PATH=${DOTNET8SDK_INSTALLDIR}:$PATH
--    pushd "$SCRIPT_DIR/TestDotNet8Compatibility" > /dev/null  # Working directory
--    pwd
--    echo "Dotnet 8 SDK Version"
--    dotnet --version
--    dotnet msbuild -t:Build -p:PackageRuntime="${RUNTIME_ID}" -p:BUILDCONFIG="${BUILD_CONFIG}" -p:RunnerVersion="${RUNNER_VERSION}" ./dir.proj || failed build
--    popd > /dev/null       # Restore working directory
--    export PATH=$PATH_BAK  # Restore PATH
- }
- 
- function layout ()
-@@ -159,17 +146,6 @@ function layout ()
-     heading "Setup externals folder for $RUNTIME_ID runner's layout"
-     bash ./Misc/externals.sh $RUNTIME_ID || checkRC externals.sh
- 
--    # Build TestDotNet8Compatibility
--    echo "Prepend ${DOTNET8SDK_INSTALLDIR} to %PATH%"         # Prepend .NET 8 SDK to PATH
--    PATH_BAK=$PATH
--    export PATH=${DOTNET8SDK_INSTALLDIR}:$PATH
--    pushd "$SCRIPT_DIR/TestDotNet8Compatibility" > /dev/null  # Working directory
--    heading "Dotnet 8 SDK Version"
--    dotnet --version
--    heading "Building .NET 8 compatibility test"
--    dotnet msbuild -t:layout -p:PackageRuntime="${RUNTIME_ID}" -p:BUILDCONFIG="${BUILD_CONFIG}" -p:RunnerVersion="${RUNNER_VERSION}" ./dir.proj || failed build
--    popd > /dev/null       # Restore working directory
--    export PATH=$PATH_BAK  # Restore PATH
- }
- 
- function runtest ()
-@@ -226,8 +202,7 @@ function package ()
+@@ -199,8 +201,7 @@ function package ()
      popd > /dev/null
  }
  
@@ -621,47 +371,8 @@ index 71c8063..aac43b0 100755
  
      # Download dotnet SDK to ../_dotnetsdk directory
      heading "Ensure Dotnet SDK"
-@@ -252,35 +227,11 @@ if [[ (! -d "${DOTNETSDK_INSTALLDIR}") || (! -e "${DOTNETSDK_INSTALLDIR}/.${DOTN
-     echo "${DOTNETSDK_VERSION}" > "${DOTNETSDK_INSTALLDIR}/.${DOTNETSDK_VERSION}"
- fi
- 
--# Install .NET 8 SDK
--if [[ (! -d "${DOTNET8SDK_INSTALLDIR}") || (! -e "${DOTNET8SDK_INSTALLDIR}/.${DOTNET8SDK_VERSION}") || (! -e "${DOTNET8SDK_INSTALLDIR}/dotnet") ]]; then
--
--    # Download dotnet 8 SDK to ../_dotnetsdk directory
--    heading "Ensure Dotnet 8 SDK"
--
--    # _dotnetsdk
--    #           \1.0.x
--    #                            \dotnet
--    #                            \.1.0.x
--    echo "Download dotnet8sdk into ${DOTNET8SDK_INSTALLDIR}"
--    rm -Rf "${DOTNETSDK_DIR}"
--
--    # run dotnet-install.ps1 on windows, dotnet-install.sh on linux
--    if [[ ("$CURRENT_PLATFORM" == "windows") ]]; then
--        echo "Convert ${DOTNET8SDK_INSTALLDIR} to Windows style path"
--        sdkinstallwindow_path=${DOTNET8SDK_INSTALLDIR:1}
--        sdkinstallwindow_path=${sdkinstallwindow_path:0:1}:${sdkinstallwindow_path:1}
--        $POWERSHELL -NoLogo -Sta -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command "& \"./Misc/dotnet-install.ps1\" -Version ${DOTNET8SDK_VERSION} -InstallDir \"${sdkinstallwindow_path}\" -NoPath; exit \$LastExitCode;" || checkRC dotnet-install.ps1
--    else
--        bash ./Misc/dotnet-install.sh --version ${DOTNET8SDK_VERSION} --install-dir "${DOTNET8SDK_INSTALLDIR}" --no-path || checkRC dotnet-install.sh
--    fi
--
--    echo "${DOTNET8SDK_VERSION}" > "${DOTNET8SDK_INSTALLDIR}/.${DOTNET8SDK_VERSION}"
-+if [[ -d "${DOTNETSDK_INSTALLDIR}" ]]; then
-+    echo "Prepend ${DOTNETSDK_INSTALLDIR} to %PATH%"
-+    export PATH=${DOTNETSDK_INSTALLDIR}:$PATH
- fi
- 
--echo "Prepend ${DOTNETSDK_INSTALLDIR} to %PATH%"
--export PATH=${DOTNETSDK_INSTALLDIR}:$PATH
--
- heading "Dotnet SDK Version"
- dotnet --version
- 
 diff --git a/src/dir.proj b/src/dir.proj
-index 056a312..1f6bdb0 100644
+index 056a312e..1f6bdb07 100644
 --- a/src/dir.proj
 +++ b/src/dir.proj
 @@ -41,13 +41,22 @@
@@ -691,13 +402,13 @@ index 056a312..1f6bdb0 100644
      </Target>
  
 diff --git a/src/global.json b/src/global.json
-index e7028fe..d1779f1 100644
+index ff3b5e09..d1779f11 100644
 --- a/src/global.json
 +++ b/src/global.json
 @@ -1,5 +1,5 @@
  {
    "sdk": {
--    "version": "6.0.421"
+-    "version": "8.0.403"
 +    "version": "8.0.110"
    }
  }
