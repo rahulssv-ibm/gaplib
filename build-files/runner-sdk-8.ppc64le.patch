@@ -211,7 +211,7 @@ index 53c1610d..d3382973 100644
  
    <ItemGroup>
 diff --git a/src/Sdk/Sdk.csproj b/src/Sdk/Sdk.csproj
-index 7ba73949..59b4c896 100644
+index 7ba73949..156616cd 100644
 --- a/src/Sdk/Sdk.csproj
 +++ b/src/Sdk/Sdk.csproj
 @@ -11,6 +11,9 @@
@@ -224,6 +224,15 @@ index 7ba73949..59b4c896 100644
      </PropertyGroup>
  
      <ItemGroup>
+@@ -18,7 +21,7 @@
+         <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+         <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
+-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
++        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />
+         <PackageReference Include="System.Security.Cryptography.Cng" Version="5.0.0" />
+         <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0" />
+         <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
 diff --git a/src/Test/L0/ConstantGenerationL0.cs b/src/Test/L0/ConstantGenerationL0.cs
 index f3c1b8f9..9a1c5aa0 100644
 --- a/src/Test/L0/ConstantGenerationL0.cs
@@ -300,7 +309,7 @@ index aebe2420..efd57870 100644
  
      <ItemGroup>
 diff --git a/src/dev.sh b/src/dev.sh
-index 795c135a..bcce8a01 100755
+index 795c135a..551ead3a 100755
 --- a/src/dev.sh
 +++ b/src/dev.sh
 @@ -54,6 +54,8 @@ elif [[ "$CURRENT_PLATFORM" == 'linux' ]]; then
@@ -321,7 +330,15 @@ index 795c135a..bcce8a01 100755
         echo "Failed: Can't build $RUNTIME_ID package $CURRENT_PLATFORM" >&2
         exit 1
      fi
-@@ -199,8 +201,7 @@ function package ()
+@@ -143,6 +145,7 @@ function layout ()
+ 
+     heading "Setup externals folder for $RUNTIME_ID runner's layout"
+     bash ./Misc/externals.sh $RUNTIME_ID || checkRC externals.sh
++
+ }
+ 
+ function runtest ()
+@@ -199,8 +202,7 @@ function package ()
      popd > /dev/null
  }
  
@@ -331,6 +348,19 @@ index 795c135a..bcce8a01 100755
  
      # Download dotnet SDK to ../_dotnetsdk directory
      heading "Ensure Dotnet SDK"
+@@ -225,8 +227,10 @@ if [[ (! -d "${DOTNETSDK_INSTALLDIR}") || (! -e "${DOTNETSDK_INSTALLDIR}/.${DOTN
+     echo "${DOTNETSDK_VERSION}" > "${DOTNETSDK_INSTALLDIR}/.${DOTNETSDK_VERSION}"
+ fi
+ 
+-echo "Prepend ${DOTNETSDK_INSTALLDIR} to %PATH%"
+-export PATH=${DOTNETSDK_INSTALLDIR}:$PATH
++if [[ -d "${DOTNETSDK_INSTALLDIR}" ]]; then
++    echo "Prepend ${DOTNETSDK_INSTALLDIR} to %PATH%"
++    export PATH=${DOTNETSDK_INSTALLDIR}:$PATH
++fi
+ 
+ heading "Dotnet SDK Version"
+ dotnet --version
 diff --git a/src/dir.proj b/src/dir.proj
 index 056a312e..1f6bdb07 100644
 --- a/src/dir.proj
