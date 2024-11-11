@@ -54,7 +54,7 @@ echo \
 sudo DEBIAN_FRONTEND=noninteractive apt-get update -y >/dev/null
 
 # Install the docker suite
-msg "Installing docker..."
+echo "Installing docker..."
 sudo DEBIAN_FRONTEND=noninteractive apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 # Read the file line by line and install each package
