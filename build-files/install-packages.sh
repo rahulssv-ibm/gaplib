@@ -34,27 +34,6 @@ sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-# Add the repository to Apt sources:
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
-
-sudo DEBIAN_FRONTEND=noninteractive apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-
-# installing docker
-for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc
-do
-    sudo apt-get remove $pkg >/dev/null
-done
-
-# Add Docker's official GPG key:
-sudo DEBIAN_FRONTEND=noninteractive apt-get install ca-certificates curl -y >/dev/null
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
-
 # Required until docker repo for oracular has ppc64le binaries
 case `uname -m` in
     ppc64le)
@@ -76,8 +55,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get update -y >/dev/null
 
 # Install the docker suite
 msg "Installing docker..."
-sudo DEBIAN_FRONTEND=noninteractive apt-get install docker-ce docker-ce-cli \
-    containerd.io docker-buildx-plugin docker-compose-plugin -y >/dev/null
+sudo DEBIAN_FRONTEND=noninteractive apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 # Read the file line by line and install each package
 while IFS= read -r package || [ -n "$package" ]; do
