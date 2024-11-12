@@ -131,7 +131,7 @@ run() {
 select_ubuntu_version() {
   case "$ARCH" in
     ppc64le)
-      export OS_VERSION="24.10"
+      export OS_VERSION="24.04"
       ;;
     s390x)
       export OS_VERSION="24.10"
