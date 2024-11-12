@@ -33,7 +33,7 @@ build_image_in_container() {
       msg "Check the BUILD_PREREQS_PATH specification" >&2
       return 3
   fi
-  local PATCH_FILE="${PATCH_FILE:-runner-sdk-8.${ARCH}.patch}"
+  local PATCH_FILE="${PATCH_FILE:-runner-main-sdk8-${ARCH}.patch}"
 
   local BUILD_CONTAINER
   BUILD_CONTAINER="gha-builder-$(date +%s)"
@@ -68,7 +68,7 @@ build_image_in_container() {
   lxc file push --mode 0755 "${BUILD_PREREQS_PATH}/supported_packages.txt" "${BUILD_CONTAINER}${BUILD_HOME}/supported_packages.txt"
 
   msg "Copy the patch file into gha-builder"
-  lxc file push ${BUILD_PREREQS_PATH}/${PATCH_FILE} "${BUILD_CONTAINER}${BUILD_HOME}/runner-sdk-8.patch"
+  lxc file push ${BUILD_PREREQS_PATH}/patches/${PATCH_FILE} "${BUILD_CONTAINER}${BUILD_HOME}/runner-sdk-8.patch"
 
   msg "Copy the register-runner.sh script into gha-builder"
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/register-runner.sh "${BUILD_CONTAINER}/opt/register-runner.sh"
