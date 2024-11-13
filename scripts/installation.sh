@@ -9,8 +9,10 @@ image_folder="/imagegeneration"
 helper_script_folder="/imagegeneration/helpers"
 installer_script_folder="/imagegeneration/installers"
 
-mkdir -p "${image_folder}"
-chmod 777 "${image_folder}"
+mkdir -p "${installer_script_folder}"
+chmod -R 777 "${installer_script_folder}"
+cp -r helpers "${helper_script_folder}"
+cp ../toolsets/toolset-2204.json "${installer_script_folder}/toolset.json"
 
 # Default environment variable values
 HELPER_SCRIPTS="${helper_script_folder}"
@@ -60,8 +62,8 @@ SCRIPT_FILES=(
     "install-actions-cache.sh"
     "install-runner-package.sh"
     "install-apt-common.sh"
-    "install-azcopy.sh"
-    "install-azure-cli.sh"
+#     "install-azcopy.sh"
+#     "install-azure-cli.sh"
     "install-azure-devops-cli.sh"
     "install-bicep.sh"
     "install-apache.sh"
