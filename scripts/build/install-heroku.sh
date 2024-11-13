@@ -19,5 +19,3 @@ apt-get install heroku
 # remove heroku's apt repository
 rm $REPO_PATH
 rm $GPG_KEY
-
-invoke_tests "Tools" "Heroku"

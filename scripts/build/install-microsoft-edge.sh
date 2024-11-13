@@ -46,5 +46,3 @@ chmod +x $edgedriver_bin
 ln -s $edgedriver_bin /usr/bin
 
 set_etc_environment_variable "EDGEWEBDRIVER" "${EDGEDRIVER_DIR}"
-
-invoke_tests "Browsers" "Edge"

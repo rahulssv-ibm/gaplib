@@ -44,14 +44,15 @@ run_script() {
 }
 
 # Add apt wrapper to implement retries
-sudo sh -c "${path_root}/../scripts/build/configure-apt-mock.sh"
+run_script "${path_root}/../scripts/build/configure-apt-mock.sh"
 echo "Setting user ubuntu with sudo privileges"
 
-# Install MS package repos, Configure apt
-sudo sh -c "${HELPER_SCRIPTS} ${DEBIAN_FRONTEND} ${path_root}/../scripts/build/install-ms-repos.sh ${path_root}/../scripts/build/configure-apt.sh"
+# Install Configure apt
+# run_script "${path_root}/../scripts/build/install-ms-repos.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
+run_script "${path_root}/../scripts/build/configure-apt.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
 
 # Configure limits
-sudo sh -c "${HELPER_SCRIPTS} ${DEBIAN_FRONTEND} ${path_root}/../scripts/build/configure-limits.sh"
+run_script "${path_root}/../scripts/build/configure-limits.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
 
 # List of scripts to be executed
 SCRIPT_FILES=(
@@ -121,8 +122,8 @@ run_script "${path_root}/../scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND"
 
 run_script "${path_root}/../scripts/build/configure-snap.sh" "HELPER_SCRIPTS"
 
-echo 'Rebooting VM...'
-sudo reboot
+# echo 'Rebooting VM...'
+# sudo reboot
 
 # The cleanup script is executed after the reboot.
 "${path_root}/../scripts/build/cleanup.sh"

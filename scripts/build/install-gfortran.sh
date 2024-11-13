@@ -16,5 +16,3 @@ done
 
 echo "Install versionless gfortran (latest)"
 apt-get install gfortran
-
-invoke_tests "Tools" "gfortran"

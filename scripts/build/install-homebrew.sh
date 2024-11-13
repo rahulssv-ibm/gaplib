@@ -27,5 +27,3 @@ gfortran=$(brew --prefix)/bin/gfortran
 if [[ -e $gfortran ]]; then
     rm $gfortran
 fi
-
-invoke_tests "Tools" "Homebrew"

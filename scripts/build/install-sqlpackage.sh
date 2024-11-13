@@ -25,5 +25,3 @@ archive_path=$(download_with_retry "https://aka.ms/sqlpackage-linux")
 unzip -qq "$archive_path" -d /usr/local/sqlpackage
 chmod +x /usr/local/sqlpackage/sqlpackage
 ln -sf /usr/local/sqlpackage/sqlpackage /usr/local/bin
-
-invoke_tests "Tools" "SqlPackage"

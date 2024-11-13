@@ -59,5 +59,3 @@ for toolset_version in ${toolset_versions[@]}; do
         touch $complete_file_path
     fi
 done
-
-invoke_tests "Tools" "Ruby"

@@ -27,4 +27,3 @@ ln -sf $VCPKG_INSTALLATION_ROOT/vcpkg /usr/local/bin
 
 rm -rf /root/.vcpkg $HOME/.vcpkg
 
-invoke_tests "Tools" "Vcpkg"

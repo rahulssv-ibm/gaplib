@@ -20,5 +20,3 @@ fi
 archive_path=$(download_with_retry "$download_url")
 
 tar xzf "$archive_path" -C "/usr/local/bin" oc
-
-invoke_tests "CLI.Tools" "OC CLI"

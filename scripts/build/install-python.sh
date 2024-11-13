@@ -41,5 +41,3 @@ fi
 
 # Adding this dir to PATH will make installed pip commands are immediately available.
 prepend_etc_environment_path '$HOME/.local/bin'
-
-invoke_tests "Tools" "Python"

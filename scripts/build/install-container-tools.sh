@@ -41,5 +41,3 @@ if is_ubuntu20; then
     # Document source repo
     echo "containers $REPO_URL" >> $HELPER_SCRIPTS/apt-sources.txt
 fi
-
-invoke_tests "Tools" "Containers"

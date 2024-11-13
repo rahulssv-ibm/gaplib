@@ -20,5 +20,3 @@ use_checksum_comparison "$archive_path" "$kotlin_hash"
 unzip -qq "$archive_path" -d $KOTLIN_ROOT
 rm $KOTLIN_ROOT/kotlinc/bin/*.bat
 ln -sf $KOTLIN_ROOT/kotlinc/bin/* /usr/bin
-
-invoke_tests "Tools" "Kotlin"

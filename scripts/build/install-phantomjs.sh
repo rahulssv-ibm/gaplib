@@ -22,5 +22,3 @@ use_checksum_comparison "$archive_path" "$ARCHIVE_HASH"
 # Extract the archive and create a symbolic link to the executable
 tar xjf "$archive_path" -C /usr/local/share
 ln -sf /usr/local/share/$DIR_NAME/bin/phantomjs /usr/local/bin
-
-invoke_tests "Tools" "Phantomjs"

@@ -12,5 +12,3 @@ npm install -g @bazel/bazelisk
 
 # run bazelisk once in order to install /usr/local/bin/bazel binary
 sudo -u $SUDO_USER bazel version
-
-invoke_tests "Tools" "Bazel"

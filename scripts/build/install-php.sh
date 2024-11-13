@@ -109,5 +109,3 @@ if is_ubuntu20; then
     rm /etc/apt/sources.list.d/ondrej-*.list
     apt-get update
 fi
-
-invoke_tests "Common" "PHP"

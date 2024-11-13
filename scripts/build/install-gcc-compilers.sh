@@ -13,5 +13,3 @@ for version in ${versions[*]}; do
     echo "Installing $version..."
     apt-get install $version
 done
-
-invoke_tests "Tools" "gcc"

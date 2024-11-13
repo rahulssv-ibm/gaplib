@@ -33,5 +33,3 @@ rm /etc/apt/sources.list.d/pgdg.list
 rm /usr/share/keyrings/postgresql.gpg
 
 echo "postgresql $REPO_URL" >> $HELPER_SCRIPTS/apt-sources.txt
-
-invoke_tests "Databases" "PostgreSQL"

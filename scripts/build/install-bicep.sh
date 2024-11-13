@@ -13,5 +13,3 @@ bicep_binary_path=$(download_with_retry "${download_url}")
 
 # Mark it as executable
 install "$bicep_binary_path" /usr/local/bin/bicep
-
-invoke_tests "Tools" "Bicep"

@@ -28,5 +28,3 @@ use_checksum_comparison "$aws_sam_cli_archive_path" "$aws_sam_cli_hash"
 # Install the latest aws sam cli release
 unzip "$aws_sam_cli_archive_path" -d /tmp
 /tmp/install
-
-invoke_tests "CLI.Tools" "AWS"

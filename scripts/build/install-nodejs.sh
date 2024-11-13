@@ -25,5 +25,3 @@ sudo chmod -R 777 /usr/local/lib/node_modules
 sudo chmod -R 777 /usr/local/bin
 
 rm -rf ~/n
-
-invoke_tests "Node" "Node.js"

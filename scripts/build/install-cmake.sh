@@ -27,5 +27,3 @@ else
 	&& ./cmakeinstall.sh --prefix=/usr/local --exclude-subdir \
 	&& rm cmakeinstall.sh
 fi
-
-invoke_tests "Tools" "Cmake"

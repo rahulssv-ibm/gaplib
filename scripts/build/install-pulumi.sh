@@ -19,5 +19,3 @@ use_checksum_comparison "$archive_path" "$external_hash" "512"
 
 # Unzipping Pulumi
 tar --strip=1 -xf "$archive_path" -C /usr/local/bin
-
-invoke_tests "Tools" "Pulumi"

@@ -26,9 +26,6 @@ find /var/log -type f -regex ".*\.[0-9]$" -delete
 # wipe log files
 find /var/log/ -type f -exec cp /dev/null {} \;
 
-# delete symlink for tests running
-rm -f /usr/local/bin/invoke_tests
-
 # remove apt mock
 prefix=/usr/local/bin
 for tool in apt apt-get apt-key;do

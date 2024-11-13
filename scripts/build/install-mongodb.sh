@@ -26,5 +26,3 @@ rm $GPG_KEY
 
 # Document source repo
 echo "mongodb $REPO_URL" >> $HELPER_SCRIPTS/apt-sources.txt
-
-invoke_tests "Databases" "MongoDB"

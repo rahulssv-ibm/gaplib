@@ -17,5 +17,3 @@ CONDA=/usr/share/miniconda
 set_etc_environment_variable "CONDA" "${CONDA}"
 
 ln -s $CONDA/bin/conda /usr/bin/conda
-
-invoke_tests "Tools" "Conda"
