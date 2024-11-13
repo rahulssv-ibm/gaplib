@@ -1,112 +1,134 @@
-toolset_file_name = "toolset-2204.json"
+#!/bin/bash
 
-image_folder            = "/imagegeneration"
-helper_script_folder    = "/imagegeneration/helpers"
-installer_script_folder = "/imagegeneration/installers"
-imagedata_file          = "/imagegeneration/imagedata.json"
+set -e  # Exit on any error
+set -o pipefail  # Fail if any command in a pipeline fails
 
-mkdir ${local.image_folder}
-chmod 777 ${local.image_folder}
+toolset_file_name="toolset-2204.json"
 
-msg "Copy the patch file into gha-builder"
-lxc file push ${BUILD_PREREQS_PATH}/scripts/helpers"${BUILD_CONTAINER}${BUILD_HOME}/${local.helper_script_folder}"
+image_folder="/imagegeneration"
+helper_script_folder="/imagegeneration/helpers"
+installer_script_folder="/imagegeneration/installers"
+
+mkdir -p "${image_folder}"
+chmod 777 "${image_folder}"
+
+# Default environment variable values
+HELPER_SCRIPTS="${helper_script_folder}"
+DEBIAN_FRONTEND="noninteractive"
+INSTALLER_SCRIPT_FOLDER="${installer_script_folder}"
+DOCKERHUB_PULL_IMAGES="NO"
+# Define path.root, assuming it's the current directory
+path_root="${PWD}"
+
+# Function to execute the script with passed environment variables
+run_script() {
+    local script_path="$1"  # First argument is the combined path to the script
+    shift  # Shift the first argument (script path) so the remaining are environment variables
+
+    # Initialize an empty array to store the environment variables
+    local env_vars=()
+
+    # Loop through the environment variable names and construct the env_vars array
+    for var_name in "$@"; do
+        if [[ -n "${!var_name}" ]]; then
+            env_vars+=("${var_name}=${!var_name}")  # Add the env var in key=value format
+        fi
+    done
+
+    # Convert the env_vars array into a space-separated string for export
+    local env_vars_string="${env_vars[*]}"
+
+    # Print and execute the script with the environment variables
+    echo "Executing: $script_path with environment variables: $env_vars_string"
+    sudo sh -c "${env_vars_string} ${script_path}"
+}
 
 # Add apt wrapper to implement retries
-sudo sh -c '/scripts/build/configure-apt-mock.sh"'
-msg "Setting user ubuntu with sudo privileges"
-lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c "/scripts/build/configure-apt-mock.sh"
-
-HELPER_SCRIPTS=${local.helper_script_folder}
-DEBIAN_FRONTEND=noninteractive
+sudo sh -c "${path_root}/../scripts/build/configure-apt-mock.sh"
+echo "Setting user ubuntu with sudo privileges"
 
 # Install MS package repos, Configure apt
-sudo sh -c '${HELPER_SCRIPTS} ${DEBIAN_FRONTEND} ${path.root}/../scripts/build/install-ms-repos.sh ${path.root}/../scripts/build/configure-apt.sh'
+sudo sh -c "${HELPER_SCRIPTS} ${DEBIAN_FRONTEND} ${path_root}/../scripts/build/install-ms-repos.sh ${path_root}/../scripts/build/configure-apt.sh"
 
 # Configure limits
-sudo sh -c '${HELPER_SCRIPTS} ${DEBIAN_FRONTEND} ${path.root}/../scripts/build/configure-limits.sh'
+sudo sh -c "${HELPER_SCRIPTS} ${DEBIAN_FRONTEND} ${path_root}/../scripts/build/configure-limits.sh"
 
+# List of scripts to be executed
+SCRIPT_FILES=(
+    "install-apt-vital.sh"
+    "install-actions-cache.sh"
+    "install-runner-package.sh"
+    "install-apt-common.sh"
+    "install-azcopy.sh"
+    "install-azure-cli.sh"
+    "install-azure-devops-cli.sh"
+    "install-bicep.sh"
+    "install-apache.sh"
+    "install-aws-tools.sh"
+    "install-clang.sh"
+    "install-swift.sh"
+    "install-cmake.sh"
+    "install-codeql-bundle.sh"
+    "install-container-tools.sh"
+    "install-dotnetcore-sdk.sh"
+    "install-microsoft-edge.sh"
+    "install-gcc-compilers.sh"
+    "install-firefox.sh"
+    "install-gfortran.sh"
+    "install-git.sh"
+    "install-git-lfs.sh"
+    "install-github-cli.sh"
+    "install-google-chrome.sh"
+    "install-google-cloud-cli.sh"
+    "install-haskell.sh"
+    "install-java-tools.sh"
+    "install-kubernetes-tools.sh"
+    "install-miniconda.sh"
+    "install-kotlin.sh"
+    "install-mysql.sh"
+    "install-nginx.sh"
+    "install-nvm.sh"
+    "install-nodejs.sh"
+    "install-bazel.sh"
+    "install-php.sh"
+    "install-postgresql.sh"
+    "install-pulumi.sh"
+    "install-ruby.sh"
+    "install-rust.sh"
+    "install-julia.sh"
+    "install-selenium.sh"
+    "install-packer.sh"
+    "install-vcpkg.sh"
+    "configure-dpkg.sh"
+    "install-yq.sh"
+    "install-android-sdk.sh"
+    "install-pypy.sh"
+    "install-python.sh"
+    "install-zstd.sh"
+)
 
-lxc file push ${BUILD_PREREQS_PATH}/scripts/build"${BUILD_CONTAINER}${BUILD_HOME}/${local.installer_script_folder}"
+# Loop through all scripts and execute them
+for SCRIPT_FILE in "${SCRIPT_FILES[@]}"; do
+    SCRIPT_PATH="${path_root}/../scripts/build/${SCRIPT_FILE}"
+    run_script "$SCRIPT_PATH" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+done
 
-lxc file push ${BUILD_PREREQS_PATH}/assets/post-gen"${BUILD_CONTAINER}${BUILD_HOME}/${local.image_folder}"
+run_script "${path_root}/../scripts/build/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-lxc file push ${BUILD_PREREQS_PATH}/toolsets/${local.toolset_file_name} "${BUILD_CONTAINER}${BUILD_HOME}/${local.installer_script_folder}/toolset.json"
+run_script "${path_root}/../scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-mv ${local.image_folder}/post-gen ${local.image_folder}/post-generation
+run_script "${path_root}/../scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-DEBIAN_FRONTEND HELPER_SCRIPTS INSTALLER_SCRIPT_FOLDER ${path.root}/../scripts/build/install-apt-vital.sh
+run_script "${path_root}/../scripts/build/configure-snap.sh" "HELPER_SCRIPTS"
 
-DEBIAN_FRONTEND HELPER_SCRIPTS INSTALLER_SCRIPT_FOLDER ${path.root}/../scripts/build/install-powershell.sh
-
-HELPER_SCRIPTS INSTALLER_SCRIPT_FOLDER ${path.root}/../scripts/build/Install-PowerShellModules.ps1
-
-DEBIAN_FRONTEND HELPER_SCRIPTS INSTALLER_SCRIPT_FOLDER 
-      "${path.root}/../scripts/build/install-actions-cache.sh",
-      "${path.root}/../scripts/build/install-runner-package.sh",
-      "${path.root}/../scripts/build/install-apt-common.sh",
-      "${path.root}/../scripts/build/install-azcopy.sh",
-      "${path.root}/../scripts/build/install-azure-cli.sh",
-      "${path.root}/../scripts/build/install-azure-devops-cli.sh",
-      "${path.root}/../scripts/build/install-bicep.sh",
-      "${path.root}/../scripts/build/install-apache.sh",
-      "${path.root}/../scripts/build/install-aws-tools.sh",
-      "${path.root}/../scripts/build/install-clang.sh",
-      "${path.root}/../scripts/build/install-swift.sh",
-      "${path.root}/../scripts/build/install-cmake.sh",
-      "${path.root}/../scripts/build/install-codeql-bundle.sh",
-      "${path.root}/../scripts/build/install-container-tools.sh",
-      "${path.root}/../scripts/build/install-dotnetcore-sdk.sh",
-      "${path.root}/../scripts/build/install-microsoft-edge.sh",
-      "${path.root}/../scripts/build/install-gcc-compilers.sh",
-      "${path.root}/../scripts/build/install-firefox.sh",
-      "${path.root}/../scripts/build/install-gfortran.sh",
-      "${path.root}/../scripts/build/install-git.sh",
-      "${path.root}/../scripts/build/install-git-lfs.sh",
-      "${path.root}/../scripts/build/install-github-cli.sh",
-      "${path.root}/../scripts/build/install-google-chrome.sh",
-      "${path.root}/../scripts/build/install-google-cloud-cli.sh",
-      "${path.root}/../scripts/build/install-haskell.sh",
-      "${path.root}/../scripts/build/install-java-tools.sh",
-      "${path.root}/../scripts/build/install-kubernetes-tools.sh",
-      "${path.root}/../scripts/build/install-miniconda.sh",
-      "${path.root}/../scripts/build/install-kotlin.sh",
-      "${path.root}/../scripts/build/install-mysql.sh",
-      "${path.root}/../scripts/build/install-nginx.sh",
-      "${path.root}/../scripts/build/install-nvm.sh",
-      "${path.root}/../scripts/build/install-nodejs.sh",
-      "${path.root}/../scripts/build/install-bazel.sh",
-      "${path.root}/../scripts/build/install-php.sh",
-      "${path.root}/../scripts/build/install-postgresql.sh",
-      "${path.root}/../scripts/build/install-pulumi.sh",
-      "${path.root}/../scripts/build/install-ruby.sh",
-      "${path.root}/../scripts/build/install-rust.sh",
-      "${path.root}/../scripts/build/install-julia.sh",
-      "${path.root}/../scripts/build/install-selenium.sh",
-      "${path.root}/../scripts/build/install-packer.sh",
-      "${path.root}/../scripts/build/install-vcpkg.sh",
-      "${path.root}/../scripts/build/configure-dpkg.sh",
-      "${path.root}/../scripts/build/install-yq.sh",
-      "${path.root}/../scripts/build/install-android-sdk.sh",
-      "${path.root}/../scripts/build/install-pypy.sh",
-      "${path.root}/../scripts/build/install-python.sh",
-      "${path.root}/../scripts/build/install-zstd.sh"
-
-HELPER_SCRIPTS INSTALLER_SCRIPT_FOLDER DOCKERHUB_PULL_IMAGES=NO ${path.root}/../scripts/build/install-docker.sh
-
-HELPER_SCRIPTS INSTALLER_SCRIPT_FOLDER ${path.root}/../scripts/build/install-pipx-packages.sh
-
-DEBIAN_FRONTEND HELPER_SCRIPTS INSTALLER_SCRIPT_FOLDER ${path.root}/../scripts/build/install-homebrew.sh
-
-HELPER_SCRIPTS ${path.root}/../scripts/build/configure-snap.sh
-
-echo 'Reboot VM'
+echo 'Rebooting VM...'
 sudo reboot
 
-pause_before        = "1m0s"
-${path.root}/../scripts/build/cleanup.sh
-start_retry_timeout = "10m"
+# The cleanup script is executed after the reboot.
+"${path_root}/../scripts/build/cleanup.sh"
 
-HELPER_SCRIPTS INSTALLER_SCRIPT_FOLDER ${path.root}/../scripts/build/configure-system.sh
+# Configure system settings
+run_script "${path_root}/../scripts/build/configure-system.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
 sleep 30
 /usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync
