@@ -64,7 +64,7 @@ SCRIPT_FILES=(
     "install-apt-common.sh"
 #     "install-azcopy.sh"
 #     "install-azure-cli.sh"
-    "install-azure-devops-cli.sh"
+#     "install-azure-devops-cli.sh"
     "install-bicep.sh"
     "install-apache.sh"
     "install-aws-tools.sh"
