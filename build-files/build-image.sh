@@ -15,7 +15,8 @@ msg() {
 update_fresh_container() {
     header "Upgrading and installing packages"
     sudo DEBIAN_FRONTEND=noninteractive apt-get -qq update -y >/dev/null
-    sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install dotnet-sdk-8.0 -y >/dev/null
+    sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install dotnet-sdk-8.0 make \
+        gcc g++ autoconf automake m4 libtool -y >/dev/null
 
     if [ $? -ne 0 ]; then
         exit 32
@@ -47,11 +48,9 @@ patch_runner() {
     cd /tmp
     git clone -q ${RUNNERREPO}
     cd runner
-    git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) -b build 
+    git checkout main -b build
     git apply /home/ubuntu/runner-sdk-8.patch
-    sed -i'' -e 's/"version": "8[^"]*"/"version": "'${SDK_VERSION}'"/' src/global.json
-    sed -i'' -e 's/"version": "8[^"]*"/"version": "'${SDK_VERSION}'"/' .devcontainer/devcontainer.json
-    sed -i'' -e 's/DOTNETSDK_VERSION="8[^"]*"/DOTNETSDK_VERSION="'${SDK_VERSION}'"/' src/dev.sh
+    sed -i'' -e /version/s/8......\"$/8.0.100\"/ src/global.json
     return $?
 }
 
@@ -91,7 +90,8 @@ install_runner() {
 
 cleanup() {
     rm -rf /home/ubuntu/build-image.sh /home/ubuntu/runner-sdk-8.patch \
-           /tmp/runner /tmp/preseed-yaml
+           /tmp/runner /tmp/preseed-yaml /home/ubuntu/.nuget \
+           /home/ubuntu/.local/share
 }
 
 run() {
@@ -116,16 +116,12 @@ run() {
 
 export HOME=/home/ubuntu
 ARCH=`uname -m`
-SDK=""
 RUNNERREPO="https://github.com/actions/runner"
-while getopts "a:s:" opt
+while getopts "a:" opt
 do
     case ${opt} in
         a)
             RUNNERREPO=${OPTARG}
-            ;;
-        s)
-            SDK=${OPTARG}
             ;;
         *)
             exit 4
@@ -133,17 +129,6 @@ do
     esac
 done
 shift $(( OPTIND - 1 ))
-
-if [ -z "${SDK}" ]; then
-    case ${ARCH} in
-        ppc64le)
-            SDK=8
-            ;;
-        s390x)
-            SDK=8
-            ;;
-    esac
-fi
 
 run "$@"
 exit $?

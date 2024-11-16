@@ -2,6 +2,8 @@ FROM    almalinux:9
 
 ARG     RUNNERREPO="https://github.com/actions/runner" RUNNERPATCH SDK=8 SDK_VERSION ARCH
 
+RUN     echo "tsflags=nodocs" >>/etc/dnf/dnf.conf
+
 RUN     dnf update -y -q && \
         dnf install -y -q wget git which langpacks-en glibc-all-langpacks sudo
         
@@ -14,11 +16,10 @@ COPY    ${RUNNERPATCH} /tmp/runner.patch
 RUN     cd /tmp && \
         git clone -q ${RUNNERREPO} && \
         cd runner && \
-        git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) -b build && \
-        git apply /tmp/runner.patch && \
-        sed -i'' -e 's/"version": "8[^"]*"/"version": "'${SDK_VERSION}'"/' src/global.json && \
-        sed -i'' -e 's/"version": "8[^"]*"/"version": "'${SDK_VERSION}'"/' .devcontainer/devcontainer.json && \
-        sed -i'' -e 's/DOTNETSDK_VERSION="8[^"]*"/DOTNETSDK_VERSION="'${SDK_VERSION}'"/' src/dev.sh
+        git checkout main -b build && \
+        # git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) -b build && \
+        sed -i'' -e /version/s/8......\"$/${SDK}.0.100\"/ src/global.json && \
+        git apply /tmp/runner.patch 
 
 RUN     cd /tmp/runner/src && \
         ./dev.sh layout && \
@@ -37,7 +38,7 @@ RUN     mkdir -p /opt/runner && \
 
 RUN     dnf install -y -q cmake make automake autoconf m4 gcc gcc-c++ libtool epel-release
 
-RUN     rm -rf /tmp/runner /var/cache/dnf/* /tmp/runner.patch && \
+RUN     rm -rf /tmp/runner /var/cache/dnf/* /tmp/runner.patch \
         dnf clean all
     
 USER    almalinux
