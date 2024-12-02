@@ -17,7 +17,7 @@ echo "Downloading CodeQL bundle $bundle_version..."
 # different operating systems within containers.
 codeql_archive=$(download_with_retry "https://github.com/github/codeql-action/releases/download/$bundle_tag_name/codeql-bundle.tar.gz")
 
-codeql_toolcache_path="$AGENT_TOOLSDIRECTORY/CodeQL/$bundle_version/x64"
+codeql_toolcache_path="$AGENT_TOOLSDIRECTORY/CodeQL/$bundle_version/$ARCH"
 mkdir -p "$codeql_toolcache_path"
 
 echo "Unpacking the downloaded CodeQL bundle archive..."
