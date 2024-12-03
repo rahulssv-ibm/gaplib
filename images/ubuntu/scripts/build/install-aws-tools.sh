@@ -10,7 +10,7 @@ source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
 
 if [ "$ARCH" = "ppc64le" ] ; then 
-    #
+    # https://ftp2.osuosl.org/pub/ppc64el/aws/awscli-1.10.16.tar.gz
     #
 elif [ "$ARCH" = "s390x" ]; then
     #
