@@ -60,17 +60,17 @@ build_runner() {
     cd src
 
     msg "dev layout"
-    ./dev.sh layout
+    ./dev.sh layout Release
 
     if [ $? -eq 0 ]; then
         msg "dev package"
-        ./dev.sh package 
+        ./dev.sh package Release
 
         if [ $? -eq 0 ]; then
             msg "Finished building runner binary"
 
             msg "Running tests"
-            ./dev.sh test
+            ./dev.sh test Release
         fi
     fi
 
