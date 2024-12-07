@@ -109,19 +109,6 @@ index 2c20d1b1..63957a5d 100644
  #else
              public static readonly Architecture PlatformArchitecture = Architecture.X64;
  #endif
-diff --git a/src/Runner.Common/JobServerQueue.cs b/src/Runner.Common/JobServerQueue.cs
-index 74c12bea..aaac09a6 100644
---- a/src/Runner.Common/JobServerQueue.cs
-+++ b/src/Runner.Common/JobServerQueue.cs
-@@ -89,7 +89,7 @@ namespace GitHub.Runner.Common
-         // In this way, customer still can get instance live console output on job start,
-         // at the same time we can cut the load to server after the build run for more than 60s
-         private int _webConsoleLineAggressiveDequeueCount = 0;
--        private const int _webConsoleLineAggressiveDequeueLimit = 4 * 60;
-+        private const int _webConsoleLineAggressiveDequeueLimit = 40 * 60;
-         private const int _webConsoleLineQueueSizeLimit = 1024;
-         private bool _webConsoleLineAggressiveDequeue = true;
-         private bool _firstConsoleOutputs = true;
 diff --git a/src/Runner.Common/Runner.Common.csproj b/src/Runner.Common/Runner.Common.csproj
 index 6c463562..e2796ffa 100644
 --- a/src/Runner.Common/Runner.Common.csproj
@@ -136,6 +123,25 @@ index 6c463562..e2796ffa 100644
    </PropertyGroup>
  
    <ItemGroup>
+diff --git a/src/Runner.Common/TraceSetting.cs b/src/Runner.Common/TraceSetting.cs
+index 786a2721..0d558b24 100644
+--- a/src/Runner.Common/TraceSetting.cs
++++ b/src/Runner.Common/TraceSetting.cs
+@@ -12,12 +12,12 @@ namespace GitHub.Runner.Common
+         {
+             DefaultTraceLevel = TraceLevel.Info;
+ #if DEBUG
+-            DefaultTraceLevel = TraceLevel.Verbose;
++            DefaultTraceLevel = TraceLevel.Info;
+ #endif            
+             string actionsRunnerTrace = Environment.GetEnvironmentVariable("GITHUB_ACTIONS_RUNNER_TRACE");
+             if (!string.IsNullOrEmpty(actionsRunnerTrace))
+             {
+-                DefaultTraceLevel = TraceLevel.Verbose;
++                DefaultTraceLevel = TraceLevel.Info;
+             }
+         }
+ 
 diff --git a/src/Runner.Common/Util/VarUtil.cs b/src/Runner.Common/Util/VarUtil.cs
 index 97273a1a..78f78701 100644
 --- a/src/Runner.Common/Util/VarUtil.cs
