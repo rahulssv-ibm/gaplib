@@ -110,14 +110,16 @@ index 2c20d1b1..63957a5d 100644
              public static readonly Architecture PlatformArchitecture = Architecture.X64;
  #endif
 diff --git a/src/Runner.Common/JobServerQueue.cs b/src/Runner.Common/JobServerQueue.cs
-index 74c12bea..ebdb994a 100644
+index 74c12bea..3e0edf21 100644
 --- a/src/Runner.Common/JobServerQueue.cs
 +++ b/src/Runner.Common/JobServerQueue.cs
-@@ -33,7 +33,7 @@ namespace GitHub.Runner.Common
+@@ -32,8 +32,8 @@ namespace GitHub.Runner.Common
+         private static readonly TimeSpan _aggressiveDelayForWebConsoleLineDequeue = TimeSpan.FromMilliseconds(250);
          private static readonly TimeSpan _delayForWebConsoleLineDequeue = TimeSpan.FromMilliseconds(500);
          private static readonly TimeSpan _delayForTimelineUpdateDequeue = TimeSpan.FromMilliseconds(500);
-         private static readonly TimeSpan _delayForFileUploadDequeue = TimeSpan.FromMilliseconds(1000);
+-        private static readonly TimeSpan _delayForFileUploadDequeue = TimeSpan.FromMilliseconds(1000);
 -        private static readonly TimeSpan _delayForResultsUploadDequeue = TimeSpan.FromMilliseconds(1000);
++        private static readonly TimeSpan _delayForFileUploadDequeue = TimeSpan.FromMilliseconds(2000);
 +        private static readonly TimeSpan _delayForResultsUploadDequeue = TimeSpan.FromMilliseconds(2000);
  
          // Job message information
