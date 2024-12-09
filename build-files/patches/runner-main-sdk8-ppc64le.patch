@@ -109,28 +109,6 @@ index 2c20d1b1..63957a5d 100644
  #else
              public static readonly Architecture PlatformArchitecture = Architecture.X64;
  #endif
-diff --git a/src/Runner.Common/JobServerQueue.cs b/src/Runner.Common/JobServerQueue.cs
-index 74c12bea..ebdb994a 100644
---- a/src/Runner.Common/JobServerQueue.cs
-+++ b/src/Runner.Common/JobServerQueue.cs
-@@ -33,7 +33,7 @@ namespace GitHub.Runner.Common
-         private static readonly TimeSpan _delayForWebConsoleLineDequeue = TimeSpan.FromMilliseconds(500);
-         private static readonly TimeSpan _delayForTimelineUpdateDequeue = TimeSpan.FromMilliseconds(500);
-         private static readonly TimeSpan _delayForFileUploadDequeue = TimeSpan.FromMilliseconds(1000);
--        private static readonly TimeSpan _delayForResultsUploadDequeue = TimeSpan.FromMilliseconds(1000);
-+        private static readonly TimeSpan _delayForResultsUploadDequeue = TimeSpan.FromMilliseconds(2000);
- 
-         // Job message information
-         private Guid _scopeIdentifier;
-@@ -89,7 +89,7 @@ namespace GitHub.Runner.Common
-         // In this way, customer still can get instance live console output on job start,
-         // at the same time we can cut the load to server after the build run for more than 60s
-         private int _webConsoleLineAggressiveDequeueCount = 0;
--        private const int _webConsoleLineAggressiveDequeueLimit = 4 * 60;
-+        private const int _webConsoleLineAggressiveDequeueLimit = 8 * 60;
-         private const int _webConsoleLineQueueSizeLimit = 1024;
-         private bool _webConsoleLineAggressiveDequeue = true;
-         private bool _firstConsoleOutputs = true;
 diff --git a/src/Runner.Common/Runner.Common.csproj b/src/Runner.Common/Runner.Common.csproj
 index 6c463562..e2796ffa 100644
 --- a/src/Runner.Common/Runner.Common.csproj
