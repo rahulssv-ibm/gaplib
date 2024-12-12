@@ -343,15 +343,13 @@ index 8e233665..998db82e 100755
  heading "Dotnet SDK Version"
  dotnet --version
 diff --git a/src/dir.proj b/src/dir.proj
-index 056a312e..583b65e1 100644
+index 056a312e..19a41360 100644
 --- a/src/dir.proj
 +++ b/src/dir.proj
 @@ -41,8 +41,17 @@
      </ItemGroup>
  
      <Target Name="Build" DependsOnTargets="GenerateConstant">
--        <MSBuild Targets="Restore" Projects="@(ProjectFiles)" StopOnFirstFailure="true" />
--        <MSBuild Targets="Publish" Projects="@(ProjectFiles)" BuildInParallel="false" StopOnFirstFailure="true" Properties="Configuration=$(BUILDCONFIG);PackageRuntime=$(PackageRuntime);Version=$(RunnerVersion);RuntimeIdentifier=$(PackageRuntime);PublishDir=$(MSBuildProjectDirectory)/../_layout/bin" />
 +        <PropertyGroup>
 +            <!-- Normally we want to publish a self-contained app for $(PackageRuntime) -->
 +            <PublishRuntimeIdentifier>RuntimeIdentifier=$(PackageRuntime)</PublishRuntimeIdentifier>
@@ -361,7 +359,8 @@ index 056a312e..583b65e1 100644
 +                 as this would confuse the expected layout, disable that behavior as well.  -->
 +            <PublishRuntimeIdentifier Condition="'$(PackageRuntime)' == 'linux-ppc64le' Or '$(PackageRuntime)' == 'linux-s390x'">SelfContained=false;CopyLocalRuntimeTargetAssets=false</PublishRuntimeIdentifier>
 +        </PropertyGroup>
-+        <MSBuild Targets="Restore" Projects="@(ProjectFiles)" StopOnFirstFailure="true" Properties="$(PublishRuntimeIdentifier)" />
+         <MSBuild Targets="Restore" Projects="@(ProjectFiles)" StopOnFirstFailure="true" />
+-        <MSBuild Targets="Publish" Projects="@(ProjectFiles)" BuildInParallel="false" StopOnFirstFailure="true" Properties="Configuration=$(BUILDCONFIG);PackageRuntime=$(PackageRuntime);Version=$(RunnerVersion);RuntimeIdentifier=$(PackageRuntime);PublishDir=$(MSBuildProjectDirectory)/../_layout/bin" />
 +        <MSBuild Targets="Publish" Projects="@(ProjectFiles)" BuildInParallel="false" StopOnFirstFailure="true" Properties="Configuration=$(BUILDCONFIG);PackageRuntime=$(PackageRuntime);Version=$(RunnerVersion);$(PublishRuntimeIdentifier);PublishDir=$(MSBuildProjectDirectory)/../_layout/bin" />
          <Exec Command="%22$(DesktopMSBuild)%22 Runner.Service/Windows/RunnerService.csproj /p:Configuration=$(BUILDCONFIG) /p:PackageRuntime=$(PackageRuntime) /p:OutputPath=%22$(MSBuildProjectDirectory)/../_layout/bin%22" ConsoleToMSBuild="true" Condition="'$(PackageRuntime)' == 'win-x64' Or '$(PackageRuntime)' == 'win-x86' Or '$(PackageRuntime)' == 'win-arm64'" />
      </Target>
