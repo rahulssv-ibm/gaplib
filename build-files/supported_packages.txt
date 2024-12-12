@@ -5,7 +5,6 @@ make
 maven
 mediainfo
 mercurial
-microsoft-edge-stable
 mysql-client
 mysql-server
 ncurses-base
@@ -21,7 +20,6 @@ openssh-sftp-server
 openssl
 p7zip-full
 p7zip-rar
-packages-microsoft-prod
 parallel
 patchelf
 php-pear
@@ -77,7 +75,6 @@ pkg-config
 podman
 pollinate
 postgresql-16
-powershell-lts
 python-babel-localedata
 python-is-python3
 python3
@@ -99,7 +96,6 @@ rpm
 rsync
 ruby-full
 shellcheck
-shim-signed
 skopeo
 snmp
 software-properties-common
@@ -121,7 +117,6 @@ ubuntu-server
 ubuntu-standard
 unzip
 util-linux
-walinuxagent
 wget
 xvfb
 xz-utils

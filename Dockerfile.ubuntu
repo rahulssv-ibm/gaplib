@@ -1,40 +1,28 @@
 FROM    ubuntu:22.04
 
-ARG     RUNNERREPO="https://github.com/actions/runner" RUNNERPATCH SDK ARCH
+ARG     RUNNERREPO="https://github.com/actions/runner" RUNNERPATCH SDK_VERSION ARCH
 
 ENV     DEBIAN_FRONTEND=noninteractive
 
 RUN     apt-get -qq update -y && \
-        apt-get -qq -y install wget git sudo alien curl libicu70 sudo && \
-        apt-get -qq -y install cpio rpm2cpio && \
+        apt-get -qq -y install wget git sudo alien curl && \
         apt autoclean
 
-COPY    build-files/convert-rpm.sh /tmp
-
-RUN     sed "s/--no-absolute-filenames//" /usr/share/perl5/Alien/Package/Rpm.pm > /tmp/Rpm.pm
-RUN     cp /tmp/Rpm.pm /usr/share/perl5/Alien/Package/Rpm.pm
-
-RUN     /tmp/convert-rpm.sh ${SDK}
-
-RUN     dpkg --install /tmp/*.deb && \
-        rm -rf /tmp/*.deb && \
-        echo "Using SDK - `dotnet --version`"
+RUN     apt-get -qq -y install dotnet-sdk-8.0  && \
+        SDK_VERSION=`dotnet --version` && \
+        echo "Using SDK - ${SDK_VERSION}"
 
 ADD     ${RUNNERPATCH} /tmp/runner.patch
 
 RUN     cd /tmp && \
         git clone -q ${RUNNERREPO} && \
         cd runner && \
-        git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) -b build && \
-        git apply /tmp/runner.patch 
-
-RUN     if [ "${SDK}" -ne 6 ]; then \
-            cd /usr/lib64/dotnet/packs; \
-            ln -s Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.Runtime.linux-${ARCH}; \
-            ln -s Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.linux-${ARCH}; \
-            ln -s Microsoft.NETCore.App.Host.rhel.9-${ARCH} Microsoft.NETCore.App.Host.linux-${ARCH}; \
-            ln -s Microsoft.NETCore.App.Ref Microsoft.NETCore.App.Runtime.linux-${ARCH}; \
-        fi
+        git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) -b build  && \
+        git apply /tmp/runner.patch && \
+        sed -i'' -e 's/"version": "8[^"]*"/"version": "'${SDK_VERSION}'"/' src/global.json && \
+        sed -i'' -e 's/"version": "8[^"]*"/"version": "'${SDK_VERSION}'"/' .devcontainer/devcontainer.json && \
+        sed -i'' -e 's/DOTNETSDK_VERSION="8[^"]*"/DOTNETSDK_VERSION="'${SDK_VERSION}'"/' src/dev.sh
+        
 
 RUN     cd /tmp/runner/src && \
         ./dev.sh layout && \
@@ -53,7 +41,7 @@ RUN     mkdir -p /opt/runner && \
 
 RUN     apt-get -qq -y install cmake make automake autoconf m4 gcc-12-base libtool
 
-RUN     rm -rf /tmp/runner /tmp/runner.patch /tmp/convert-rpm.sh
+RUN     rm -rf /tmp/runner /tmp/runner.patch
     
 USER    ubuntu
 
