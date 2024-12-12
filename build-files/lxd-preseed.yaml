@@ -12,7 +12,7 @@ storage_pools:
     size: 80GiB
   description: "gaplib storage pool"
   name: default
-  driver: lvm
+  driver: dir
 profiles:
 - config: {}
   description: "gaplib"

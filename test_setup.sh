@@ -1,4 +1,5 @@
 #!/bin/bash
+
 usage() {
     echo "setup-build-env [flags]"
     echo ""
@@ -7,17 +8,18 @@ usage() {
     echo "                             defaults to ${ACTION_RUNNER}"
     echo "-o <exported image>          Path to exported image"
     echo "                             defaults to ${EXPORT}"
-    echo "-s <SDK level>               .NET SDK level"
-    echo "                             - Defaults to value in build script for ppc64le"
-    echo "                             - Ignored for s390x which uses an RPM"
     echo "-h                           Display this usage information"
     exit
+}
+
+msg() {
+    echo `date +"%Y-%m-%dT%H:%M:%S%:z"` $*
 }
 
 ensure_lxd() {
   if ! command -v lxc version &> /dev/null
   then
-    echo "LXD could not be found. Please ensure LXD exists."
+    msg "LXD could not be found. Please ensure LXD exists."
     exit 1
   fi
 }
@@ -28,14 +30,14 @@ build_image_in_container() {
 
   local BUILD_PREREQS_PATH="${SRCDIR}/build-files"
   if [ ! -d "${BUILD_PREREQS_PATH}" ]; then
-      echo "Check the BUILD_PREREQS_PATH specification" >&2
+      msg "Check the BUILD_PREREQS_PATH specification" >&2
       return 3
   fi
 
   local BUILD_CONTAINER
-  BUILD_CONTAINER="gha-dotnet8-test"
+  BUILD_CONTAINER="gha-test"
 
-  echo "Launching build container ${LXD_CONTAINER}"
+  msg "Launching build container ${LXD_CONTAINER}"
   lxc launch "${LXD_CONTAINER}" "${BUILD_CONTAINER}" 
   lxc ls
   
@@ -50,45 +52,36 @@ build_image_in_container() {
   done
 
   if [ -z "${CHECK}" ]; then
-      echo "Unable to start the build container" >&2
+      msg "Unable to start the build container" >&2
       lxc delete -f ${BUILD_CONTAINER}
       return 2
   fi
 
-  echo "Copy the build-image script into gha-builder"
-  lxc file push --mode 0755 "${BUILD_PREREQS_PATH}/test_build.sh" "${BUILD_CONTAINER}${BUILD_HOME}/test_build.sh"
+  msg "Copy the build-image script into gha-builder"
+  lxc file push --mode 0755 "${BUILD_PREREQS_PATH}/setup_dotnet.sh" "${BUILD_CONTAINER}${BUILD_HOME}/setup_dotnet.sh"
   
-  echo "Copy the register-runner.sh script into gha-builder"
+  msg "Copy the register-runner.sh script into gha-builder"
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/register-runner.sh "${BUILD_CONTAINER}/opt/register-runner.sh"
   
-  echo "Copy the /etc/rc.local - required in case podman is used"
+  msg "Copy the /etc/rc.local - required in case podman is used"
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/rc.local "${BUILD_CONTAINER}/etc/rc.local"
   
-  echo "Copy the LXD preseed configuration"
+  msg "Copy the LXD preseed configuration"
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/lxd-preseed.yaml "${BUILD_CONTAINER}/tmp/lxd-preseed.yaml"
   
-  echo "Copy the gha-service unit file into gha-builder"
+  msg "Copy the gha-service unit file into gha-builder"
   lxc file push ${BUILD_PREREQS_PATH}/gha-runner.service "${BUILD_CONTAINER}/etc/systemd/system/gha-runner.service"
 
-  echo "Running build-image.sh"
-  lxc exec "${BUILD_CONTAINER}" --user 1000 --group 1000 -- ${BUILD_HOME}/test_build.sh -a ${ACTION_RUNNER} ${SDK}
+  msg "Copy the apt and dpkg overrides into gha-builder - these prevent doc files from being installed"
+  lxc file push --mode 0644 "${BUILD_PREREQS_PATH}/99synaptics" "${BUILD_CONTAINER}/etc/apt/apt.conf.d/99synaptics"
+  lxc file push --mode 0644 "${BUILD_PREREQS_PATH}/01-nodoc" "${BUILD_CONTAINER}/etc/dpkg/dpkg.cfg.d/01-nodoc"
+
+  msg "Setting user ubuntu with sudo privileges"
+  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' | sudo EDITOR='tee -a' visudo"
+ 
+  msg "Running build-image.sh"
+  lxc exec "${BUILD_CONTAINER}" --user 1000 --group 1000 -- ${BUILD_HOME}/setup_dotnet.sh -a ${ACTION_RUNNER} ${SDK}
   RC=$?
-
-#   if [ ${RC} -eq 0 ]; then
-#       # Until we are at lxc >= 5.19 we can't use the --reuse option on the publish command
-#       echo "Deleting old image"
-#       lxc image delete ${IMAGE_ALIAS} 2>/dev/null
-
-#       echo "Runner build complete. Creating image snapshot."
-#       lxc publish "${BUILD_CONTAINER}" -f --alias "${IMAGE_ALIAS}" description="GitHub Actions ${OS_NAME} ${OS_VERSION} Runner for ${ARCH}"
-  
-#       echo "Export the image to ${EXPORT} for use elsewhere"
-#       lxc image export "${IMAGE_ALIAS}" ${EXPORT}
-#   else
-#       echo "Build process failed with RC: $? - review log to determine cause of failure" >&2
-#   fi
-
-#   lxc delete -f "${BUILD_CONTAINER}"
 
   return ${RC}
 }
@@ -99,6 +92,19 @@ run() {
   return $?
 }
 
+select_ubuntu_version() {
+  case "$ARCH" in
+    ppc64le)
+      export OS_VERSION="22.04"
+      ;;
+    s390x)
+      export OS_VERSION="24.10"
+      ;;
+    *)
+      export OS_VERSION="24.10" # Default version for other architectures
+      ;;
+  esac
+}
 prolog() {
   export PATH=/snap/bin:${PATH}
   export SOURCE=$(readlink -f ${BASH_SOURCE[0]})
@@ -107,24 +113,24 @@ prolog() {
   export ARCH=`uname -m`
   export ACTION_RUNNER="https://github.com/actions/runner"
   export EXPORT="distro/lxc-runner"
-  export SDK=""
-
   export OS_NAME="${OS_NAME:-ubuntu}"
-  export OS_VERSION="${OS_VERSION:-22.04}"
-  export LXD_CONTAINER="${OS_NAME}:${OS_VERSION}"
   export BUILD_HOME="/home/ubuntu"
+
+  select_ubuntu_version "$@"
+
+  export LXD_CONTAINER="${OS_NAME}:${OS_VERSION}"
 
   mkdir -p distro
 
   X=`groups | grep -q lxd`
   if [ $? -eq 1 ]; then
-      echo "Setting permissions"
+      msg "Setting permissions"
       sudo chmod 0666 /var/snap/lxd/common/lxd/unix.socket
   fi
 }
 
 prolog
-while getopts "a:o:hs:" opt
+while getopts "a:o:h:" opt
 do
     case "${opt}" in
         a)
@@ -135,9 +141,6 @@ do
             ;;
         h)
             usage
-            ;;
-        s)
-            SDK="-s ${OPTARG}"
             ;;
         *)
             usage
