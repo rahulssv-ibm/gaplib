@@ -209,7 +209,7 @@ index 53c1610d..d3382973 100644
  
    <ItemGroup>
 diff --git a/src/Sdk/Sdk.csproj b/src/Sdk/Sdk.csproj
-index ce7f97c8..1154504f 100644
+index ce7f97c8..dfc5990c 100644
 --- a/src/Sdk/Sdk.csproj
 +++ b/src/Sdk/Sdk.csproj
 @@ -11,6 +11,9 @@
@@ -222,15 +222,6 @@ index ce7f97c8..1154504f 100644
      </PropertyGroup>
  
      <ItemGroup>
-@@ -18,7 +21,7 @@
-         <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-         <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
--        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
-+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />
-         <PackageReference Include="System.Security.Cryptography.Cng" Version="5.0.0" />
-         <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0" />
-         <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
 diff --git a/src/Test/L0/ConstantGenerationL0.cs b/src/Test/L0/ConstantGenerationL0.cs
 index f3c1b8f9..9a1c5aa0 100644
 --- a/src/Test/L0/ConstantGenerationL0.cs
@@ -352,10 +343,10 @@ index 8e233665..998db82e 100755
  heading "Dotnet SDK Version"
  dotnet --version
 diff --git a/src/dir.proj b/src/dir.proj
-index 056a312e..1f6bdb07 100644
+index 056a312e..583b65e1 100644
 --- a/src/dir.proj
 +++ b/src/dir.proj
-@@ -41,13 +41,22 @@
+@@ -41,8 +41,17 @@
      </ItemGroup>
  
      <Target Name="Build" DependsOnTargets="GenerateConstant">
@@ -373,11 +364,5 @@ index 056a312e..1f6bdb07 100644
 +        <MSBuild Targets="Restore" Projects="@(ProjectFiles)" StopOnFirstFailure="true" Properties="$(PublishRuntimeIdentifier)" />
 +        <MSBuild Targets="Publish" Projects="@(ProjectFiles)" BuildInParallel="false" StopOnFirstFailure="true" Properties="Configuration=$(BUILDCONFIG);PackageRuntime=$(PackageRuntime);Version=$(RunnerVersion);$(PublishRuntimeIdentifier);PublishDir=$(MSBuildProjectDirectory)/../_layout/bin" />
          <Exec Command="%22$(DesktopMSBuild)%22 Runner.Service/Windows/RunnerService.csproj /p:Configuration=$(BUILDCONFIG) /p:PackageRuntime=$(PackageRuntime) /p:OutputPath=%22$(MSBuildProjectDirectory)/../_layout/bin%22" ConsoleToMSBuild="true" Condition="'$(PackageRuntime)' == 'win-x64' Or '$(PackageRuntime)' == 'win-x86' Or '$(PackageRuntime)' == 'win-arm64'" />
-     </Target>
- 
-     <Target Name="Test" DependsOnTargets="GenerateConstant">
--        <Exec Command="dotnet build Test/Test.csproj -c $(BUILDCONFIG) /p:PackageRuntime=$(PackageRuntime)" ConsoleToMSBuild="true" />
-+        <Exec Command="dotnet build Test/Test.csproj -c $(BUILDCONFIG) /p:PackageRuntime=$(PackageRuntime) /p:SelfContained=false /p:CopyLocalRuntimeTargetAssets=false" ConsoleToMSBuild="true" />
-         <Exec Command="dotnet test Test/Test.csproj -c $(BUILDCONFIG) --no-build --logger:trx" ConsoleToMSBuild="true" />
      </Target>
  

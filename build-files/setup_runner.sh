@@ -58,7 +58,7 @@ install_runner() {
 }
 
 cleanup() {
-    rm -rf /home/ubuntu/build-image.sh /home/ubuntu/runner-sdk-8.patch \
+    sudo rm -rf /home/ubuntu/build-image.sh /home/ubuntu/runner-sdk-8.patch \
            /tmp/runner /tmp/preseed-yaml /opt/runner /home/ubuntu/.nuget \
            /home/ubuntu/.local/share
 }
