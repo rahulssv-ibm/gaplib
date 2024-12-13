@@ -64,7 +64,7 @@ cleanup() {
 }
 
 run() {
-    
+    cleanup
     patch_runner
     RC=$?
     if [ ${RC} -eq 0 ]; then
@@ -75,7 +75,6 @@ run() {
             RC=$?
         fi
     fi
-    cleanup
     return ${RC}
 }
 
