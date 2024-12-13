@@ -57,14 +57,18 @@ install_runner() {
     return $?
 }
 
-cleanup() {
+pre_cleanup() {
+    sudo rm -rf /tmp/runner /opt/runner
+}
+
+post_cleanup() {
     sudo rm -rf /home/ubuntu/build-image.sh /home/ubuntu/runner-sdk-8.patch \
-           /tmp/runner /tmp/preseed-yaml /opt/runner /home/ubuntu/.nuget \
+           /tmp/preseed-yaml /home/ubuntu/.nuget \
            /home/ubuntu/.local/share
 }
 
 run() {
-    cleanup
+    pre_cleanup
     patch_runner
     RC=$?
     if [ ${RC} -eq 0 ]; then
@@ -75,6 +79,7 @@ run() {
             RC=$?
         fi
     fi
+    post_cleanup
     return ${RC}
 }
 
