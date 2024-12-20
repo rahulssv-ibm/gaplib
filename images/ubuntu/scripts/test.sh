@@ -49,8 +49,6 @@ run_script() {
 
 # List of scripts to be executed
 SCRIPT_FILES=(
-    "install-yq.sh"
-    "install-android-sdk.sh"
     "install-pypy.sh"
     "install-python.sh"
     "install-zstd.sh"
