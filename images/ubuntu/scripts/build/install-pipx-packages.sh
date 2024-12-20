@@ -18,7 +18,7 @@ for package in $pipx_packages; do
 
     # https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
     # Install ansible into an existing ansible-core Virtual Environment
-    if [[ $package == "ansible-core" && ("$ARCH" != "ppc64le" || "$ARCH" != "s390x") ]]; then
+    if [[ $package == "ansible-core" && "$ARCH" != "ppc64le" && "$ARCH" != "s390x" ]]; then
         pipx install $package
         pipx inject $package ansible
     fi
