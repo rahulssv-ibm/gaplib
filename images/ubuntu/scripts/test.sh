@@ -9,8 +9,8 @@ image_folder="/imagegeneration"
 helper_script_folder="/imagegeneration/helpers"
 installer_script_folder="/imagegeneration/installers"
 
-mkdir -p "${installer_script_folder}"
-chmod -R 777 "${installer_script_folder}"
+sudo mkdir -p "${installer_script_folder}"
+sudo chmod -R 777 "${installer_script_folder}"
 cp -r helpers "${helper_script_folder}"
 cp ../toolsets/toolset-2204.json "${installer_script_folder}/toolset.json"
 
