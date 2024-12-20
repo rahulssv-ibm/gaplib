@@ -49,17 +49,6 @@ run_script() {
 
 # List of scripts to be executed
 SCRIPT_FILES=(
-    "install-bazel.sh"
-    "install-php.sh"
-    "install-postgresql.sh"
-    "install-pulumi.sh"
-    "install-ruby.sh"
-    "install-rlang.sh"
-    "install-rust.sh"
-    "install-julia.sh"
-    "install-selenium.sh"
-    "install-terraform.sh"
-    "install-packer.sh"
     "install-vcpkg.sh"
     "configure-dpkg.sh"
     "install-yq.sh"
