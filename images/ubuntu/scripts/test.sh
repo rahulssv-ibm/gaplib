@@ -49,18 +49,6 @@ run_script() {
 
 # List of scripts to be executed
 SCRIPT_FILES=(
-    "install-azcopy.sh"
-    "install-azure-cli.sh"
-    "install-azure-devops-cli.sh"
-    "install-bicep.sh"
-    "install-aliyun-cli.sh"
-    "install-apache.sh"
-    "install-aws-tools.sh"
-    "install-clang.sh"
-    "install-swift.sh"
-    "install-cmake.sh"
-    "install-codeql-bundle.sh"
-    "install-container-tools.sh"
     "install-dotnetcore-sdk.sh"
     "install-firefox.sh"
     "install-microsoft-edge.sh"

@@ -1,9 +1,6 @@
-#!/bin/bash -e
-################################################################################
-##  File:  install-dotnetcore-sdk.sh
-##  Desc:  Install .NET Core SDK
-################################################################################
+#!/bin/bash
 set -x
+
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/install.sh
@@ -13,7 +10,7 @@ ARCH=${ARCH:-$(uname -m)}
 
 if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
     echo "Installing dotnet for architecture: $ARCH"
-    apt-get install dotnet-sdk-8.0
+    apt-get install -y dotnet-sdk-8.0
 else
     extract_dotnet_sdk() {
         local archive_name=$1
@@ -42,11 +39,11 @@ else
     # Microsoft <-> Canonical repos dependencies mix up.
     # Give Microsoft's repo higher priority to avoid collisions.
     # See: https://github.com/dotnet/core/issues/7699
-    cat << EOF > /etc/apt/preferences.d/dotnet
-    Package: *net*
-    Pin: origin packages.microsoft.com
-    Pin-Priority: 1001
-    EOF
+    cat <<EOF > /etc/apt/preferences.d/dotnet
+Package: *net*
+Pin: origin packages.microsoft.com
+Pin-Priority: 1001
+EOF
 
     apt-get update
 
@@ -54,7 +51,7 @@ else
         echo "Determining if .NET Core ($latest_package) is installed"
         if ! dpkg -S $latest_package &> /dev/null; then
             echo "Could not find .NET Core ($latest_package), installing..."
-            apt-get install $latest_package
+            apt-get install -y $latest_package
         else
             echo ".NET Core ($latest_package) is already installed"
         fi
