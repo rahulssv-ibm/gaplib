@@ -8,7 +8,7 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-if [ "$ARCH" = "ppc64le" ] ; then 
+if [[ "$ARCH" == "ppc64le" ]] ; then 
     # Determine latest ORAS CLI version
     download_url=$(resolve_github_release_asset_url "oras-project/oras" "endswith(\"linux_ppc64le.tar.gz\")" "latest")
 
@@ -22,6 +22,9 @@ if [ "$ARCH" = "ppc64le" ] ; then
 
     # Unzip ORAS CLI
     tar xzf "$archive_path" -C /usr/local/bin oras
+elif [[ "$ARCH" == "s390x" ]]; then
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
 else
     # Determine latest ORAS CLI version
     download_url=$(resolve_github_release_asset_url "oras-project/oras" "endswith(\"linux_amd64.tar.gz\")" "latest")

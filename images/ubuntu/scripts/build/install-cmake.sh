@@ -8,10 +8,10 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-if [ "$ARCH" = "ppc64le" ] ; then 
+if [[ "$ARCH" == "ppc64le" ]]; then 
     apt-get install -y cmake 
-elif [ "$ARCH" = "s390x" ]; then
-    apt-get install -y cmake 
+elif [[ "$ARCH" == "s390x" ]]; then
+    apt-get install -y cmake
 else
 	# Test to see if the software in question is already installed, if not install it
 	echo "Checking to see if the installer script has already been run"

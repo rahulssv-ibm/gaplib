@@ -8,12 +8,12 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-if [ "$ARCH" = "ppc64le" ] ; then 
-    #
-    #
-elif [ "$ARCH" = "s390x" ]; then
-    #
-    #
+if [[ "$ARCH" == "ppc64le" ]]; then 
+    # Placeholder for ppc64le-specific logic
+    echo "No actions defined for ppc64le architecture."
+elif [[ "$ARCH" == "s390x" ]]; then
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
 else
     # Dowload Pulumi
     version=$(curl -fsSL "https://www.pulumi.com/latest-version")

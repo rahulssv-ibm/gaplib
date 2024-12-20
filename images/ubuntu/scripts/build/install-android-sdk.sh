@@ -9,12 +9,12 @@ source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/etc-environment.sh
 
-if [ "$ARCH" = "ppc64le" ] ; then 
-    #
-    #
-elif [ "$ARCH" = "s390x" ]; then
-    #
-    #
+if [[ "$ARCH" == "ppc64le" ]]; then 
+    # Placeholder for ppc64le-specific logic
+    echo "No actions defined for ppc64le architecture."
+elif [[ "$ARCH" == "s390x" ]]; then
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
 else
     add_filtered_installation_components() {
         local minimum_version=$1

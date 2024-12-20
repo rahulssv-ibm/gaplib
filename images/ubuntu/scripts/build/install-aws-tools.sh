@@ -9,12 +9,12 @@ set -x
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
 
-if [ "$ARCH" = "ppc64le" ] ; then 
-    # https://ftp2.osuosl.org/pub/ppc64el/aws/awscli-1.10.16.tar.gz
-    #
-elif [ "$ARCH" = "s390x" ]; then
-    #
-    #
+if [[ "$ARCH" == "ppc64le" ]]; then 
+    # Placeholder for ppc64le-specific logic
+    echo "No actions defined for ppc64le architecture."
+elif [[ "$ARCH" == "s390x" ]]; then
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
 else
     awscliv2_archive_path=$(download_with_retry "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip")
     unzip -qq "$awscliv2_archive_path" -d /tmp

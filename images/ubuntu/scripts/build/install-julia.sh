@@ -7,7 +7,7 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-if [ "$ARCH" = "ppc64le" ] ; then 
+if [[ "$ARCH" == "ppc64le" ]] ; then 
     # get the latest julia version
     json=$(curl -fsSL "https://julialang-s3.julialang.org/bin/versions.json")
     julia_version=$(echo $json | jq -r '.[].files[] | select(.triplet=="powerpc64le-linux-gnu" and (.version | contains("-") | not)).version' | sort -V | tail -n1)
@@ -21,9 +21,9 @@ if [ "$ARCH" = "ppc64le" ] ; then
     mkdir -p "${julia_installation_path}"
     tar -C "${julia_installation_path}" -xzf "$julia_archive_path" --strip-components=1
     ln -s "${julia_installation_path}/bin/julia" /usr/bin/julia
-elif [ "$ARCH" = "s390x" ]; then
-    #
-    #
+elif [[ "$ARCH" == "s390x" ]]; then
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
 else
     # get the latest julia version
     json=$(curl -fsSL "https://julialang-s3.julialang.org/bin/versions.json")

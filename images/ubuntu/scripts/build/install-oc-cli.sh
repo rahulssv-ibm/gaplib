@@ -8,12 +8,12 @@ set -x
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
 
-if [ "$ARCH" = "ppc64le" ] ; then 
-    #
-    #
-elif [ "$ARCH" = "s390x" ]; then
-    #
-    #
+if [[ "$ARCH" == "ppc64le" ]]; then 
+    # Placeholder for ppc64le-specific logic
+    echo "No actions defined for ppc64le architecture."
+elif [[ "$ARCH" == "s390x" ]]; then
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
 else
     if is_ubuntu20; then
         toolset_version=$(get_toolset_value '.ocCli.version')

@@ -7,13 +7,13 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/etc-environment.sh
 
-if [ "$ARCH" = "ppc64le" ] ; then 
+if [[ "$ARCH" == "ppc64le" ]] ; then 
     # Install Miniconda
     curl -fsSL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-ppc64le.sh -o miniconda.sh \
         && chmod +x miniconda.sh \
         && ./miniconda.sh -b -p /usr/share/miniconda \
         && rm miniconda.sh
-elif [ "$ARCH" = "s390x" ]; then
+elif [[ "$ARCH" == "s390x" ]]; then
     # Install Miniconda
     curl -fsSL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-s390x.sh -o miniconda.sh \
         && chmod +x miniconda.sh \

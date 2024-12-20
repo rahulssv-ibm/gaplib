@@ -8,7 +8,8 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-if [ "$ARCH" = "ppc64le" || "$ARCH" = "s390x"] ; then 
+if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
+    echo "Installing Docker for architecture: $ARCH"
     # installing docker
     for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 

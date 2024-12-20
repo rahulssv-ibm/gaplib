@@ -4,12 +4,12 @@
 ##  Desc:  Install Heroku CLI. Based on instructions found here: https://devcenter.heroku.com/articles/heroku-cli
 ################################################################################
 set -x
-if [ "$ARCH" = "ppc64le" ] ; then 
-    #
-    #
-elif [ "$ARCH" = "s390x" ]; then
-    #
-    #
+if [[ "$ARCH" == "ppc64le" ]]; then 
+    # Placeholder for ppc64le-specific logic
+    echo "No actions defined for ppc64le architecture."
+elif [[ "$ARCH" == "s390x" ]]; then
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
 else
     REPO_URL="https://cli-assets.heroku.com/channels/stable/apt"
     GPG_KEY="/usr/share/keyrings/heroku.gpg"

@@ -7,7 +7,7 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-if [ "$ARCH" = "ppc64le" ] ; then 
+if [[ "$ARCH" == "ppc64le" ]] ; then 
     apt-get update -y
     apt-get install -y build-essential g++ flex bison gperf \
             ruby perl libsqlite3-dev libfontconfig1-dev libicu-dev \
@@ -26,6 +26,9 @@ if [ "$ARCH" = "ppc64le" ] ; then
     # Start automated tests.
     echo "starting tests"
     cd $wrkdir/phantomjs && cd test && python run-tests.py
+elif [[ "$ARCH" == "s390x" ]]; then
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
 else
     # Install required dependencies
     apt-get install chrpath libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev

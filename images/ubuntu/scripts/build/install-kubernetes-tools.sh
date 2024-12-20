@@ -8,7 +8,7 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-if [ "$ARCH" = "ppc64le" ] ; then 
+if [[ "$ARCH" == "ppc64le" ]] ; then 
     export version="latest"
     sudo apt install golang -y
     sudo go install sigs.k8s.io/kind@$version # v0.22.0
@@ -40,7 +40,7 @@ if [ "$ARCH" = "ppc64le" ] ; then
     download_url="https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
     curl -fsSL "$download_url" | bash
     mv kustomize /usr/local/bin
-elif [ "$ARCH" = "s390x" ]; then
+elif [[ "$ARCH" == "s390x" ]]; then
     export version="latest"
     sudo apt install golang -y
     sudo go install sigs.k8s.io/kind@$version # v0.22.0

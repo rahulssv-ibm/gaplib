@@ -8,7 +8,7 @@ set -x
 source $HELPER_SCRIPTS/install.sh
 dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"
 
-if [ "$ARCH" = "ppc64le" ] ; then 
+if [[ "$ARCH" == "ppc64le" ]] ; then 
     toolset_version=$(get_toolset_value '.mongodb.version')
     REPO_URL="https://repo.mongodb.org/apt/ubuntu"
     GPG_KEY="/usr/share/keyrings/mongodb-org-$toolset_version.gpg"
@@ -28,6 +28,9 @@ if [ "$ARCH" = "ppc64le" ] ; then
 
     # Document source repo
     echo "mongodb $REPO_URL" >> $HELPER_SCRIPTS/apt-sources.txt
+elif [[ "$ARCH" == "s390x" ]]; then
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
 else
     toolset_version=$(get_toolset_value '.mongodb.version')
     REPO_URL="https://repo.mongodb.org/apt/ubuntu"
