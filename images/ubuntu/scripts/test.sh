@@ -49,8 +49,6 @@ run_script() {
 
 # List of scripts to be executed
 SCRIPT_FILES=(
-    "install-runner-package.sh"
-    "install-apt-common.sh"
     "install-azcopy.sh"
     "install-azure-cli.sh"
     "install-azure-devops-cli.sh"
