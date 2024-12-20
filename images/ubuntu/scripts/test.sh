@@ -46,20 +46,9 @@ run_script() {
 }
 
 # Add apt wrapper to implement retries
-run_script "${path_root}/../scripts/build/configure-apt-mock.sh"
-echo "Setting user ubuntu with sudo privileges"
-
-# Install Configure apt
-# run_script "${path_root}/../scripts/build/install-ms-repos.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
-run_script "${path_root}/../scripts/build/configure-apt.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
-
-# Configure limits
-run_script "${path_root}/../scripts/build/configure-limits.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
 
 # List of scripts to be executed
 SCRIPT_FILES=(
-    "install-apt-vital.sh"
-    "install-actions-cache.sh"
     "install-runner-package.sh"
     "install-apt-common.sh"
     "install-azcopy.sh"
