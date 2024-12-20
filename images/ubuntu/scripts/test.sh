@@ -49,11 +49,6 @@ run_script() {
 
 # List of scripts to be executed
 SCRIPT_FILES=(
-    "install-dotnetcore-sdk.sh"
-    "install-firefox.sh"
-    "install-microsoft-edge.sh"
-    "install-gcc-compilers.sh"
-    "install-gfortran.sh"
     "install-git.sh"
     "install-git-lfs.sh"
     "install-github-cli.sh"
