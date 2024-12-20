@@ -11,8 +11,8 @@ installer_script_folder="/imagegeneration/installers"
 
 sudo mkdir -p "${installer_script_folder}"
 sudo chmod -R 777 "${installer_script_folder}"
-cp -r helpers "${helper_script_folder}"
-cp ../toolsets/toolset-2204.json "${installer_script_folder}/toolset.json"
+sudo cp -r helpers "${helper_script_folder}"
+sudo cp ../toolsets/toolset-2204.json "${installer_script_folder}/toolset.json"
 
 # Default environment variable values
 HELPER_SCRIPTS="${helper_script_folder}"
