@@ -49,7 +49,6 @@ run_script() {
 
 # List of scripts to be executed
 SCRIPT_FILES=(
-    "install-nodejs.sh"
     "install-bazel.sh"
     "install-php.sh"
     "install-postgresql.sh"

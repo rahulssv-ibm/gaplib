@@ -7,8 +7,18 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-# Install bazelisk
-npm install -g @bazel/bazelisk
+ARCH=${ARCH:-$(uname -m)}
 
-# run bazelisk once in order to install /usr/local/bin/bazel binary
-sudo -u $SUDO_USER bazel version
+if [[ "$ARCH" == "ppc64le" ]]; then 
+    # Placeholder for ppc64le-specific logic
+    echo "No actions defined for ppc64le architecture."
+elif [[ "$ARCH" == "s390x" ]]; then
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
+else
+    # Install bazelisk
+    npm install -g @bazel/bazelisk
+
+    # run bazelisk once in order to install /usr/local/bin/bazel binary
+    sudo -u $SUDO_USER bazel version
+fi
