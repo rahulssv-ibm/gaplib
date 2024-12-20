@@ -49,8 +49,6 @@ run_script() {
 
 # List of scripts to be executed
 SCRIPT_FILES=(
-    "install-vcpkg.sh"
-    "configure-dpkg.sh"
     "install-yq.sh"
     "install-android-sdk.sh"
     "install-pypy.sh"
