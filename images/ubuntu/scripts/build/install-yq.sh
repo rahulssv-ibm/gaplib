@@ -8,6 +8,8 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
+ARCH=${ARCH:-$(uname -m)}
+
 if [ "$ARCH" = "ppc64le" ]; then
     # Download yq for ppc64le
     yq_url=$(resolve_github_release_asset_url "mikefarah/yq" "endswith(\"yq_linux_ppc64le\")" "latest")

@@ -7,6 +7,8 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
+ARCH=${ARCH:-$(uname -m)}
+
 if [[ "$ARCH" == "ppc64le" ]]; then
     # Install Packer for ppc64le
     download_url=$(curl -fsSL https://api.releases.hashicorp.com/v1/releases/packer/latest | jq -r '.builds[] | select((.arch=="ppc64le") and (.os=="linux")).url')

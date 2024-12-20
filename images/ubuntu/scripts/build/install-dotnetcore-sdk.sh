@@ -8,7 +8,9 @@ set -x
 source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/os.sh
-  
+
+ARCH=${ARCH:-$(uname -m)}
+
 if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
     echo "Installing dotnet for architecture: $ARCH"
     apt-get install dotnet-sdk-8.0

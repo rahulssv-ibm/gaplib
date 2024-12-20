@@ -8,6 +8,8 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
+ARCH=${ARCH:-$(uname -m)}
+
 if [[ "$ARCH" == "ppc64le" ]] ; then 
     # Determine latest ORAS CLI version
     download_url=$(resolve_github_release_asset_url "oras-project/oras" "endswith(\"linux_ppc64le.tar.gz\")" "latest")

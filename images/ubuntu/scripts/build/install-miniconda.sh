@@ -7,6 +7,8 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/etc-environment.sh
 
+ARCH=${ARCH:-$(uname -m)}
+
 if [[ "$ARCH" == "ppc64le" ]] ; then 
     # Install Miniconda
     curl -fsSL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-ppc64le.sh -o miniconda.sh \

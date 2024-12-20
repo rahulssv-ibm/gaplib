@@ -8,6 +8,8 @@ set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
+ARCH=${ARCH:-$(uname -m)}
+
 if [[ "$ARCH" == "ppc64le" ]]; then 
     apt-get install -y cmake 
 elif [[ "$ARCH" == "s390x" ]]; then

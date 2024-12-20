@@ -8,6 +8,8 @@ set -x
 source $HELPER_SCRIPTS/install.sh
 dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"
 
+ARCH=${ARCH:-$(uname -m)}
+
 if [[ "$ARCH" == "ppc64le" ]] ; then 
     toolset_version=$(get_toolset_value '.mongodb.version')
     REPO_URL="https://repo.mongodb.org/apt/ubuntu"
