@@ -49,7 +49,7 @@ run_script() {
 
 # List of scripts to be executed
 SCRIPT_FILES=(
-      
+
 )
 
 # Loop through all scripts and execute them
@@ -58,7 +58,7 @@ for SCRIPT_FILE in "${SCRIPT_FILES[@]}"; do
     run_script "$SCRIPT_PATH" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 done
 
-run_script "${path_root}/../scripts/build/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+# run_script "${path_root}/../scripts/build/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
 run_script "${path_root}/../scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
