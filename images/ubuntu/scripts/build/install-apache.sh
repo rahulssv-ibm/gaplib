@@ -3,7 +3,7 @@
 ##  File:  install-apache.sh
 ##  Desc:  Install Apache HTTP Server
 ################################################################################
-
+set -x
 # Install Apache
 apt-get install apache2
 

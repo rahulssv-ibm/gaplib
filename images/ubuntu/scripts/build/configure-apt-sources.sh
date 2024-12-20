@@ -3,7 +3,7 @@
 ##  File:  configure-apt-sources.sh
 ##  Desc:  Configure apt sources with failover from Azure to Ubuntu archives.
 ################################################################################
-
+set -x
 source $HELPER_SCRIPTS/os.sh
 
 touch /etc/apt/apt-mirrors.txt

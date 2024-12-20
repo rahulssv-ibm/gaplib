@@ -3,7 +3,7 @@
 ##  File:  install-terraform.sh
 ##  Desc:  Install terraform
 ################################################################################
-
+set -x
 source $HELPER_SCRIPTS/install.sh
 
 if [ "$ARCH" = "ppc64le" ]; then 

@@ -3,7 +3,7 @@
 ##  File:  cleanup.sh
 ##  Desc:  Perform cleanup
 ################################################################################
-
+set -x
 # before cleanup
 before=$(df / -Pm | awk 'NR==2{print $4}')
 

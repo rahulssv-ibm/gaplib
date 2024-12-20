@@ -3,7 +3,7 @@
 ##  File:  install-sbt.sh
 ##  Desc:  Install sbt
 ################################################################################
-
+set -x
 source $HELPER_SCRIPTS/install.sh
 
 # Install latest sbt release

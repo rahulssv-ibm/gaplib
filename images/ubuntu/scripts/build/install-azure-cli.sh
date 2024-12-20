@@ -3,7 +3,7 @@
 ##  File:  install-azure-cli.sh
 ##  Desc:  Install Azure CLI (az)
 ################################################################################
-
+set -x
 # Install Azure CLI (instructions taken from https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 curl -fsSL https://aka.ms/InstallAzureCLIDeb | sudo bash
 

@@ -3,7 +3,7 @@
 ##  File:  install-hhvm.sh
 ##  Desc:  Install HHVM
 ################################################################################
-
+set -x
 REPO_URL="https://dl.hhvm.com/ubuntu"
 GPG_KEY="/usr/share/keyrings/hhvm.gpg"
 REPO_PATH="/etc/apt/sources.list.d/hhvm.list"

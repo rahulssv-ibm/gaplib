@@ -4,7 +4,7 @@
 ##  Desc:  Install yq - a command-line YAML, JSON and XML processor
 ##  Supply chain security: yq - checksum validation
 ################################################################################
-
+set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 

@@ -3,7 +3,7 @@
 ##  File:  install-azcopy.sh
 ##  Desc:  Install AzCopy
 ################################################################################
-
+set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 

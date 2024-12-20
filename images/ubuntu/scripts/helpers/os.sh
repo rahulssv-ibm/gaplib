@@ -3,7 +3,7 @@
 ##  File:  os.sh
 ##  Desc:  Helper functions for OS releases
 ################################################################################
-
+set -x
 is_ubuntu20() {
     lsb_release -rs | grep -q '20.04'
 }

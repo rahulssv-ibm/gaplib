@@ -3,7 +3,7 @@
 ##  File:  install-codeql-bundle.sh
 ##  Desc:  Install CodeQL CLI Bundle to the toolcache.
 ################################################################################
-
+set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 

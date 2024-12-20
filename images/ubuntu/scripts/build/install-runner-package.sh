@@ -3,7 +3,7 @@
 ##  File:  install-runner-package.sh
 ##  Desc:  Download and Install runner package
 ################################################################################
-
+set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 

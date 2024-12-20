@@ -3,7 +3,7 @@
 ##  File:  install-julia.sh
 ##  Desc:  Install Julia and add to the path
 ################################################################################
-
+set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 

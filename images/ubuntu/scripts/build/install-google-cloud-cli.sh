@@ -3,7 +3,7 @@
 ##  File:  install-google-cloud-cli.sh
 ##  Desc:  Install the Google Cloud CLI
 ################################################################################
-
+set -x
 REPO_URL="https://packages.cloud.google.com/apt"
 
 # Install the Google Cloud CLI

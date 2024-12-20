@@ -4,7 +4,7 @@
 ##  Desc:  Install Alibaba Cloud CLI
 ##  Supply chain security: Alibaba Cloud CLI - checksum validation
 ################################################################################
-
+set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh

@@ -3,7 +3,7 @@
 ##  File:  install-heroku.sh
 ##  Desc:  Install Heroku CLI. Based on instructions found here: https://devcenter.heroku.com/articles/heroku-cli
 ################################################################################
-
+set -x
 if [ "$ARCH" = "ppc64le" ] ; then 
     #
     #
