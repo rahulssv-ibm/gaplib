@@ -49,9 +49,7 @@ run_script() {
 
 # List of scripts to be executed
 SCRIPT_FILES=(
-    "install-pypy.sh"
-    "install-python.sh"
-    "install-zstd.sh"
+      
 )
 
 # Loop through all scripts and execute them
