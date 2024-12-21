@@ -82,5 +82,3 @@ done
 # Configure system settings
 run_script "${path_root}/../scripts/build/configure-system.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "IMAGE_FOLDER"
 
-sleep 30
-/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync
