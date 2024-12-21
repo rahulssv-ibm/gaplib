@@ -9,21 +9,32 @@ set -x
 source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/install.sh
 
-# Install the Homebrew on Linux
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+ARCH=${ARCH:-$(uname -m)}
 
-# Invoke shellenv to make brew available during running session
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+if [[ "$ARCH" == "ppc64le" ]]; then 
+    # Placeholder for ppc64le-specific logic
+    echo "No actions defined for ppc64le architecture."
+elif [[ "$ARCH" == "s390x" ]]; then
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
+else
+    # Install the Homebrew on Linux
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-set_etc_environment_variable HOMEBREW_NO_AUTO_UPDATE 1
-set_etc_environment_variable HOMEBREW_CLEANUP_PERIODIC_FULL_DAYS 3650
+    # Invoke shellenv to make brew available during running session
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# Validate the installation ad hoc
-echo "Validate the installation reloading /etc/environment"
-reload_etc_environment
+    set_etc_environment_variable HOMEBREW_NO_AUTO_UPDATE 1
+    set_etc_environment_variable HOMEBREW_CLEANUP_PERIODIC_FULL_DAYS 3650
 
-gfortran=$(brew --prefix)/bin/gfortran
-# Remove gfortran symlink, not to conflict with system gfortran
-if [[ -e $gfortran ]]; then
-    rm $gfortran
+    # Validate the installation ad hoc
+    echo "Validate the installation reloading /etc/environment"
+    reload_etc_environment
+
+    gfortran=$(brew --prefix)/bin/gfortran
+    # Remove gfortran symlink, not to conflict with system gfortran
+    if [[ -e $gfortran ]]; then
+        rm $gfortran
+    fi
 fi
+
