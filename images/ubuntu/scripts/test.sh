@@ -13,6 +13,9 @@ sudo mkdir -p "${installer_script_folder}"
 sudo chmod -R 777 "${installer_script_folder}"
 sudo cp -r helpers "${helper_script_folder}"
 sudo cp ../toolsets/toolset-2204.json "${installer_script_folder}/toolset.json"
+sudo cp -r build/ "${installer_script_folder}"
+sudo cp -r ../assets/post-gen "${image_folder}"
+sudo mv -r "${image_folder}/post-gen" "${image_folder}/post-generation"
 
 # Default environment variable values
 HELPER_SCRIPTS="${helper_script_folder}"
