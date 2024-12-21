@@ -4,8 +4,8 @@
 ##  Desc: Post deployment system configuration actions
 ################################################################################
 set -x
-source $HELPER_SCRIPT_FOLDER/etc-environment.sh
-source $HELPER_SCRIPT_FOLDER/os.sh
+source $HELPER_SCRIPTS/etc-environment.sh
+source $HELPER_SCRIPTS/os.sh
 
 mv -f /imagegeneration/post-generation /opt
 
