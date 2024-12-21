@@ -20,7 +20,6 @@ if [ ! -d "${image_folder}/post-generation" ]; then
     sudo mv "${image_folder}/post-gen" "${image_folder}/post-generation"
 fi
 
-
 # Default environment variable values
 HELPER_SCRIPTS="${helper_script_folder}"
 IMAGE_FOLDER="${image_folder}"
