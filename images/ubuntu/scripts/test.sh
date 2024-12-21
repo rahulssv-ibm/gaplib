@@ -19,6 +19,7 @@ sudo mv "${image_folder}/post-gen" "${image_folder}/post-generation"
 
 # Default environment variable values
 HELPER_SCRIPTS="${helper_script_folder}"
+IMAGE_FOLDER="${image_folder}"
 DEBIAN_FRONTEND="noninteractive"
 INSTALLER_SCRIPT_FOLDER="${installer_script_folder}"
 DOCKERHUB_PULL_IMAGES="NO"
@@ -65,18 +66,18 @@ done
 
 # run_script "${path_root}/../scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-run_script "${path_root}/../scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+# run_script "${path_root}/../scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-run_script "${path_root}/../scripts/build/configure-snap.sh" "HELPER_SCRIPTS"
+# run_script "${path_root}/../scripts/build/configure-snap.sh" "HELPER_SCRIPTS"
 
-# echo 'Rebooting VM...'
-# sudo reboot
+# # echo 'Rebooting VM...'
+# # sudo reboot
 
-# The cleanup script is executed after the reboot.
-"${path_root}/../scripts/build/cleanup.sh"
+# # The cleanup script is executed after the reboot.
+# "${path_root}/../scripts/build/cleanup.sh"
 
 # Configure system settings
-run_script "${path_root}/../scripts/build/configure-system.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+run_script "${path_root}/../scripts/build/configure-system.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "IMAGE_FOLDER"
 
 sleep 30
 /usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync
