@@ -3,7 +3,6 @@
 ##  File:  install-pipx-packages.sh
 ##  Desc:  Install tools via pipx
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 

@@ -3,12 +3,9 @@
 ##  File:  install-java-tools.sh
 ##  Desc:  Install Java and related tooling (Ant, Gradle, Maven)
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/etc-environment.sh
-
-ARCH=${ARCH:-$(uname -m)}
 
 create_java_environment_variable() {
     local java_version=$1

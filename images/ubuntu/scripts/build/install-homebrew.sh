@@ -4,12 +4,9 @@
 ##  Desc:  Install Homebrew on Linux
 ##  Caveat: Brew MUST NOT be used to install any tool during the image build to avoid dependencies, which may come along with the tool
 ################################################################################
-set -x
 # Source the helpers
 source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/install.sh
-
-ARCH=${ARCH:-$(uname -m)}
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
     # Placeholder for ppc64le-specific logic

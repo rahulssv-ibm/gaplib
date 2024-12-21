@@ -3,7 +3,6 @@
 ##  File:  configure-apt.sh
 ##  Desc:  Configure apt, install jq and apt-fast packages.
 ################################################################################
-set -x
 source $HELPER_SCRIPTS/os.sh
 
 # Stop and disable apt-daily upgrade services;

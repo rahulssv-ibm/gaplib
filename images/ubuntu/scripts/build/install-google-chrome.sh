@@ -3,12 +3,9 @@
 ##  File:  install-google-chrome.sh
 ##  Desc:  Install google-chrome, chromedriver and chromium
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/etc-environment.sh
-
-ARCH=${ARCH:-$(uname -m)}
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
     # Placeholder for ppc64le-specific logic

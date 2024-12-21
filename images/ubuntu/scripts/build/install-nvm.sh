@@ -3,7 +3,6 @@
 ##  File:  install-nvm.sh
 ##  Desc:  Install Nvm
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/etc-environment.sh
 

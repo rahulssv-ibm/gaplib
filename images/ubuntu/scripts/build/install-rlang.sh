@@ -3,9 +3,6 @@
 ##  File:  install-rlang.sh
 ##  Desc:  Install R
 ################################################################################
-set -x
-
-ARCH=${ARCH:-$(uname -m)}
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
     # Placeholder for ppc64le-specific logic

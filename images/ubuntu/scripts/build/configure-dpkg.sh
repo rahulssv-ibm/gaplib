@@ -3,7 +3,6 @@
 ##  File:  configure-dpkg.sh
 ##  Desc:  Configure dpkg
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/etc-environment.sh
 

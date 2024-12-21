@@ -3,10 +3,7 @@
 ##  File:  install-terraform.sh
 ##  Desc:  Install terraform
 ################################################################################
-set -x
 source $HELPER_SCRIPTS/install.sh
-
-ARCH=${ARCH:-$(uname -m)}
 
 if [ "$ARCH" = "ppc64le" ]; then 
     wget -O /usr/local/bin/terraform https://ftp2.osuosl.org/pub/ppc64el/terraform/terraform-1.4.6

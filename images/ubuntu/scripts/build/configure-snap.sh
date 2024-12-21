@@ -3,7 +3,6 @@
 ##  File:  configure-snap.sh
 ##  Desc:  Configure snap
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/etc-environment.sh
 

@@ -3,7 +3,6 @@
 ##  File: configure-system.sh
 ##  Desc: Post deployment system configuration actions
 ################################################################################
-set -x
 source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/os.sh
 

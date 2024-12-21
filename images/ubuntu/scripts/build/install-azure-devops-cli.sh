@@ -3,9 +3,6 @@
 ##  File:  install-azure-devops-cli.sh
 ##  Desc:  Install Azure DevOps CLI (az devops)
 ################################################################################
-set -x
-
-ARCH=${ARCH:-$(uname -m)}
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
     # Placeholder for ppc64le-specific logic

@@ -3,7 +3,6 @@
 ##  File:  install-mono.sh
 ##  Desc:  Install Mono
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/os.sh
 

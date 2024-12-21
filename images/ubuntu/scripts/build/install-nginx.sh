@@ -3,7 +3,6 @@
 ##  File:  install-nginx.sh
 ##  Desc:  Install Nginx
 ################################################################################
-set -x
 # Install Nginx
 apt-get install nginx
 

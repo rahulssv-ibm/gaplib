@@ -3,7 +3,6 @@
 ##  File:  install-python.sh
 ##  Desc:  Install Python 3
 ################################################################################
-set -x
 set -e
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/etc-environment.sh

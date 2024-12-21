@@ -3,12 +3,9 @@
 ##  File:  install-oc-cli.sh
 ##  Desc:  Install the OC CLI
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
-
-ARCH=${ARCH:-$(uname -m)}
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
     # Placeholder for ppc64le-specific logic

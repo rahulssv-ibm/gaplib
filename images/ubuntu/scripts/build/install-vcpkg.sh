@@ -3,11 +3,8 @@
 ##  File:  install-vcpkg.sh
 ##  Desc:  Install vcpkg
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/etc-environment.sh
-
-ARCH=${ARCH:-$(uname -m)}
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
     # Placeholder for ppc64le-specific logic

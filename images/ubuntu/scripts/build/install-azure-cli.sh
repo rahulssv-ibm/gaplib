@@ -3,9 +3,6 @@
 ##  File:  install-azure-cli.sh
 ##  Desc:  Install Azure CLI (az)
 ################################################################################
-set -x
-
-ARCH=${ARCH:-$(uname -m)}
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
     # Placeholder for ppc64le-specific logic

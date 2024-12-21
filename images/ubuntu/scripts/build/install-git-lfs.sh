@@ -3,7 +3,6 @@
 ##  File:  install-git-lfs.sh
 ##  Desc:  Install Git-lfs
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 

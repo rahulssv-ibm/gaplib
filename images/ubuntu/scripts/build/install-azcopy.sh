@@ -3,9 +3,6 @@
 ##  File:  install-azcopy.sh
 ##  Desc:  Install AzCopy
 ################################################################################
-set -x
-
-ARCH=${ARCH:-$(uname -m)}
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
     # Placeholder for ppc64le-specific logic

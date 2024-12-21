@@ -3,11 +3,8 @@
 ##  File:  install-miniconda.sh
 ##  Desc:  Install miniconda
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/etc-environment.sh
-
-ARCH=${ARCH:-$(uname -m)}
 
 if [[ "$ARCH" == "ppc64le" ]] ; then 
     # Install Miniconda

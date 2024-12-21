@@ -3,7 +3,6 @@
 ##  File:  install.sh
 ##  Desc:  Helper functions for installing tools
 ################################################################################
-set -x
 download_with_retry() {
     local url=$1
     local download_path=$2

@@ -4,11 +4,8 @@
 ##  Desc:  Install docker onto the image
 ##  Supply chain security: amazon-ecr-credential-helper - dynamic checksum validation
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
-
-ARCH=${ARCH:-$(uname -m)}
 
 if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
     REPO_URL="https://download.docker.com/linux/ubuntu"

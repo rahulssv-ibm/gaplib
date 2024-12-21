@@ -3,7 +3,6 @@
 ##  File:  install-ms-repos.sh
 ##  Desc:  Install official Microsoft package repos for the distribution
 ################################################################################
-set -x
 os_label=$(lsb_release -rs)
 
 # Install Microsoft repository

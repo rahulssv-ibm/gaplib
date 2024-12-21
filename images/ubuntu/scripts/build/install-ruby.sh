@@ -3,7 +3,6 @@
 ##  File:  install-ruby.sh
 ##  Desc:  Install Ruby requirements and ruby gems
 ################################################################################
-set -x
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
