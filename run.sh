@@ -44,11 +44,13 @@ handle_os_and_arch() {
                 1)
                     echo "Proceeding with minimal setup for $os $version."
                     # Insert minimal setup script or function here
+                    ./minimal_setup.sh "${os}" "${version}"
                     return 0
                     ;;
                 2)
                     echo "Proceeding with complete setup for $os $version."
                     # Insert complete setup script or function here
+                    ./complete_setup.sh "${os}" "${version}"
                     return 0
                     ;;
                 3)
