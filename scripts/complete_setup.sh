@@ -2,11 +2,12 @@
 set -e  # Exit on any error
 set -o pipefail  # Fail if any command in a pipeline fails
 
-toolset_file_name="toolset-2204.json"
+toolset_file_name="toolset-$(echo "$2" | sed 's/\.//g').json"
 
 image_folder="/imagegeneration"
 helper_script_folder="/imagegeneration/helpers"
 installer_script_folder="/imagegeneration/installers"
+imagedata_file="/imagegeneration/imagedata.json"
 
 sudo mkdir -p "${installer_script_folder}"
 sudo chmod -R 777 "${installer_script_folder}"
@@ -23,6 +24,9 @@ fi
 ARCH=${ARCH:-$(uname -m)}
 HELPER_SCRIPTS="${helper_script_folder}"
 IMAGE_FOLDER="${image_folder}"
+IMAGE_OS=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+IMAGE_VERSION=$2
+IMAGEDATA_FILE="${imagedata_file}"
 DEBIAN_FRONTEND="noninteractive"
 INSTALLER_SCRIPT_FOLDER="${installer_script_folder}"
 DOCKERHUB_PULL_IMAGES="NO"
@@ -62,6 +66,12 @@ run_script "${path_root}/../scripts/build/configure-apt.sh" "DEBIAN_FRONTEND" "H
 
 # Configure limits
 run_script "${path_root}/../scripts/build/configure-limits.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
+
+# Configure image data
+run_script "${path_root}/../scripts/build/configure-image-data.sh" "IMAGE_VERSION" "IMAGEDATA_FILE"
+
+# Configure environment
+run_script "${path_root}/../scripts/build/configure-environment.sh" "IMAGE_OS" "IMAGE_VERSION" "HELPER_SCRIPTS"
 
 # List of scripts to be executed
 SCRIPT_FILES=(

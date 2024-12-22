@@ -68,10 +68,10 @@ run_script "${path_root}/../scripts/build/configure-apt.sh" "DEBIAN_FRONTEND" "H
 # Configure limits
 run_script "${path_root}/../scripts/build/configure-limits.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
 
-# Configure limits
+# Configure image data
 run_script "${path_root}/../scripts/build/configure-image-data.sh" "IMAGE_VERSION" "IMAGEDATA_FILE"
 
-# Configure limits
+# Configure environment
 run_script "${path_root}/../scripts/build/configure-environment.sh" "IMAGE_OS" "IMAGE_VERSION" "HELPER_SCRIPTS"
 
 # List of scripts to be executed
