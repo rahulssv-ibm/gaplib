@@ -75,7 +75,22 @@ if [[ "$IMAGE_OS" == *"ubuntu"* ]]; then
 
     run_script "${path_root}/../scripts/build/install-apt-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
+    run_script "${path_root}/../scripts/build/install-apt-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+
+    run_script "${path_root}/../scripts/build/configure-dpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 elif [[ "$IMAGE_OS" == *"centos"* ]]; then
+    # Add apt wrapper to implement retries
+    run_script "${path_root}/../scripts/build/configure-yum-mock.sh"
+    echo "Setting user ubuntu with sudo privileges"
+
+    # Install Configure apt
+    run_script "${path_root}/../scripts/build/configure-dnf.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
+
+    run_script "${path_root}/../scripts/build/install-dnf-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+
+    run_script "${path_root}/../scripts/build/install-dnf-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+
+    run_script "${path_root}/../scripts/build/configure-dnfpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 
 fi
 
@@ -86,21 +101,22 @@ SCRIPT_FILES=()
 
 # Define scripts for each setup type
 if [ "$SETUP" == "minimal" ]; then
+    # List of scripts to be executed
     SCRIPT_FILES=(
-        "install-actions-cache.sh"
-        "install-runner-package.sh"
-        "install-apt-common.sh"
         "install-dotnetcore-sdk.sh"
+        "install-runner-package.sh"
+        "install-actions-cache.sh"
         "install-git.sh"
         "install-git-lfs.sh"
         "install-github-cli.sh"
         "install-zstd.sh"
     )
 elif [ "$SETUP" == "complete" ]; then
+    # List of scripts to be executed
     SCRIPT_FILES=(
-        "install-actions-cache.sh"
+        "install-dotnetcore-sdk.sh"
         "install-runner-package.sh"
-        "install-apt-common.sh"
+        "install-actions-cache.sh"
         "install-azcopy.sh"
         "install-azure-cli.sh"
         "install-azure-devops-cli.sh"
@@ -113,7 +129,6 @@ elif [ "$SETUP" == "complete" ]; then
         "install-cmake.sh"
         "install-codeql-bundle.sh"
         "install-container-tools.sh"
-        "install-dotnetcore-sdk.sh"
         "install-firefox.sh"
         "install-microsoft-edge.sh"
         "install-gcc-compilers.sh"
@@ -149,19 +164,19 @@ elif [ "$SETUP" == "complete" ]; then
         "install-terraform.sh"
         "install-packer.sh"
         "install-vcpkg.sh"
-        "configure-dpkg.sh"
         "install-yq.sh"
         "install-android-sdk.sh"
         "install-pypy.sh"
         "install-python.sh"
         "install-zstd.sh"
     )
+    run_script "${path_root}/../scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+
+    run_script "${path_root}/../scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 else
     echo "Invalid SETUP value. Please set SETUP to 'minimal' or 'complete'."
     exit 1
 fi
-# List of scripts to be executed
-
 
 # Loop through all scripts and execute them
 for SCRIPT_FILE in "${SCRIPT_FILES[@]}"; do
@@ -170,10 +185,6 @@ for SCRIPT_FILE in "${SCRIPT_FILES[@]}"; do
 done
 
 run_script "${path_root}/../scripts/build/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
-
-run_script "${path_root}/../scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
-
-run_script "${path_root}/../scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
 run_script "${path_root}/../scripts/build/configure-snap.sh" "HELPER_SCRIPTS"
 

@@ -110,7 +110,7 @@
             ]
         }
     ],
-    "apt": {
+    "dnf": {
         "vital_packages": [
             "bzip2",
             "curl",

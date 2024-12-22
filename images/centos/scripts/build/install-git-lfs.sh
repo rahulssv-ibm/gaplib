@@ -3,17 +3,17 @@
 ##  File:  install-git-lfs.sh
 ##  Desc:  Install Git-lfs
 ################################################################################
-# Source the helpers for use with the script
+# Load helper functions (if any)
 source $HELPER_SCRIPTS/install.sh
 
-GIT_LFS_REPO="https://packagecloud.io/install/repositories/github/git-lfs"
+GIT_LFS_REPO="https://packagecloud.io/github/git-lfs/el/9"
 
 # Install git-lfs
-curl -fsSL $GIT_LFS_REPO/script.deb.sh | bash
-apt-get install git-lfs
+curl -fsSL https://packagecloud.io/install/repositories/github/git-lfs/script.rpm.sh | sudo bash
+sudo dnf install -y git-lfs
 
 # Remove source repo's
-rm /etc/apt/sources.list.d/github_git-lfs.list
+sudo rm -f /etc/yum.repos.d/github_git-lfs.repo
 
-# Document apt source repo's
-echo "git-lfs $GIT_LFS_REPO" >> $HELPER_SCRIPTS/apt-sources.txt
+# Document installed Git LFS repo
+echo "git-lfs $GIT_LFS_REPO" | sudo tee -a $HELPER_SCRIPTS/package-versions.txt

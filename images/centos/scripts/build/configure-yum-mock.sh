@@ -1,12 +1,12 @@
 #!/bin/bash -e
 ################################################################################
-##  File:  configure-apt-mock.sh
-##  Desc:  A temporary workaround for https://github.com/Azure/azure-linux-extensions/issues/1238.
+##  File:  configure-yum-mock.sh
+##  Desc:  A temporary workaround to handle transient issues with DNF/YUM.
 ##         Cleaned up during cleanup.sh.
 ################################################################################
 prefix=/usr/local/bin
 
-for real_tool in /usr/bin/apt /usr/bin/apt-get /usr/bin/apt-key; do
+for real_tool in /usr/bin/yum /usr/bin/dnf; do
     tool=$(basename $real_tool)
     cat >$prefix/$tool <<EOT
 #!/bin/sh
@@ -23,19 +23,16 @@ while [ \$i -le 30 ];do
   retry=false
 
   if grep -q 'Could not get lock' \$err;then
-    # apt db locked needs retry
+    # DNF/YUM db locked needs retry
     retry=true
-  elif grep -q 'Could not open file /var/lib/apt/lists' \$err;then
-    # apt update is not completed, needs retry
-    retry=true
-  elif grep -q 'IPC connect call failed' \$err;then
-    # the delay should help with gpg-agent not ready
+  elif grep -q 'Failed to download metadata' \$err;then
+    # Repository metadata issue, needs retry
     retry=true
   elif grep -q 'Temporary failure in name resolution' \$err;then
-    # It looks like DNS is not updated with random generated hostname yet
+    # DNS resolution issue
     retry=true
-  elif grep -q 'dpkg frontend is locked by another process' \$err;then
-    # dpkg process is busy by another process
+  elif grep -q 'Package is being held by another process' \$err;then
+    # DNF/YUM process is busy by another process
     retry=true
   fi
 

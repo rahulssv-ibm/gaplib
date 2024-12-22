@@ -17,19 +17,23 @@ archive_path=$(download_with_retry "${download_url}")
 external_hash=$(get_checksum_from_url "${download_url}.sha256" "${release_name}.tar.gz" "SHA256")
 use_checksum_comparison "$archive_path" "$external_hash"
 
-# Install zstd
-apt-get install liblz4-dev
+# Install dependencies
+sudo dnf install -y lz4-devel gcc make
+
+# Extract and build zstd
 tar xzf "$archive_path" -C /tmp
 
 make -C "/tmp/${release_name}/contrib/pzstd" all
 make -C "/tmp/${release_name}" zstd-release
 
+# Copy binaries
 for copyprocess in zstd zstdless zstdgrep; do
-    cp "/tmp/${release_name}/programs/${copyprocess}" /usr/local/bin/
+    sudo cp "/tmp/${release_name}/programs/${copyprocess}" /usr/local/bin/
 done
 
-cp "/tmp/${release_name}/contrib/pzstd/pzstd" /usr/local/bin/
+sudo cp "/tmp/${release_name}/contrib/pzstd/pzstd" /usr/local/bin/
 
+# Create symlinks
 for symlink in zstdcat zstdmt unzstd; do
-    ln -sf /usr/local/bin/zstd /usr/local/bin/${symlink}
+    sudo ln -sf /usr/local/bin/zstd /usr/local/bin/${symlink}
 done
