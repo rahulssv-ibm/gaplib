@@ -59,7 +59,7 @@ ensure_lxd() {
 
 build_image_in_container() {
   
-  local IMAGE_ALIAS="${IMAGE_ALIAS:-${OS_NAME}-${OS_VERSION}-${ARCH}}"
+  local IMAGE_ALIAS="${IMAGE_ALIAS:-${CONTAINER_OS_NAME}-${CONTAINER_OS_VERSION}-${ARCH}}"
 
   local BUILD_PREREQS_PATH="${SRCDIR}/build-files"
   if [ ! -d "${BUILD_PREREQS_PATH}" ]; then
@@ -128,13 +128,13 @@ run() {
 select_ubuntu_version() {
   case "$ARCH" in
     ppc64le)
-      export OS_VERSION="22.04"
+      export CONTAINER_OS_VERSION="22.04"
       ;;
     s390x)
-      export OS_VERSION="24.10"
+      export CONTAINER_OS_VERSION="24.10"
       ;;
     *)
-      export OS_VERSION="24.10" # Default version for other architectures
+      export CONTAINER_OS_VERSION="24.10" # Default version for other architectures
       ;;
   esac
 }
@@ -148,12 +148,13 @@ prolog() {
   export EXPORT="distro/lxc-runner"
   export HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"')
   export HOST_OS_VERSION=$(grep -E 'VERSION_ID' /etc/os-release | cut -d'=' -f2 | tr -d '"')
-  export OS_NAME="${OS_NAME:-ubuntu}"
+  export CONTAINER_OS_NAME="${CONTAINER_OS_NAME:-ubuntu}"
+  export CONTAINER_OS_VERSION=""
   export BUILD_HOME="/home/ubuntu"
 
   select_ubuntu_version "$@"
 
-  export LXD_CONTAINER="${OS_NAME}:${OS_VERSION}"
+  export LXD_CONTAINER="${CONTAINER_OS_NAME}:${CONTAINER_OS_VERSION}"
 
   mkdir -p distro
 
