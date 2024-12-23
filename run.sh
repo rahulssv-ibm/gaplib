@@ -189,7 +189,7 @@ while true; do
     read -rp "Enter your choice: " main_choice
     case $main_choice in
     1)
-        setup_env "setup" $(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"') $(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
+        setup_env "vm" $(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"') $(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
         ;;
     2)
         ask_os_and_setup_env "lxd"
