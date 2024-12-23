@@ -46,7 +46,7 @@ handle_os_and_arch() {
                     echo "Choose setup type for $os $version on $arch:"
                     echo "1. Minimal Setup"
                     echo "2. Complete Setup"
-                    echo "3. Return back to the previous step"
+                    echo "3. Return back to main menu"
                     read -rp "Enter your choice: " setup_choice
 
                     case $setup_choice in
@@ -85,52 +85,43 @@ handle_os_and_arch() {
 # Function to handle VM setup
 setup_vm() {
     local os=$1
+    local version=${2:-} # Use the second argument as the version or leave it empty
 
     if [[ "$os" == *"Ubuntu"* || "$os" == *"CentOS"* ]]; then
-        echo "Selected OS: $os/Almalinux"
-        echo "Select the OS version:"
-        if [[ "$os" == *"Ubuntu"* ]]; then
-            echo "1. 22.04"
-            echo "2. 24.10"
-            echo "3. 24.04"
-            echo "4. Return back to main menu"
-            read -rp "Enter your choice: " version_choice
-            case $version_choice in
-            1)
-                handle_os_and_arch "$os" "22.04" || setup_vm "$os"
-                ;;
-            2)
-                handle_os_and_arch "$os" "24.10" || setup_vm "$os"
-                ;;
-            3)
-                handle_os_and_arch "$os" "24.04" || setup_vm "$os"
-                ;;
-            4)
-                return
-                ;;
-            *)
-                echo "Invalid choice."
-                setup_vm "$os"
-                ;;
-            esac
-        elif [[ "$os" == *"CentOS"* ]]; then
-            echo "1. 9"
-            echo "2. Return back to main menu"
-            read -rp "Enter your choice: " version_choice
-            case $version_choice in
-            1)
-                handle_os_and_arch "$os" "9" || setup_vm "$os"
-                ;;
-            2)
-                return
-                ;;
-            *)
-                echo "Invalid choice."
-                setup_vm "$os"
-                ;;
-            esac
+        echo "Selected OS: $os"
+
+        # If version is not provided, prompt the user for a choice
+        if [[ -z "$version" ]]; then
+            echo "Select the OS version:"
+            if [[ "$os" == *"Ubuntu"* ]]; then
+                echo "1. 22.04"
+                echo "2. 24.10"
+                echo "3. 24.04"
+                echo "4. Return back to main menu"
+                read -rp "Enter your choice: " version_choice
+                case $version_choice in
+                1) version="22.04" ;;
+                2) version="24.10" ;;
+                3) version="24.04" ;;
+                4) return ;;
+                *) echo "Invalid choice."; setup_vm "$os"; return ;;
+                esac
+            elif [[ "$os" == *"CentOS"* ]]; then
+                echo "1. 9"
+                echo "2. Return back to main menu"
+                read -rp "Enter your choice: " version_choice
+                case $version_choice in
+                1) version="9" ;;
+                2) return ;;
+                *) echo "Invalid choice."; setup_vm "$os"; return ;;
+                esac
+            fi
         fi
 
+        # Call handle_os_and_arch with the selected or provided version
+        if ! handle_os_and_arch "$os" "$version"; then
+            return
+        fi
     else
         echo "OS not supported."
         echo "1. Return back to main menu"
@@ -139,7 +130,7 @@ setup_vm() {
         case "$choice" in
             1) return ;;
             2) exit 0 ;;
-            *) echo "Invalid choice." ;;
+            *) echo "Invalid choice."; ;;
         esac
     fi
 }
@@ -277,7 +268,7 @@ while true; do
     read -rp "Enter your choice: " main_choice
     case $main_choice in
     1)
-        setup_vm $(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"')
+        setup_vm $(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"') $(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
         ;;
     2)
         setup_lxd
