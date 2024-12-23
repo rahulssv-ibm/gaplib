@@ -20,6 +20,16 @@ if [ ! -d "${BUILD_PREREQS_PATH}" ]; then
   msg "Check the BUILD_PREREQS_PATH specification" >&2
   return 3
 fi
+
+if [[ "$IMAGE_OS" == *"Ubuntu"* ]]; then
+  BUILD_HOME="/home/ubuntu"
+  msg "Copy the apt and dpkg overrides into gha-builder - these prevent doc files from being installed"
+  cp -r "${BUILD_PREREQS_PATH}/assets/99synaptics" "/etc/apt/apt.conf.d/99synaptics"
+  chmod -R 0644 /etc/apt/apt.conf.d/99synaptics
+  cp -r "${BUILD_PREREQS_PATH}/assets/01-nodoc" "/etc/dpkg/dpkg.cfg.d/01-nodoc"
+  chmod -R 0644 /etc/dpkg/dpkg.cfg.d/01-nodoc
+fi
+
 local PATCH_FILE="${PATCH_FILE:-runner-main-sdk8-${ARCH}.patch}"
 msg "Copy the patch file into gha-builder"
 cp -r "${BUILD_PREREQS_PATH}/../patches/${PATCH_FILE}" "${BUILD_HOME}/runner-sdk-8.patch"
@@ -48,8 +58,4 @@ msg "Copy the gha-service unit file into gha-builder"
 cp -r ${BUILD_PREREQS_PATH}/assets/gha-runner.service "/etc/systemd/system/gha-runner.service"
 chmod -R 0755 /etc/systemd/system/gha-runner.service
 
-msg "Copy the apt and dpkg overrides into gha-builder - these prevent doc files from being installed"
-cp -r "${BUILD_PREREQS_PATH}/assets/99synaptics" "/etc/apt/apt.conf.d/99synaptics"
-chmod -R 0644 /etc/apt/apt.conf.d/99synaptics
-cp -r "${BUILD_PREREQS_PATH}/assets/01-nodoc" "/etc/dpkg/dpkg.cfg.d/01-nodoc"
-chmod -R 0644 /etc/dpkg/dpkg.cfg.d/01-nodoc
+
