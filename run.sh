@@ -25,22 +25,24 @@ handle_unsupported_arch() {
 
 # Function to handle OS selection and architecture
 handle_os_and_arch() {
-    local os=$1
-    local version=$2
+    local env=$1
+    local os=$2
+    local version=$3
     local supported_arch=("ppc64le" "s390x" "x86_64")
     local arch=$(uname -m)
 
     # Check if the current architecture is supported
     for sa in "${supported_arch[@]}"; do
         if [ "$arch" == "$sa" ]; then
-            if [ "$os" == "CentOS" ]; then
+            if [ "$os" == "centos" ]; then
                 # Only minimal setup is supported for CentOS
                 echo "Only minimal setup is supported for $os/Almalinux $version on $arch."
                 echo "Proceeding with minimal setup..."
                 # Insert minimal setup script or function here
-                # ./setup.sh "minimal" "${os}" "${version}"
+                # sudo sh -c './${env}.sh ${os} ${version} minimal'
+                echo "${env}.sh ${os} ${version} minimal"
                 return 0
-            elif [ "$os" == "Ubuntu" ]; then
+            elif [ "$os" == "ubuntu" ]; then
                 # Ask the user for minimal or complete setup
                 while true; do
                     echo "Choose setup type for $os $version on $arch:"
@@ -53,13 +55,15 @@ handle_os_and_arch() {
                         1)
                             echo "Proceeding with minimal setup for $os $version."
                             # Insert minimal setup script or function here
-                            # ./setup.sh "minimal" "${os}" "${version}"
+                            # sudo sh -c './${env}.sh ${os} ${version} minimal'
+                            echo "${env}.sh ${os} ${version} minimal"
                             return 0
                             ;;
                         2)
                             echo "Proceeding with complete setup for $os $version."
                             # Insert complete setup script or function here
-                            # ./setup.sh "complete" "${os}" "${version}"
+                            # sudo sh -c './${env}.sh ${os} ${version} complete'
+                            echo "${env}.sh ${os} ${version} complete"
                             return 0
                             ;;
                         3)
@@ -83,17 +87,18 @@ handle_os_and_arch() {
 }
 
 # Function to handle VM setup
-setup_vm() {
-    local os=$1
-    local version=${2:-} # Use the second argument as the version or leave it empty
+setup_env() {
+    local env=$1
+    local os=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+    local version=${3:-} # Use the second argument as the version or leave it empty
 
-    if [[ "$os" == *"Ubuntu"* || "$os" == *"CentOS"* ]]; then
+    if [[ "$os" == *"ubuntu"* || "$os" == *"centos"* ]]; then
         echo "Selected OS: $os"
 
         # If version is not provided, prompt the user for a choice
         if [[ -z "$version" ]]; then
             echo "Select the OS version:"
-            if [[ "$os" == *"Ubuntu"* ]]; then
+            if [[ "$os" == *"ubuntu"* ]]; then
                 echo "1. 22.04"
                 echo "2. 24.10"
                 echo "3. 24.04"
@@ -104,22 +109,22 @@ setup_vm() {
                 2) version="24.10" ;;
                 3) version="24.04" ;;
                 4) return ;;
-                *) echo "Invalid choice."; setup_vm "$os"; return ;;
+                *) echo "Invalid choice."; setup_env "$env" "$os"; return ;;
                 esac
-            elif [[ "$os" == *"CentOS"* ]]; then
+            elif [[ "$os" == *"centos"* ]]; then
                 echo "1. 9"
                 echo "2. Return back to main menu"
                 read -rp "Enter your choice: " version_choice
                 case $version_choice in
                 1) version="9" ;;
                 2) return ;;
-                *) echo "Invalid choice."; setup_vm "$os"; return ;;
+                *) echo "Invalid choice."; setup_env "$env" "$os"; return ;;
                 esac
             fi
         fi
 
         # Call handle_os_and_arch with the selected or provided version
-        if ! handle_os_and_arch "$os" "$version"; then
+        if ! handle_os_and_arch "$env" "$os" "$version"; then
             return
         fi
     else
@@ -135,12 +140,12 @@ setup_vm() {
     fi
 }
 
-# Helper Function: Ask OS and call setup_vm
-ask_os_and_setup_vm() { 
+# Helper Function: Ask OS and call setup_env
+ask_os_and_setup_env() { 
     component="$1"
     
     case "$component" in
-        "Docker" | "Podman")
+        "docker" | "podman")
             while true; do
                 echo "Please select the OS for $component setup:"
                 echo "1. Ubuntu"
@@ -148,8 +153,8 @@ ask_os_and_setup_vm() {
                 echo "3. Return back to the previous step"
                 read -rp "Enter choice: " os_choice
                 case $os_choice in
-                    1) setup_vm "Ubuntu"; break ;;  # Pass the OS as argument to setup_vm
-                    2) setup_vm "CentOS"; break ;;  # Pass the OS as argument to setup_vm
+                    1) setup_env "$component" "ubuntu"; break ;;  # Pass the OS as argument to setup_env
+                    2) setup_env "$component" "centos"; break ;;  # Pass the OS as argument to setup_env
                     3) return ;;                    # Return to the previous menu
                     *)
                         echo "Invalid choice. Please try again."
@@ -157,14 +162,14 @@ ask_os_and_setup_vm() {
                 esac
             done
             ;;
-        "LXD")
+        "lxd")
             while true; do
                 echo "Please select the OS for $component setup:"
                 echo "1. Ubuntu"
                 echo "2. Return back to the previous step"
                 read -rp "Enter choice: " os_choice
                 case $os_choice in
-                    1) setup_vm "Ubuntu"; break ;;  # Pass the OS as argument to setup_vm
+                    1) setup_env "$component" "ubuntu"; break ;;  # Pass the OS as argument to setup_env
                     2) return ;;                    # Return to the previous menu
                     *)
                         echo "Invalid choice. Please try again."
@@ -178,106 +183,22 @@ ask_os_and_setup_vm() {
     esac
 }
 
-# Function to check and install LXD
-setup_lxd() {
-    if ! command -v lxd &> /dev/null; then
-        echo "LXD is not installed."
-        echo "1. Install using snap"
-        echo "2. Return back to the previous step"
-        echo "3. Exit"
-        read -rp "Enter your choice: " choice
-        case $choice in
-        1)
-            sudo snap install lxd
-            ;;
-        2)
-            return
-            ;;
-        3)
-            exit 0
-            ;;
-        *)
-            echo "Invalid choice."
-            setup_lxd
-            ;;
-        esac
-    fi
-
-    ask_os_and_setup_vm "LXD"
-}
-
-# Function to check and install Docker
-setup_docker() {
-    if ! command -v docker &> /dev/null; then
-        echo "Docker is not installed."
-        echo "1. Install Docker"
-        echo "2. Return back to the previous step"
-        echo "3. Exit"
-        read -rp "Enter your choice: " choice
-        case $choice in
-        1)
-            sudo apt update && sudo apt install -y docker.io
-            ;;
-        2)
-            return
-            ;;
-        3)
-            exit 0
-            ;;
-        *)
-            echo "Invalid choice."
-            setup_docker
-            ;;
-        esac
-    fi
-
-    ask_os_and_setup_vm "Docker"
-}
-
-# Function to check and install Podman
-setup_podman() {
-    if ! command -v podman &> /dev/null; then
-        echo "Podman is not installed."
-        echo "1. Install Podman"
-        echo "2. Return back to the previous step"
-        echo "3. Exit"
-        read -rp "Enter your choice: " choice
-        case $choice in
-        1)
-            sudo apt update && sudo apt install -y podman
-            ;;
-        2)
-            return
-            ;;
-        3)
-            exit 0
-            ;;
-        *)
-            echo "Invalid choice."
-            setup_podman
-            ;;
-        esac
-    fi
-
-    ask_os_and_setup_vm "Podman"
-}
-
 # Main script loop
 while true; do
     display_main_menu
     read -rp "Enter your choice: " main_choice
     case $main_choice in
     1)
-        setup_vm $(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"') $(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
+        setup_env "setup" $(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"') $(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
         ;;
     2)
-        setup_lxd
+        ask_os_and_setup_env "lxd"
         ;;
     3)
-        setup_docker
+        ask_os_and_setup_env "docker"
         ;;
     4)
-        setup_podman
+        ask_os_and_setup_env "podman"
         ;;
     5)
         echo "Exiting..."

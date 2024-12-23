@@ -3,7 +3,6 @@ set -e  # Exit on any error
 set -o pipefail  # Fail if any command in a pipeline fails
 
 toolset_file_name="toolset-$(echo "$2" | sed 's/\.//g').json"
-
 image_folder="/imagegeneration"
 helper_script_folder="/imagegeneration/helpers"
 installer_script_folder="/imagegeneration/installers"
@@ -11,10 +10,10 @@ imagedata_file="/imagegeneration/imagedata.json"
 
 sudo mkdir -p "${installer_script_folder}"
 sudo chmod -R 777 "${installer_script_folder}"
-sudo cp -r helpers "${helper_script_folder}"
-sudo cp ../toolsets/${toolset_file_name} "${installer_script_folder}/toolset.json"
+sudo cp -r scripts/helpers "${helper_script_folder}"
+sudo cp toolsets/${toolset_file_name} "${installer_script_folder}/toolset.json"
 sudo cp -r build/ "${installer_script_folder}"
-sudo cp -r ../assets/post-gen "${image_folder}"
+sudo cp -r assets/post-gen "${image_folder}"
 
 if [ ! -d "${image_folder}/post-generation" ]; then
     sudo mv "${image_folder}/post-gen" "${image_folder}/post-generation"
@@ -24,8 +23,8 @@ fi
 ARCH=${ARCH:-$(uname -m)}
 HELPER_SCRIPTS="${helper_script_folder}"
 IMAGE_FOLDER="${image_folder}"
-IMAGE_OS=$(echo "$2" | tr '[:upper:]' '[:lower:]')
-IMAGE_VERSION=$3
+IMAGE_OS=$1
+IMAGE_VERSION=$2
 IMAGEDATA_FILE="${imagedata_file}"
 DEBIAN_FRONTEND="noninteractive"
 INSTALLER_SCRIPT_FOLDER="${installer_script_folder}"
@@ -57,44 +56,44 @@ run_script() {
 }
 
 # Configure limits
-run_script "${path_root}/../scripts/build/configure-limits.sh" 
+run_script "${path_root}/scripts/build/configure-limits.sh" 
 
 # Configure image data
-run_script "${path_root}/../scripts/build/configure-image-data.sh" "IMAGE_VERSION" "IMAGEDATA_FILE"
+run_script "${path_root}/scripts/build/configure-image-data.sh" "IMAGE_VERSION" "IMAGEDATA_FILE"
 
 # Configure environment
-run_script "${path_root}/../scripts/build/configure-environment.sh" "IMAGE_OS" "IMAGE_VERSION" "HELPER_SCRIPTS"
+run_script "${path_root}/scripts/build/configure-environment.sh" "IMAGE_OS" "IMAGE_VERSION" "HELPER_SCRIPTS"
 
 if [[ "$IMAGE_OS" == *"ubuntu"* ]]; then
     # Add apt wrapper to implement retries
-    run_script "${path_root}/../scripts/build/configure-apt-mock.sh"
+    run_script "${path_root}/scripts/build/configure-apt-mock.sh"
     echo "Setting user ubuntu with sudo privileges"
 
     # Install Configure apt
-    run_script "${path_root}/../scripts/build/configure-apt.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
+    run_script "${path_root}/scripts/build/configure-apt.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
 
-    run_script "${path_root}/../scripts/build/install-apt-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${path_root}/scripts/build/install-apt-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/../scripts/build/install-apt-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${path_root}/scripts/build/install-apt-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/../scripts/build/configure-dpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${path_root}/scripts/build/configure-dpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 elif [[ "$IMAGE_OS" == *"centos"* ]]; then
     # Add apt wrapper to implement retries
-    run_script "${path_root}/../scripts/build/configure-yum-mock.sh"
+    run_script "${path_root}/scripts/build/configure-yum-mock.sh"
     echo "Setting user ubuntu with sudo privileges"
 
     # Install Configure apt
-    run_script "${path_root}/../scripts/build/configure-dnf.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
+    run_script "${path_root}/scripts/build/configure-dnf.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
 
-    run_script "${path_root}/../scripts/build/install-dnf-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${path_root}/scripts/build/install-dnf-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/../scripts/build/install-dnf-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${path_root}/scripts/build/install-dnf-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/../scripts/build/configure-dnfpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" 
+    run_script "${path_root}/scripts/build/configure-dnfpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" 
 
 fi
 
-SETUP=${1:-"minimal"} # Default to "minimal" if SETUP is not set
+SETUP=${3:-"minimal"} # Default to "minimal" if SETUP is not set
 
 # Initialize an empty array for script files
 SCRIPT_FILES=()
@@ -170,9 +169,9 @@ elif [ "$SETUP" == "complete" ]; then
         "install-python.sh"
         "install-zstd.sh"
     )
-    run_script "${path_root}/../scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${path_root}/scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/../scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${path_root}/scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 else
     echo "Invalid SETUP value. Please set SETUP to 'minimal' or 'complete'."
     exit 1
@@ -180,19 +179,19 @@ fi
 
 # Loop through all scripts and execute them
 for SCRIPT_FILE in "${SCRIPT_FILES[@]}"; do
-    SCRIPT_PATH="${path_root}/../scripts/build/${SCRIPT_FILE}"
+    SCRIPT_PATH="${path_root}/scripts/build/${SCRIPT_FILE}"
     run_script "$SCRIPT_PATH" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 done
 
-run_script "${path_root}/../scripts/build/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+run_script "${path_root}/scripts/build/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-run_script "${path_root}/../scripts/build/configure-snap.sh" "HELPER_SCRIPTS"
+run_script "${path_root}/scripts/build/configure-snap.sh" "HELPER_SCRIPTS"
 
 # echo 'Rebooting VM...'
 # sudo reboot
 
 # The cleanup script is executed after the reboot.
-"${path_root}/../scripts/build/cleanup.sh"
+"${path_root}/scripts/build/cleanup.sh"
 
 # Configure system settings
-run_script "${path_root}/../scripts/build/configure-system.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "IMAGE_FOLDER"
+run_script "${path_root}/scripts/build/configure-system.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "IMAGE_FOLDER"
