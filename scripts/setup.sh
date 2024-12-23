@@ -75,9 +75,9 @@ if [[ "$IMAGE_OS" == *"ubuntu"* ]]; then
 
     run_script "${path_root}/../scripts/build/install-apt-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/../scripts/build/install-apt-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+    run_script "${path_root}/../scripts/build/install-apt-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/../scripts/build/configure-dpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+    run_script "${path_root}/../scripts/build/configure-dpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 elif [[ "$IMAGE_OS" == *"centos"* ]]; then
     # Add apt wrapper to implement retries
     run_script "${path_root}/../scripts/build/configure-yum-mock.sh"
@@ -88,9 +88,9 @@ elif [[ "$IMAGE_OS" == *"centos"* ]]; then
 
     run_script "${path_root}/../scripts/build/install-dnf-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/../scripts/build/install-dnf-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+    run_script "${path_root}/../scripts/build/install-dnf-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/../scripts/build/configure-dnfpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+    run_script "${path_root}/../scripts/build/configure-dnfpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" 
 
 fi
 

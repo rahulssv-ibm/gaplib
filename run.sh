@@ -33,34 +33,47 @@ handle_os_and_arch() {
     # Check if the current architecture is supported
     for sa in "${supported_arch[@]}"; do
         if [ "$arch" == "$sa" ]; then
-            # Ask the user for minimal or complete setup
-            echo "Choose setup type for $os $version on $arch:"
-            echo "1. Minimal Setup"
-            echo "2. Complete Setup"
-            echo "3. Return back to the previous step"
-            read -rp "Enter your choice: " setup_choice
+            if [ "$os" == "CentOS" ]; then
+                # Only minimal setup is supported for CentOS
+                echo "Only minimal setup is supported for $os/Almalinux $version on $arch."
+                echo "Proceeding with minimal setup..."
+                # Insert minimal setup script or function here
+                # ./setup.sh "minimal" "${os}" "${version}"
+                return 0
+            elif [ "$os" == "Ubuntu" ]; then
+                # Ask the user for minimal or complete setup
+                while true; do
+                    echo "Choose setup type for $os $version on $arch:"
+                    echo "1. Minimal Setup"
+                    echo "2. Complete Setup"
+                    echo "3. Return back to the previous step"
+                    read -rp "Enter your choice: " setup_choice
 
-            case $setup_choice in
-                1)
-                    echo "Proceeding with minimal setup for $os $version."
-                    # Insert minimal setup script or function here
-                    ./setup.sh "minimal" "${os}" "${version}"
-                    return 0
-                    ;;
-                2)
-                    echo "Proceeding with complete setup for $os $version."
-                    # Insert complete setup script or function here
-                    ./setup.sh "complete" "${os}" "${version}"
-                    return 0
-                    ;;
-                3)
-                    return 1  # Go back to the previous menu
-                    ;;
-                *)
-                    echo "Invalid choice, please try again."
-                    return 1  # Re-prompt the user
-                    ;;
-            esac
+                    case $setup_choice in
+                        1)
+                            echo "Proceeding with minimal setup for $os $version."
+                            # Insert minimal setup script or function here
+                            # ./setup.sh "minimal" "${os}" "${version}"
+                            return 0
+                            ;;
+                        2)
+                            echo "Proceeding with complete setup for $os $version."
+                            # Insert complete setup script or function here
+                            # ./setup.sh "complete" "${os}" "${version}"
+                            return 0
+                            ;;
+                        3)
+                            return 1  # Go back to the previous menu
+                            ;;
+                        *)
+                            echo "Invalid choice, please try again."
+                            ;;
+                    esac
+                done
+            else
+                echo "Unsupported OS: $os. Please select a valid OS."
+                return 1
+            fi
         fi
     done
 
@@ -74,7 +87,7 @@ setup_vm() {
     local os=$1
 
     if [[ "$os" == *"Ubuntu"* || "$os" == *"CentOS"* ]]; then
-        echo "Detected OS: $os"
+        echo "Selected OS: $os/Almalinux"
         echo "Select the OS version:"
         if [[ "$os" == *"Ubuntu"* ]]; then
             echo "1. 22.04"
@@ -132,28 +145,45 @@ setup_vm() {
 }
 
 # Helper Function: Ask OS and call setup_vm
-ask_os_and_setup_vm() {
+ask_os_and_setup_vm() { 
     component="$1"
-    echo "Please select the OS for $component setup:"
-    echo "1. Ubuntu"
-    echo "2. CentOS"
-    echo "3. Return back to the previous step"
-    read -rp "Enter choice: " os_choice
-    case $os_choice in
-        1) setup_vm "Ubuntu" ;;  # Pass the OS as argument to setup_vm
-        2) setup_vm "CentOS" ;;  # Pass the OS as argument to setup_vm
-        3) return ;;              # Return to the previous menu
-        *)
-            echo "OS not supported."
-            echo "1. Return back to the previous step"
-            echo "2. Exit"
-            read -rp "Enter your choice: " choice
-            case "$choice" in
-                1) ask_os_and_setup_vm "$component" ;;  # Recur for the selection
-                2) exit 0 ;;
-                *) echo "Invalid choice." ;;
-            esac
+    
+    case "$component" in
+        "Docker" | "Podman")
+            while true; do
+                echo "Please select the OS for $component setup:"
+                echo "1. Ubuntu"
+                echo "2. CentOS/Almalinux"
+                echo "3. Return back to the previous step"
+                read -rp "Enter choice: " os_choice
+                case $os_choice in
+                    1) setup_vm "Ubuntu"; break ;;  # Pass the OS as argument to setup_vm
+                    2) setup_vm "CentOS"; break ;;  # Pass the OS as argument to setup_vm
+                    3) return ;;                    # Return to the previous menu
+                    *)
+                        echo "Invalid choice. Please try again."
+                        ;;
+                esac
+            done
             ;;
+        "LXD")
+            while true; do
+                echo "Please select the OS for $component setup:"
+                echo "1. Ubuntu"
+                echo "2. Return back to the previous step"
+                read -rp "Enter choice: " os_choice
+                case $os_choice in
+                    1) setup_vm "Ubuntu"; break ;;  # Pass the OS as argument to setup_vm
+                    2) return ;;                    # Return to the previous menu
+                    *)
+                        echo "Invalid choice. Please try again."
+                        ;;
+                esac
+            done
+            ;;
+        *)
+            echo "Unsupported component: $component"
+            return ;;
     esac
 }
 
