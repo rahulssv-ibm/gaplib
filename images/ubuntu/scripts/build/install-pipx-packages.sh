@@ -10,8 +10,6 @@ export PATH="$PATH:/opt/pipx_bin"
 
 pipx_packages=$(get_toolset_value ".pipx[] .package")
 
-ARCH=${ARCH:-$(uname -m)}
-
 for package in $pipx_packages; do
     echo "Install $package into default python"
 

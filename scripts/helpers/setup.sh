@@ -170,9 +170,9 @@ elif [ "$SETUP" == "complete" ]; then
         "install-python.sh"
         "install-zstd.sh"
     )
-    run_script "${SRCDIR}/scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${SRCDIR}/scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 
-    run_script "${SRCDIR}/scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${SRCDIR}/scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 else
     echo "Invalid SETUP value. Please set SETUP to 'minimal' or 'complete'."
     exit 1
@@ -184,9 +184,9 @@ for SCRIPT_FILE in "${SCRIPT_FILES[@]}"; do
     run_script "$SCRIPT_PATH" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 done
 
-run_script "${SRCDIR}/scripts/build/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+run_script "${SRCDIR}/scripts/build/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 
-run_script "${SRCDIR}/scripts/build/configure-snap.sh" "HELPER_SCRIPTS"
+run_script "${SRCDIR}/scripts/build/configure-snap.sh" "HELPER_SCRIPTS" "ARCH"
 
 # echo 'Rebooting VM...'
 # sudo reboot
