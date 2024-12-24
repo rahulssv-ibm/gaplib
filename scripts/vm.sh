@@ -36,7 +36,7 @@ cp -r ${BUILD_PREREQS_PATH}/helpers/setup.sh "${BUILD_HOME}/setup.sh"
 chmod -R 0755 ${BUILD_HOME}/setup.sh
   
 msg "Copy the supported packages list into the gha-builder"
-cp -r "${BUILD_PREREQS_PATH}/../images/${HOST_OS_NAME}/" "${BUILD_HOME}" --recursive
+cp -r "${BUILD_PREREQS_PATH}/../images/${HOST_OS_NAME}/." "${BUILD_HOME}"
 chmod -R 0755 ${BUILD_HOME}
 
 msg "Copy the register-runner.sh script into gha-builder"

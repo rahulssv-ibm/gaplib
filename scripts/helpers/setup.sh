@@ -19,14 +19,15 @@ DEBIAN_FRONTEND="noninteractive"
 INSTALLER_SCRIPT_FOLDER="${installer_script_folder}"
 DOCKERHUB_PULL_IMAGES="NO"
 # Define path.root, assuming it's the current directory
-path_root="${PWD}"
+export SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
+export SRCDIR=$(dirname "${SOURCE}")
 
 sudo mkdir -p "${installer_script_folder}"
 sudo chmod -R 777 "${installer_script_folder}"
-sudo cp -r ${path_root}/scripts/helpers "${helper_script_folder}"
-sudo cp ${path_root}/toolsets/${toolset_file_name} "${installer_script_folder}/toolset.json"
-sudo cp -r ${path_root}/scripts/build/ "${installer_script_folder}"
-sudo cp -r ${path_root}/assets/post-gen "${image_folder}"
+sudo cp -r ${SRCDIR}/scripts/helpers "${helper_script_folder}"
+sudo cp ${SRCDIR}/toolsets/${toolset_file_name} "${installer_script_folder}/toolset.json"
+sudo cp -r ${SRCDIR}/scripts/build/ "${installer_script_folder}"
+sudo cp -r ${SRCDIR}/assets/post-gen "${image_folder}"
 
 if [ ! -d "${image_folder}/post-generation" ]; then
     sudo mv "${image_folder}/post-gen" "${image_folder}/post-generation"
@@ -56,40 +57,40 @@ run_script() {
 }
 
 # Configure limits
-run_script "${path_root}/scripts/build/configure-limits.sh" 
+run_script "${SRCDIR}/scripts/build/configure-limits.sh" 
 
 # Configure image data
-run_script "${path_root}/scripts/build/configure-image-data.sh" "IMAGE_VERSION" "IMAGEDATA_FILE"
+run_script "${SRCDIR}/scripts/build/configure-image-data.sh" "IMAGE_VERSION" "IMAGEDATA_FILE"
 
 # Configure environment
-run_script "${path_root}/scripts/build/configure-environment.sh" "IMAGE_OS" "IMAGE_VERSION" "HELPER_SCRIPTS"
+run_script "${SRCDIR}/scripts/build/configure-environment.sh" "IMAGE_OS" "IMAGE_VERSION" "HELPER_SCRIPTS"
 
 if [[ "$IMAGE_OS" == *"ubuntu"* ]]; then
     # Add apt wrapper to implement retries
-    run_script "${path_root}/scripts/build/configure-apt-mock.sh"
+    run_script "${SRCDIR}/scripts/build/configure-apt-mock.sh"
     echo "Setting user ubuntu with sudo privileges"
 
     # Install Configure apt
-    run_script "${path_root}/scripts/build/configure-apt.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
+    run_script "${SRCDIR}/scripts/build/configure-apt.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
 
-    run_script "${path_root}/scripts/build/install-apt-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${SRCDIR}/scripts/build/install-apt-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/scripts/build/install-apt-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${SRCDIR}/scripts/build/install-apt-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/scripts/build/configure-dpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${SRCDIR}/scripts/build/configure-dpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 elif [[ "$IMAGE_OS" == *"centos"* ]]; then
     # Add apt wrapper to implement retries
-    run_script "${path_root}/scripts/build/configure-yum-mock.sh"
+    run_script "${SRCDIR}/scripts/build/configure-yum-mock.sh"
     echo "Setting user ubuntu with sudo privileges"
 
     # Install Configure apt
-    run_script "${path_root}/scripts/build/configure-dnf.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
+    run_script "${SRCDIR}/scripts/build/configure-dnf.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
 
-    run_script "${path_root}/scripts/build/install-dnf-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${SRCDIR}/scripts/build/install-dnf-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/scripts/build/install-dnf-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${SRCDIR}/scripts/build/install-dnf-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/scripts/build/configure-dnfpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" 
+    run_script "${SRCDIR}/scripts/build/configure-dnfpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" 
 
 fi
 
@@ -169,9 +170,9 @@ elif [ "$SETUP" == "complete" ]; then
         "install-python.sh"
         "install-zstd.sh"
     )
-    run_script "${path_root}/scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${SRCDIR}/scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-    run_script "${path_root}/scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${SRCDIR}/scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 else
     echo "Invalid SETUP value. Please set SETUP to 'minimal' or 'complete'."
     exit 1
@@ -179,19 +180,19 @@ fi
 
 # Loop through all scripts and execute them
 for SCRIPT_FILE in "${SCRIPT_FILES[@]}"; do
-    SCRIPT_PATH="${path_root}/scripts/build/${SCRIPT_FILE}"
+    SCRIPT_PATH="${SRCDIR}/scripts/build/${SCRIPT_FILE}"
     run_script "$SCRIPT_PATH" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 done
 
-run_script "${path_root}/scripts/build/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+run_script "${SRCDIR}/scripts/build/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-run_script "${path_root}/scripts/build/configure-snap.sh" "HELPER_SCRIPTS"
+run_script "${SRCDIR}/scripts/build/configure-snap.sh" "HELPER_SCRIPTS"
 
 # echo 'Rebooting VM...'
 # sudo reboot
 
 # The cleanup script is executed after the reboot.
-"${path_root}/scripts/build/cleanup.sh"
+"${SRCDIR}/scripts/build/cleanup.sh"
 
 # Configure system settings
-run_script "${path_root}/scripts/build/configure-system.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "IMAGE_FOLDER"
+run_script "${SRCDIR}/scripts/build/configure-system.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "IMAGE_FOLDER"
