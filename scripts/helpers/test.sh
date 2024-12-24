@@ -114,32 +114,6 @@ if [ "$SETUP" == "minimal" ]; then
 elif [ "$SETUP" == "complete" ]; then
     # List of scripts to be executed
     SCRIPT_FILES=(
-        "install-dotnetcore-sdk.sh"
-        "install-runner-package.sh"
-        "install-actions-cache.sh"
-        "install-azcopy.sh"
-        "install-azure-cli.sh"
-        "install-azure-devops-cli.sh"
-        "install-bicep.sh"
-        "install-aliyun-cli.sh"
-        "install-apache.sh"
-        "install-aws-tools.sh"
-        "install-clang.sh"
-        "install-swift.sh"
-        "install-cmake.sh"
-        "install-codeql-bundle.sh"
-        "install-container-tools.sh"
-        "install-firefox.sh"
-        "install-microsoft-edge.sh"
-        "install-gcc-compilers.sh"
-        "install-gfortran.sh"
-        "install-git.sh"
-        "install-git-lfs.sh"
-        "install-github-cli.sh"
-        "install-google-chrome.sh"
-        "install-google-cloud-cli.sh"
-        "install-haskell.sh"
-        "install-heroku.sh"
         "install-java-tools.sh"
         "install-kubernetes-tools.sh"
         "install-oc-cli.sh"
@@ -170,9 +144,9 @@ elif [ "$SETUP" == "complete" ]; then
         "install-python.sh"
         "install-zstd.sh"
     )
-    run_script "${SRCDIR}/scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+    # run_script "${SRCDIR}/scripts/build/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 
-    run_script "${SRCDIR}/scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+    # run_script "${SRCDIR}/scripts/build/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 else
     echo "Invalid SETUP value. Please set SETUP to 'minimal' or 'complete'."
     exit 1
