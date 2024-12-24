@@ -12,7 +12,7 @@ export HOST_OS_VERSION=$2
 export SETUP=$3
 export BUILD_HOME="/home/runner"
 
-local BUILD_PREREQS_PATH="${SRCDIR}"
+BUILD_PREREQS_PATH="${SRCDIR}"
 if [ ! -d "${BUILD_PREREQS_PATH}" ]; then
   msg "Check the BUILD_PREREQS_PATH specification" >&2
   return 3
@@ -27,7 +27,7 @@ if [[ "$HOST_OS_NAME" == *"ubuntu"* ]]; then
   chmod -R 0644 /etc/dpkg/dpkg.cfg.d/01-nodoc
 fi
 
-local PATCH_FILE="${PATCH_FILE:-runner-main-sdk8-${ARCH}.patch}"
+PATCH_FILE="${PATCH_FILE:-runner-main-sdk8-${ARCH}.patch}"
 msg "Copy the patch file into gha-builder"
 cp -r "${BUILD_PREREQS_PATH}/../patches/${PATCH_FILE}" "${BUILD_HOME}/runner-sdk-8.patch"
 
