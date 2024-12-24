@@ -52,7 +52,7 @@ install_runner() {
     sudo tar -xf /tmp/runner/_package/*.tar.gz -C /opt/runner
     if [ $? -eq 0 ]; then
         sudo chown ubuntu:ubuntu -R /opt/runner
-        /opt/runner/config.sh --version
+        sudo -u ubuntu /opt/runner/config.sh --version
     fi
     return $?
 }
