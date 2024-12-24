@@ -7,8 +7,8 @@ export SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
 export SRCDIR=$(dirname "${SOURCE}")
   
 export ARCH=`uname -m`
-export HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"')
-export HOST_OS_VERSION=$(grep -E 'VERSION_ID' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+export HOST_OS_NAME=$1
+export HOST_OS_VERSION=$2
 export SETUP=$3
 export BUILD_HOME="/home/runner"
 
@@ -18,7 +18,7 @@ if [ ! -d "${BUILD_PREREQS_PATH}" ]; then
   return 3
 fi
 
-if [[ "$HOST_OS_NAME" == *"Ubuntu"* ]]; then
+if [[ "$HOST_OS_NAME" == *"ubuntu"* ]]; then
   BUILD_HOME="/home/ubuntu"
   msg "Copy the apt and dpkg overrides into gha-builder - these prevent doc files from being installed"
   cp -r "${BUILD_PREREQS_PATH}/assets/99synaptics" "/etc/apt/apt.conf.d/99synaptics"
@@ -33,14 +33,14 @@ cp -r "${BUILD_PREREQS_PATH}/../patches/${PATCH_FILE}" "${BUILD_HOME}/runner-sdk
 
 msg "Copy the setup.sh script into gha-builder"
 cp -r ${BUILD_PREREQS_PATH}/helpers/setup.sh "${BUILD_HOME}/setup.sh"
-chmod -R 0755 ${BUILD_HOME}/helpers/setup.sh
+chmod -R 0755 ${BUILD_HOME}/setup.sh
   
 msg "Copy the supported packages list into the gha-builder"
 cp -r "${BUILD_PREREQS_PATH}/../images/${HOST_OS_NAME}" "${BUILD_HOME}" --recursive
 chmod -R 0755 ${BUILD_HOME}
 
 msg "Copy the register-runner.sh script into gha-builder"
-cp -r ${BUILD_PREREQS_PATH}/register-runner.sh "/opt/register-runner.sh"
+cp -r ${BUILD_PREREQS_PATH}/helpers/register-runner.sh "/opt/register-runner.sh"
 chmod -R 0755 /opt/register-runner.sh
 
 msg "Copy the /etc/rc.local - required in case podman is used"
@@ -55,4 +55,4 @@ msg "Copy the gha-service unit file into gha-builder"
 cp -r ${BUILD_PREREQS_PATH}/assets/gha-runner.service "/etc/systemd/system/gha-runner.service"
 chmod -R 0755 /etc/systemd/system/gha-runner.service
 
-
+sudo sh -c "${BUILD_HOME}/setup.sh ${HOST_OS_NAME} ${HOST_OS_VERSION} ${SETUP}"

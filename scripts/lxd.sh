@@ -101,7 +101,7 @@ build_image() {
   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' | sudo EDITOR='tee -a' visudo"
   
   msg "Running build-image.sh"
-  lxc exec "${BUILD_CONTAINER}" --user 1000 --group 1000 -- ${BUILD_HOME}/setup.sh ${CONTAINER_OS_NAME} ${CONTAINER_OS_VERSION} ${SETUP}
+  lxc exec "${BUILD_CONTAINER}" --user 1000 --group 1000 -- sh -c  "${BUILD_HOME}/setup.sh ${CONTAINER_OS_NAME} ${CONTAINER_OS_VERSION} ${SETUP}"
   RC=$?
 
   if [ ${RC} -eq 0 ]; then
@@ -144,7 +144,7 @@ prolog() {
   export ARCH=`uname -m`
   export ACTION_RUNNER="https://github.com/actions/runner"
   export EXPORT="distro/lxc-runner"
-  export HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"')
+  export HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]')
   export HOST_OS_VERSION=$(grep -E 'VERSION_ID' /etc/os-release | cut -d'=' -f2 | tr -d '"')
   export CONTAINER_OS_NAME="${1:-ubuntu}"
   export CONTAINER_OS_VERSION=$2

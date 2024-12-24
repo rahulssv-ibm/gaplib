@@ -89,7 +89,7 @@ handle_os_and_arch() {
 # Function to handle VM setup
 setup_env() {
     local env=$1
-    local os=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+    local os=$2
     local version=${3:-} # Use the second argument as the version or leave it empty
 
     if [[ "$os" == *"ubuntu"* || "$os" == *"centos"* ]]; then
@@ -189,7 +189,7 @@ while true; do
     read -rp "Enter your choice: " main_choice
     case $main_choice in
     1)
-        setup_env "vm" $(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"') $(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
+        setup_env "vm" $(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]' | awk '{print $1}') $(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
         ;;
     2)
         ask_os_and_setup_env "lxd"
