@@ -8,17 +8,6 @@ helper_script_folder="/imagegeneration/helpers"
 installer_script_folder="/imagegeneration/installers"
 imagedata_file="/imagegeneration/imagedata.json"
 
-sudo mkdir -p "${installer_script_folder}"
-sudo chmod -R 777 "${installer_script_folder}"
-sudo cp -r scripts/helpers "${helper_script_folder}"
-sudo cp toolsets/${toolset_file_name} "${installer_script_folder}/toolset.json"
-sudo cp -r build/ "${installer_script_folder}"
-sudo cp -r assets/post-gen "${image_folder}"
-
-if [ ! -d "${image_folder}/post-generation" ]; then
-    sudo mv "${image_folder}/post-gen" "${image_folder}/post-generation"
-fi
-
 # Default environment variable values
 ARCH=${ARCH:-$(uname -m)}
 HELPER_SCRIPTS="${helper_script_folder}"
@@ -31,6 +20,17 @@ INSTALLER_SCRIPT_FOLDER="${installer_script_folder}"
 DOCKERHUB_PULL_IMAGES="NO"
 # Define path.root, assuming it's the current directory
 path_root="${PWD}"
+
+sudo mkdir -p "${installer_script_folder}"
+sudo chmod -R 777 "${installer_script_folder}"
+sudo cp -r ${path_root}/scripts/helpers "${helper_script_folder}"
+sudo cp ${path_root}/toolsets/${toolset_file_name} "${installer_script_folder}/toolset.json"
+sudo cp -r ${path_root}/scripts/build/ "${installer_script_folder}"
+sudo cp -r ${path_root}/assets/post-gen "${image_folder}"
+
+if [ ! -d "${image_folder}/post-generation" ]; then
+    sudo mv "${image_folder}/post-gen" "${image_folder}/post-generation"
+fi
 
 # Function to execute the script with passed environment variables
 run_script() {

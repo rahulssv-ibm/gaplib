@@ -79,7 +79,7 @@ build_image() {
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/setup.sh "${BUILD_CONTAINER}${BUILD_HOME}/setup.sh"
   
   msg "Copy the supported packages list into the gha-builder"
-  lxc file push --mode 0755 "${BUILD_PREREQS_PATH}/../images/${CONTAINER_OS_NAME}" "${BUILD_CONTAINER}${BUILD_HOME}" --recursive
+  lxc file push --mode 0755 "${BUILD_PREREQS_PATH}/../images/${CONTAINER_OS_NAME}/" "${BUILD_CONTAINER}${BUILD_HOME}" --recursive
 
   msg "Copy the register-runner.sh script into gha-builder"
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/register-runner.sh "${BUILD_CONTAINER}/opt/register-runner.sh"
