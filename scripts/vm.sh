@@ -3,13 +3,10 @@
 msg() {
     echo `date +"%Y-%m-%dT%H:%M:%S%:z"` $*
 }
-export PATH=/snap/bin:${PATH}
 export SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
 export SRCDIR=$(dirname "${SOURCE}")
   
 export ARCH=`uname -m`
-export ACTION_RUNNER="https://github.com/actions/runner"
-export EXPORT="distro/lxc-runner"
 export HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"')
 export HOST_OS_VERSION=$(grep -E 'VERSION_ID' /etc/os-release | cut -d'=' -f2 | tr -d '"')
 export SETUP=$3
@@ -21,7 +18,7 @@ if [ ! -d "${BUILD_PREREQS_PATH}" ]; then
   return 3
 fi
 
-if [[ "$IMAGE_OS" == *"Ubuntu"* ]]; then
+if [[ "$HOST_OS_NAME" == *"Ubuntu"* ]]; then
   BUILD_HOME="/home/ubuntu"
   msg "Copy the apt and dpkg overrides into gha-builder - these prevent doc files from being installed"
   cp -r "${BUILD_PREREQS_PATH}/assets/99synaptics" "/etc/apt/apt.conf.d/99synaptics"
@@ -35,8 +32,8 @@ msg "Copy the patch file into gha-builder"
 cp -r "${BUILD_PREREQS_PATH}/../patches/${PATCH_FILE}" "${BUILD_HOME}/runner-sdk-8.patch"
 
 msg "Copy the setup.sh script into gha-builder"
-cp -r ${BUILD_PREREQS_PATH}/setup.sh "${BUILD_HOME}/setup.sh"
-chmod -R 0755 ${BUILD_HOME}/setup.sh
+cp -r ${BUILD_PREREQS_PATH}/helpers/setup.sh "${BUILD_HOME}/setup.sh"
+chmod -R 0755 ${BUILD_HOME}/helpers/setup.sh
   
 msg "Copy the supported packages list into the gha-builder"
 cp -r "${BUILD_PREREQS_PATH}/../images/${HOST_OS_NAME}" "${BUILD_HOME}" --recursive
