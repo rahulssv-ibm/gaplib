@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e  # Exit on any error
-set -o pipefail  # Fail if any command in a pipeline fails
+set -ox pipefail  # Fail if any command in a pipeline fails
 
 toolset_file_name="toolset-$(echo "$2" | sed 's/\.//g').json"
 image_folder="/imagegeneration"
@@ -24,9 +24,9 @@ export SRCDIR=$(dirname "${SOURCE}")
 
 sudo mkdir -p "${installer_script_folder}"
 sudo chmod -R 777 "${installer_script_folder}"
-sudo cp -r ${SRCDIR}/scripts/helpers "${helper_script_folder}"
+sudo cp -r ${SRCDIR}/scripts/helpers/. "${helper_script_folder}"
 sudo cp ${SRCDIR}/toolsets/${toolset_file_name} "${installer_script_folder}/toolset.json"
-sudo cp -r ${SRCDIR}/scripts/build/ "${installer_script_folder}"
+sudo cp -r ${SRCDIR}/scripts/build/. "${installer_script_folder}"
 sudo cp -r ${SRCDIR}/assets/post-gen "${image_folder}"
 
 if [ ! -d "${image_folder}/post-generation" ]; then
