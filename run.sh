@@ -39,8 +39,8 @@ handle_os_and_arch() {
                 echo "Only minimal setup is supported for $os/Almalinux $version on $arch."
                 echo "Proceeding with minimal setup..."
                 # Insert minimal setup script or function here
-                # sudo sh -c './${env}.sh ${os} ${version} minimal'
-                echo "${env}.sh ${os} ${version} minimal"
+                sudo sh -c 'scripts/${env}.sh ${os} ${version} minimal'
+                # echo "${env}.sh ${os} ${version} minimal"
                 return 0
             elif [ "$os" == "ubuntu" ]; then
                 # Ask the user for minimal or complete setup
@@ -55,15 +55,15 @@ handle_os_and_arch() {
                         1)
                             echo "Proceeding with minimal setup for $os $version."
                             # Insert minimal setup script or function here
-                            # sudo sh -c './${env}.sh ${os} ${version} minimal'
-                            echo "${env}.sh ${os} ${version} minimal"
+                            sudo sh -c 'scripts/${env}.sh ${os} ${version} minimal'
+                            # echo "${env}.sh ${os} ${version} minimal"
                             return 0
                             ;;
                         2)
                             echo "Proceeding with complete setup for $os $version."
                             # Insert complete setup script or function here
-                            # sudo sh -c './${env}.sh ${os} ${version} complete'
-                            echo "${env}.sh ${os} ${version} complete"
+                            sudo sh -c 'scripts/${env}.sh ${os} ${version} complete'
+                            # echo "${env}.sh ${os} ${version} complete"
                             return 0
                             ;;
                         3)
