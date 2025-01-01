@@ -5,7 +5,7 @@ ensure_podman() {
     if ! command -v podman &> /dev/null; then
         local HELPER_SCRIPTS=${SRCDIR}/../images/${HOST_OS_NAME}/scripts/helpers
         echo "Podman is not installed. Attempting to install Podman..."
-        if sudo sh -c "HELPER_SCRIPTS='${SRCDIR}/../images/${HOST_OS_NAME}/scripts/helpers' DOCKERHUB_PULL_IMAGES='NO' ARCH=${ARCH} ${SRCDIR}/../images/${HOST_OS_NAME}/scripts/build/install-podman.sh"; then
+        if sudo sh -c "HELPER_SCRIPTS='${SRCDIR}/../images/${HOST_OS_NAME}/scripts/helpers' ARCH=${ARCH} ${SRCDIR}/../images/${HOST_OS_NAME}/scripts/build/install-podman.sh"; then
             echo "Podman installed successfully."
         else
             echo "Failed to install Podman. Please check your system configuration." >&2
