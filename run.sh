@@ -34,7 +34,7 @@ handle_os_and_arch() {
     # Check if the current architecture is supported
     for sa in "${supported_arch[@]}"; do
         if [[ "$arch" == "$sa" ]]; then
-            if [[ "$os" == *"centos"*]]; then
+            if [[ "$os" == *"centos"* ]]; then
                 # Only minimal setup is supported for CentOS
                 echo "Only minimal setup is supported for $os $version on $arch."
                 echo "Proceeding with minimal setup..."
