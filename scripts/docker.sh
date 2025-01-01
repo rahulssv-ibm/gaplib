@@ -1,7 +1,10 @@
 #!/bin/bash
 
-source helpers/setup_config.sh
-source helpers/run_script.sh
+SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
+SRCDIR=$(dirname "${SOURCE}")
+
+source ${SRCDIR}/helpers/setup_config.sh
+source ${SRCDIR}/helpers/run_script.sh
 # Function to ensure Docker is installed and available
 ensure_docker() {
     if ! command -v docker &> /dev/null; then
@@ -44,16 +47,13 @@ build_image() {
 # Main function to run the script
 run() {
     # Export system architecture
-    export ARCH=$(uname -m)
-    export HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]' | awk '{print $1}')
-    export HOST_OS_VERSION=$(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
+    ARCH=$(uname -m)
+    HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]' | awk '{print $1}')
+    HOST_OS_VERSION=$(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
 
     # Validate input arguments and set defaults
-    export CONTAINER_OS_NAME="${1:-ubuntu}"
-    export CONTAINER_OS_VERSION="${2:-latest}"
-
-    export SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
-    export SRCDIR=$(dirname "${SOURCE}")
+    CONTAINER_OS_NAME="${1:-ubuntu}"
+    CONTAINER_OS_VERSION="${2:-latest}"
 
     echo "Host OS: ${HOST_OS_NAME} ${HOST_OS_VERSION}, Architecture: ${ARCH}"
     echo "Target container OS: ${CONTAINER_OS_NAME} ${CONTAINER_OS_VERSION}"

@@ -2,8 +2,11 @@
 set -e  # Exit on any error
 set -ox pipefail  # Fail if any command in a pipeline fails
 
-source setup_config.sh
-source run_script.sh
+SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
+SRCDIR=$(dirname "${SOURCE}")
+
+source ${SRCDIR}/setup_config.sh
+source ${SRCDIR}/run_script.sh
 # Configure limits
 run_script "${INSTALLER_SCRIPT_FOLDER}/configure-limits.sh" 
 
