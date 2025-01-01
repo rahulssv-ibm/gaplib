@@ -1,11 +1,13 @@
 #!/bin/bash
 
+source helpers/setup_config.sh
+source helpers/run_script.sh
 # Function to ensure Docker is installed and available
 ensure_docker() {
     if ! command -v docker &> /dev/null; then
         local 
         echo "Docker is not installed. Attempting to install Docker..."
-        if sudo sh -c "HELPER_SCRIPTS='${SRCDIR}/../images/${HOST_OS_NAME}/scripts/helpers' DOCKERHUB_PULL_IMAGES='NO' ARCH=${ARCH} ${SRCDIR}/../images/${HOST_OS_NAME}/scripts/build/install-docker.sh"; then
+        if run_script "${INSTALLER_SCRIPT_FOLDER}/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"; then
             echo "Docker installed successfully."
         else
             echo "Failed to install Docker. Please check your system configuration." >&2

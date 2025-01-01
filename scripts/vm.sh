@@ -55,4 +55,4 @@ msg "Copy the gha-service unit file into gha-builder"
 cp -r ${BUILD_PREREQS_PATH}/assets/gha-runner.service "/etc/systemd/system/gha-runner.service"
 chmod -R 0755 /etc/systemd/system/gha-runner.service
 
-sudo sh -c "${BUILD_HOME}/setup.sh ${HOST_OS_NAME} ${HOST_OS_VERSION} ${SETUP}"
+sudo sh -c "${BUILD_HOME}/setup_install.sh ${HOST_OS_NAME} ${HOST_OS_VERSION} ${SETUP}"
