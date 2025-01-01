@@ -7,7 +7,7 @@
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-if [[ "$ARCH" == "ppc64le"]]; then 
+if [[ "$ARCH" == "ppc64le" ]]; then 
 
     dnf -y install dnf-plugins-core
     dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
