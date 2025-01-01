@@ -3,8 +3,9 @@
 # Function to ensure Podman is installed and available
 ensure_podman() {
     if ! command -v podman &> /dev/null; then
+        local HELPER_SCRIPTS=${SRCDIR}/../images/${HOST_OS_NAME}/scripts/helpers
         echo "Podman is not installed. Attempting to install Podman..."
-        if sudo sh -c "${SRCDIR}/../images/${HOST_OS_NAME}/scripts/build/install-podman.sh"; then
+        if sudo sh -c "${SRCDIR}/../images/${HOST_OS_NAME}/scripts/build/install-podman.sh" "${HELPER_SCRIPTS}" "${ARCH}"; then
             echo "Podman installed successfully."
         else
             echo "Failed to install Podman. Please check your system configuration." >&2
