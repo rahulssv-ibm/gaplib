@@ -62,7 +62,7 @@ pre_cleanup() {
 }
 
 post_cleanup() {
-    sudo rm -rf /home/runner/build-image.sh /tmp/runner/runner-sdk-8.patch \
+    sudo rm -rf /home/runner/build-image.sh /tmp/runner-sdk-8.patch \
            /tmp/preseed-yaml /home/runner/.nuget \
            /home/runner/.local/share
 }
