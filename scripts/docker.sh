@@ -4,7 +4,7 @@
 ensure_docker() {
     if ! command -v docker &> /dev/null; then
         echo "Docker is not installed. Attempting to install Docker..."
-        if sudo sh -c "install-docker.sh"; then
+        if sudo sh -c "${SRCDIR}/../images/${HOST_OS_NAME}/scripts/build/install-docker.sh"; then
             echo "Docker installed successfully."
         else
             echo "Failed to install Docker. Please check your system configuration." >&2
@@ -17,16 +17,16 @@ ensure_docker() {
 
 # Function to build a Docker image
 build_image() {
-    local dockerfile="Dockerfile.${CONTAINER_OS_NAME}.${CONTAINER_OS_VERSION}"
+    local dockerfile="${SRCDIR}/../dockerfiles/Dockerfile.${CONTAINER_OS_NAME}.${CONTAINER_OS_VERSION}"
 
     if [ ! -f "$dockerfile" ]; then
         echo "Error: Dockerfile for ${CONTAINER_OS_NAME} version ${CONTAINER_OS_VERSION} not found." >&2
         return 1
     fi
-
+    PATCH_FILE="${PATCH_FILE:-runner-main-sdk8-${ARCH}.patch}"
     echo "Building Docker image for ${CONTAINER_OS_NAME} version ${CONTAINER_OS_VERSION}..."
     docker build -f "$dockerfile" \
-        --build-arg RUNNERPATCH=build-files/runner-sdk-8.patch \
+        --build-arg RUNNERPATCH=${SRCDIR}/../patches/${PATCH_FILE} \
         --build-arg ARCH="${ARCH}" \
         --tag "runner:${CONTAINER_OS_NAME}.${CONTAINER_OS_VERSION}" .
 
@@ -42,18 +42,21 @@ build_image() {
 run() {
     # Export system architecture
     export ARCH=$(uname -m)
-    export HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"')
-    export HOST_OS_VERSION=$(grep -E '^VERSION_ID' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+    export HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]' | awk '{print $1}')
+    export HOST_OS_VERSION=$(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
 
     # Validate input arguments and set defaults
     export CONTAINER_OS_NAME="${1:-ubuntu}"
     export CONTAINER_OS_VERSION="${2:-latest}"
 
+    export SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
+    export SRCDIR=$(dirname "${SOURCE}")
+
     echo "Host OS: ${HOST_OS_NAME} ${HOST_OS_VERSION}, Architecture: ${ARCH}"
     echo "Target container OS: ${CONTAINER_OS_NAME} ${CONTAINER_OS_VERSION}"
 
     # Ensure Docker is installed
-    ensure_docker
+    ensure_docker "$@"
 
     # Build the Docker image
     build_image "$@"
