@@ -1,14 +1,14 @@
 #!/bin/bash
 
-SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
-SRCDIR=$(dirname "${SOURCE}")
+HELPERS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/helpers"
 
-source ${SRCDIR}/helpers/setup_config.sh
-source ${SRCDIR}/helpers/run_script.sh
+source ${HELPERS_DIR}/setup_vars.sh
+source ${HELPERS_DIR}/setup_img.sh
+source ${HELPERS_DIR}/run_script.sh
+
 # Function to ensure Docker is installed and available
 ensure_docker() {
     if ! command -v docker &> /dev/null; then
-        local 
         echo "Docker is not installed. Attempting to install Docker..."
         if run_script "${INSTALLER_SCRIPT_FOLDER}/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"; then
             echo "Docker installed successfully."
@@ -23,21 +23,20 @@ ensure_docker() {
 
 # Function to build a Docker image
 build_image() {
-    local dockerfile="${SRCDIR}/../dockerfiles/Dockerfile.${CONTAINER_OS_NAME}.${CONTAINER_OS_VERSION}"
+    local dockerfile="${HELPERS_DIR}/../../dockerfiles/Dockerfile.${IMAGE_OS}.${IMAGE_VERSION}"
 
     if [ ! -f "$dockerfile" ]; then
-        echo "Error: Dockerfile for ${CONTAINER_OS_NAME} version ${CONTAINER_OS_VERSION} not found." >&2
+        echo "Error: Dockerfile for ${IMAGE_OS} version ${IMAGE_VERSION} not found." >&2
         return 1
     fi
-    PATCH_FILE="${PATCH_FILE:-runner-main-sdk8-${ARCH}.patch}"
-    echo "Building Docker image for ${CONTAINER_OS_NAME} version ${CONTAINER_OS_VERSION}..."
+    echo "Building Docker image for ${IMAGE_OS} version ${IMAGE_VERSION}..."
     docker build -f "$dockerfile" \
         --build-arg RUNNERPATCH="../patches/${PATCH_FILE}" \
         --build-arg ARCH="${ARCH}" \
-        --tag "runner:${CONTAINER_OS_NAME}.${CONTAINER_OS_VERSION}" .
+        --tag "runner:${IMAGE_OS}.${IMAGE_VERSION}" .
 
     if [ $? -eq 0 ]; then
-        echo "Docker image built successfully: runner:${CONTAINER_OS_NAME}.${CONTAINER_OS_VERSION}"
+        echo "Docker image built successfully: runner:${IMAGE_OS}.${IMAGE_VERSION}"
     else
         echo "Error: Failed to build Docker image." >&2
         return 1
@@ -51,12 +50,8 @@ run() {
     HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]' | awk '{print $1}')
     HOST_OS_VERSION=$(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
 
-    # Validate input arguments and set defaults
-    CONTAINER_OS_NAME="${1:-ubuntu}"
-    CONTAINER_OS_VERSION="${2:-latest}"
-
     echo "Host OS: ${HOST_OS_NAME} ${HOST_OS_VERSION}, Architecture: ${ARCH}"
-    echo "Target container OS: ${CONTAINER_OS_NAME} ${CONTAINER_OS_VERSION}"
+    echo "Target container OS: ${IMAGE_OS} ${IMAGE_VERSION}"
 
     # Ensure Docker is installed
     ensure_docker "$@"

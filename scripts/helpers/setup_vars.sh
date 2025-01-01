@@ -19,16 +19,5 @@ IMAGEDATA_FILE="${imagedata_file}"
 DEBIAN_FRONTEND="noninteractive"
 INSTALLER_SCRIPT_FOLDER="${installer_script_folder}"
 DOCKERHUB_PULL_IMAGES="NO"
-# Define path.root, assuming it's the current directory
-IMGDIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../../images/${IMAGE_OS}"
 
-sudo mkdir -p "${installer_script_folder}"
-sudo chmod -R 777 "${installer_script_folder}"
-sudo cp -r ${IMGDIR}/scripts/helpers/. "${helper_script_folder}"
-sudo cp ${IMGDIR}/toolsets/${toolset_file_name} "${installer_script_folder}/toolset.json"
-sudo cp -r ${IMGDIR}/scripts/build/. "${installer_script_folder}"
-sudo cp -r ${IMGDIR}/assets/post-gen "${image_folder}"
-
-if [ ! -d "${image_folder}/post-generation" ]; then
-    sudo mv "${image_folder}/post-gen" "${image_folder}/post-generation"
-fi
+PATCH_FILE="${PATCH_FILE:-runner-main-sdk8-${ARCH}.patch}"

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+HELPERS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/helpers"
+
+source ${HELPERS_DIR}/setup_vars.sh
+source ${HELPERS_DIR}/setup_img.sh
+source ${HELPERS_DIR}/run_script.sh
+
 usage() {
     echo "setup-build-env [flags]"
     echo ""
@@ -22,11 +28,11 @@ ensure_lxd() {
         echo "Installing LXD using snap..."
         if ! command -v snap &> /dev/null; then
             echo "Snap is not installed. Installing Snap..."
-            sudo sh -c "install-snap.sh"
+            run_script "${INSTALLER_SCRIPT_FOLDER}/install-snap.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
             echo "Snap installed successfully."
         fi
         echo "Installing LXD using Snap..."
-        sudo sh -c "install-lxd.sh"
+        run_script "${INSTALLER_SCRIPT_FOLDER}/install-lxd.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
         if command -v lxd &> /dev/null; then
             echo "LXD installed successfully."
         else
@@ -40,14 +46,13 @@ ensure_lxd() {
 
 build_image() {
   
-  local IMAGE_ALIAS="${IMAGE_ALIAS:-${CONTAINER_OS_NAME}-${CONTAINER_OS_VERSION}-${ARCH}}"
+  local IMAGE_ALIAS="${IMAGE_ALIAS:-${IMAGE_OS}-${IMAGE_VERSION}-${ARCH}}"
 
-  local BUILD_PREREQS_PATH="${SRCDIR}"
+  local BUILD_PREREQS_PATH="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
   if [ ! -d "${BUILD_PREREQS_PATH}" ]; then
       msg "Check the BUILD_PREREQS_PATH specification" >&2
       return 3
   fi
-  local PATCH_FILE="${PATCH_FILE:-runner-main-sdk8-${ARCH}.patch}"
 
   local BUILD_CONTAINER
   BUILD_CONTAINER="gha-builder-$(date +%s)"
@@ -73,13 +78,10 @@ build_image() {
   fi
 
   msg "Copy the patch file into gha-builder"
-  lxc file push ${BUILD_PREREQS_PATH}/../patches/${PATCH_FILE} "${BUILD_CONTAINER}${BUILD_HOME}/runner-sdk-8.patch"
+  lxc file push ${BUILD_PREREQS_PATH}/../patches/${PATCH_FILE} "${BUILD_CONTAINER}/tmp/runner-sdk-8.patch"
 
-  msg "Copy the setup.sh script into gha-builder"
-  lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/setup.sh "${BUILD_CONTAINER}${BUILD_HOME}/setup.sh"
-  
   msg "Copy the supported packages list into the gha-builder"
-  lxc file push --mode 0755 "${BUILD_PREREQS_PATH}/../images/${CONTAINER_OS_NAME}/." "${BUILD_CONTAINER}${BUILD_HOME}" --recursive
+  lxc file push --mode 0755 "/imagegeneration" "${BUILD_CONTAINER}/imagegeneration" --recursive
 
   msg "Copy the register-runner.sh script into gha-builder"
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/register-runner.sh "${BUILD_CONTAINER}/opt/register-runner.sh"
@@ -101,7 +103,7 @@ build_image() {
   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' | sudo EDITOR='tee -a' visudo"
   
   msg "Running build-image.sh"
-  lxc exec "${BUILD_CONTAINER}" --user 1000 --group 1000 -- sh -c  "${BUILD_HOME}/setup.sh ${CONTAINER_OS_NAME} ${CONTAINER_OS_VERSION} ${SETUP}"
+  lxc exec "${BUILD_CONTAINER}" --user 1000 --group 1000 -- sh -c  "/imagegeneration/helpers/setup_install.sh ${IMAGE_OS} ${IMAGE_VERSION} ${SETUP}"
   RC=$?
 
   if [ ${RC} -eq 0 ]; then
@@ -137,21 +139,13 @@ run() {
 }
 
 prolog() {
-  export PATH=/snap/bin:${PATH}
-  export SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
-  export SRCDIR=$(dirname "${SOURCE}")
-  
-  export ARCH=`uname -m`
-  export ACTION_RUNNER="https://github.com/actions/runner"
-  export EXPORT="distro/lxc-runner"
-  export HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]')
-  export HOST_OS_VERSION=$(grep -E 'VERSION_ID' /etc/os-release | cut -d'=' -f2 | tr -d '"')
-  export CONTAINER_OS_NAME="${1:-ubuntu}"
-  export CONTAINER_OS_VERSION=$2
-  export SETUP=$3
-  export BUILD_HOME="/home/ubuntu"
-
-  export LXD_CONTAINER="${CONTAINER_OS_NAME}:${CONTAINER_OS_VERSION}"
+  PATH=/snap/bin:${PATH}
+  ACTION_RUNNER="https://github.com/actions/runner"
+  EXPORT="distro/lxc-runner"
+  HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]')
+  HOST_OS_VERSION=$(grep -E 'VERSION_ID' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+  BUILD_HOME="/home"
+  LXD_CONTAINER="${IMAGE_OS}:${IMAGE_VERSION}"
 
   mkdir -p distro
 

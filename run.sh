@@ -43,37 +43,45 @@ handle_os_and_arch() {
                 # echo "${env}.sh ${os} ${version} minimal"
                 return 0
             elif [[ "$os" == "ubuntu" ]]; then
-                # Ask the user for minimal or complete setup
-                while true; do
-                    echo "Choose setup type for $os $version on $arch:"
-                    echo "1. Minimal Setup"
-                    echo "2. Complete Setup"
-                    echo "3. Return back to main menu"
-                    read -rp "Enter your choice: " setup_choice
+                # Check if the environment is docker or podman for minimal setup
+                if [[ "$env" == "docker" || "$env" == "podman" ]]; then
+                    echo "Only minimal setup is supported for $os $version in $env."
+                    # Proceed with minimal setup
+                    sudo sh -c "scripts/${env}.sh ${os} ${version} minimal"
+                    return 0
+                else
+                    # Ask the user for minimal or complete setup
+                    while true; do
+                        echo "Choose setup type for $os $version on $arch:"
+                        echo "1. Minimal Setup"
+                        echo "2. Complete Setup"
+                        echo "3. Return back to main menu"
+                        read -rp "Enter your choice: " setup_choice
 
-                    case $setup_choice in
-                        1)
-                            echo "Proceeding with minimal setup for $os $version."
-                            # Insert minimal setup script or function here
-                            sudo sh -c "scripts/${env}.sh ${os} ${version} minimal"
-                            # echo "${env}.sh ${os} ${version} minimal"
-                            return 0
-                            ;;
-                        2)
-                            echo "Proceeding with complete setup for $os $version."
-                            # Insert complete setup script or function here
-                            sudo sh -c "scripts/${env}.sh ${os} ${version} complete"
-                            # echo "${env}.sh ${os} ${version} complete"
-                            return 0
-                            ;;
-                        3)
-                            return 1  # Go back to the previous menu
-                            ;;
-                        *)
-                            echo "Invalid choice, please try again."
-                            ;;
-                    esac
-                done
+                        case $setup_choice in
+                            1)
+                                echo "Proceeding with minimal setup for $os $version."
+                                # Insert minimal setup script or function here
+                                sudo sh -c "scripts/${env}.sh ${os} ${version} minimal"
+                                # echo "${env}.sh ${os} ${version} minimal"
+                                return 0
+                                ;;
+                            2)
+                                echo "Proceeding with complete setup for $os $version."
+                                # Insert complete setup script or function here
+                                sudo sh -c "scripts/${env}.sh ${os} ${version} complete"
+                                # echo "${env}.sh ${os} ${version} complete"
+                                return 0
+                                ;;
+                            3)
+                                return 1  # Go back to the previous menu
+                                ;;
+                            *)
+                                echo "Invalid choice, please try again."
+                                ;;
+                        esac
+                    done
+                fi
             else
                 echo "Unsupported OS: $os. Please select a valid OS."
                 return 1
@@ -85,6 +93,7 @@ handle_os_and_arch() {
     handle_unsupported_arch
     return $?
 }
+
 
 # Function to handle VM setup
 setup_env() {
