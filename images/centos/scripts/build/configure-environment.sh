@@ -27,8 +27,7 @@ set_etc_environment_variable "XDG_CONFIG_HOME" '$HOME/.config'
 sed -i 's/::1 ip6-localhost ip6-loopback/::1     localhost ip6-localhost ip6-loopback/g' /etc/hosts
 
 # Prepare directory and env variable for toolcache
-AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
-mkdir $AGENT_TOOLSDIRECTORY
+mkdir -p $AGENT_TOOLSDIRECTORY && echo "Directory created." || echo "Directory already exists."
 set_etc_environment_variable "AGENT_TOOLSDIRECTORY" "${AGENT_TOOLSDIRECTORY}"
 set_etc_environment_variable "RUNNER_TOOL_CACHE" "${AGENT_TOOLSDIRECTORY}"
 chmod -R 777 $AGENT_TOOLSDIRECTORY
