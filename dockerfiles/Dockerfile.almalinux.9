@@ -11,7 +11,7 @@ RUN     dnf install -y -q dotnet-sdk-${SDK}.0 && \
         SDK_VERSION=`dotnet --version` && \
         echo "Using SDK - ${SDK_VERSION}"
 
-COPY    ${RUNNERPATCH} /tmp/runner.patch
+ADD    ${RUNNERPATCH} /tmp/runner.patch
 
 RUN     cd /tmp && \
         git clone -q ${RUNNERREPO} && \
