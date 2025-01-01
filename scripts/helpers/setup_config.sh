@@ -20,9 +20,7 @@ DEBIAN_FRONTEND="noninteractive"
 INSTALLER_SCRIPT_FOLDER="${installer_script_folder}"
 DOCKERHUB_PULL_IMAGES="NO"
 # Define path.root, assuming it's the current directory
-SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
-SRCDIR=$(dirname "${SOURCE}")
-IMGDIR="${SRCDIR}/../../images/${IMAGE_OS}"
+IMGDIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../../images/${IMAGE_OS}"
 
 sudo mkdir -p "${installer_script_folder}"
 sudo chmod -R 777 "${installer_script_folder}"
