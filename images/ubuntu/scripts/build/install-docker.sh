@@ -18,31 +18,7 @@ if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then
     apt-get update
 
     # Install docker components which available via apt-get
-    # Using toolsets keep installation order to install dependencies before the package in order to control versions
-
-    components=$(get_toolset_value '.docker.components[] .package')
-    for package in $components; do
-        version=$(get_toolset_value ".docker.components[] | select(.package == \"$package\") | .version")
-        if [[ $version == "latest" ]]; then
-            apt-get install --no-install-recommends "$package"
-        else
-            version_string=$(apt-cache madison "$package" | awk '{ print $3 }' | grep "$version" | grep "$os_codename" | head -1)
-            apt-get install --no-install-recommends "${package}=${version_string}"
-        fi
-    done
-
-    # Install plugins that are best installed from the GitHub repository
-    # Be aware that `url` built from github repo name and plugin name because of current repo naming for those plugins
-
-    plugins=$(get_toolset_value '.docker.plugins[] .plugin')
-    for plugin in $plugins; do
-        version=$(get_toolset_value ".docker.plugins[] | select(.plugin == \"$plugin\") | .version")
-        filter=$(get_toolset_value ".docker.plugins[] | select(.plugin == \"$plugin\") | .asset")
-        url=$(resolve_github_release_asset_url "docker/$plugin" "endswith(\"$filter\")" "$version")
-        binary_path=$(download_with_retry "$url" "/tmp/docker-$plugin")
-        mkdir -pv "/usr/libexec/docker/cli-plugins"
-        install "$binary_path" "/usr/libexec/docker/cli-plugins/docker-$plugin"
-    done
+    apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
     # docker from official repo introduced different GID generation: https://github.com/actions/runner-images/issues/8157
     gid=$(cut -d ":" -f 3 /etc/group | grep "^1..$" | sort -n | tail -n 1 | awk '{ print $1+1 }')
