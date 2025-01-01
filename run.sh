@@ -34,7 +34,7 @@ handle_os_and_arch() {
     # Check if the current architecture is supported
     for sa in "${supported_arch[@]}"; do
         if [[ "$arch" == "$sa" ]]; then
-            if [[ "$os" == *"centos"* || "$os" == *"almalinux"* ]]; then
+            if [[ "$os" == *"centos"*]]; then
                 # Only minimal setup is supported for CentOS
                 echo "Only minimal setup is supported for $os $version on $arch."
                 echo "Proceeding with minimal setup..."
@@ -92,7 +92,7 @@ setup_env() {
     local os=$2
     local version=${3:-} # Use the second argument as the version or leave it empty
 
-    if [[ "$os" == *"ubuntu"* || "$os" == *"centos"* || "$os" == *"almalinux"* ]]; then
+    if [[ "$os" == *"ubuntu"* || "$os" == *"centos"* ]]; then
         echo "Selected OS: $os"
 
         # If version is not provided, prompt the user for a choice
@@ -111,7 +111,7 @@ setup_env() {
                 4) return ;;
                 *) echo "Invalid choice."; setup_env "$env" "$os"; return ;;
                 esac
-            elif [[ "$os" == *"centos"* || "$os" == *"almalinux"* ]]; then
+            elif [[ "$os" == *"centos"* ]]; then
                 echo "1. 9"
                 echo "2. Return back to main menu"
                 read -rp "Enter your choice: " version_choice
@@ -154,7 +154,7 @@ ask_os_and_setup_env() {
                 read -rp "Enter choice: " os_choice
                 case $os_choice in
                     1) setup_env "$component" "ubuntu"; break ;;  # Pass the OS as argument to setup_env
-                    2) setup_env "$component" "almalinux"; break ;;  # Pass the OS as argument to setup_env
+                    2) setup_env "$component" "centos"; break ;;  # Pass the OS as argument to setup_env
                     3) return ;;                    # Return to the previous menu
                     *)
                         echo "Invalid choice. Please try again."
