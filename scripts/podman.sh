@@ -5,7 +5,7 @@ ensure_podman() {
     if ! command -v podman &> /dev/null; then
         local HELPER_SCRIPTS=${SRCDIR}/../images/${HOST_OS_NAME}/scripts/helpers
         echo "Podman is not installed. Attempting to install Podman..."
-        if sudo sh -c "${SRCDIR}/../images/${HOST_OS_NAME}/scripts/build/install-podman.sh" "${HELPER_SCRIPTS}" "${ARCH}"; then
+        if sudo sh -c "${SRCDIR}/../images/${HOST_OS_NAME}/scripts/build/install-podman.sh ${HELPER_SCRIPTS} ${ARCH}"; then
             echo "Podman installed successfully."
         else
             echo "Failed to install Podman. Please check your system configuration." >&2
@@ -27,7 +27,7 @@ build_image() {
     PATCH_FILE="${PATCH_FILE:-runner-main-sdk8-${ARCH}.patch}"
     echo "Building Podman image for ${CONTAINER_OS_NAME} version ${CONTAINER_OS_VERSION}..."
     podman build -f "$dockerfile" \
-        --build-arg RUNNERPATCH=${SRCDIR}/../patches/${PATCH_FILE} \
+        --build-arg RUNNERPATCH="../patches/${PATCH_FILE}" \
         --build-arg ARCH="${ARCH}" \
         --tag "runner:${CONTAINER_OS_NAME}.${CONTAINER_OS_VERSION}" .
 

@@ -6,7 +6,7 @@ ensure_docker() {
         local HELPER_SCRIPTS=${SRCDIR}/../images/${HOST_OS_NAME}/scripts/helpers
         local DOCKERHUB_PULL_IMAGES="NO"
         echo "Docker is not installed. Attempting to install Docker..."
-        if sudo sh -c "${SRCDIR}/../images/${HOST_OS_NAME}/scripts/build/install-docker.sh" "${DOCKERHUB_PULL_IMAGES}" "${HELPER_SCRIPTS}" "${ARCH}"; then
+        if sudo sh -c "${SRCDIR}/../images/${HOST_OS_NAME}/scripts/build/install-docker.sh ${DOCKERHUB_PULL_IMAGES} ${HELPER_SCRIPTS} ${ARCH}"; then
             echo "Docker installed successfully."
         else
             echo "Failed to install Docker. Please check your system configuration." >&2
@@ -28,7 +28,7 @@ build_image() {
     PATCH_FILE="${PATCH_FILE:-runner-main-sdk8-${ARCH}.patch}"
     echo "Building Docker image for ${CONTAINER_OS_NAME} version ${CONTAINER_OS_VERSION}..."
     docker build -f "$dockerfile" \
-        --build-arg RUNNERPATCH=${SRCDIR}/../patches/${PATCH_FILE} \
+        --build-arg RUNNERPATCH="../patches/${PATCH_FILE}" \
         --build-arg ARCH="${ARCH}" \
         --tag "runner:${CONTAINER_OS_NAME}.${CONTAINER_OS_VERSION}" .
 
