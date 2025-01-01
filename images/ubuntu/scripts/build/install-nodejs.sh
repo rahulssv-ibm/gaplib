@@ -11,9 +11,13 @@ default_version=$(get_toolset_value '.node.default')
 curl -fsSL https://raw.githubusercontent.com/tj/n/master/bin/n -o ~/n
 bash ~/n $default_version
 
-# Install node modules
-# node_modules=$(get_toolset_value '.node_modules[].name')
-# npm install -g $node_modules
+if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then
+    npm install -g grunt gulp n typescript newman vercel webpack webpack-cli lerna yarn
+else
+    # Install node modules
+    node_modules=$(get_toolset_value '.node_modules[].name')
+    npm install -g $node_modules
+fi
 
 echo "Creating the symlink for [now] command to vercel CLI"
 ln -s /usr/local/bin/vercel /usr/local/bin/now
