@@ -4,13 +4,6 @@
 ##  Desc:  Configure dnf/yum, install jq package, and improve package management behavior.
 ################################################################################
 
-# Stop and disable dnf-automatic updates
-systemctl stop dnf-automatic.timer
-systemctl disable dnf-automatic.timer
-systemctl disable dnf-automatic.service
-systemctl stop dnf-automatic-notifyonly.timer
-systemctl disable dnf-automatic-notifyonly.timer
-
 # Enable retries for DNF (maximum retries set to 10)
 echo "retries=10" >> /etc/dnf/dnf.conf
 
@@ -34,7 +27,6 @@ echo 'DNF/YUM repositories:'
 dnf repolist
 
 # Update repositories and install jq
-dnf update -y
 dnf install -y jq
 
 # Optional: Configure parallel downloads to speed up package installation
