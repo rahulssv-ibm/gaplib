@@ -33,8 +33,8 @@ handle_os_and_arch() {
 
     # Check if the current architecture is supported
     for sa in "${supported_arch[@]}"; do
-        if [ "$arch" == "$sa" ]; then
-            if [ "$os" == *"centos"* || "$os" == *"almalinux"* ]; then
+        if [[ "$arch" == "$sa" ]]; then
+            if [[ "$os" == *"centos"* || "$os" == *"almalinux"* ]]; then
                 # Only minimal setup is supported for CentOS
                 echo "Only minimal setup is supported for $os $version on $arch."
                 echo "Proceeding with minimal setup..."
@@ -42,7 +42,7 @@ handle_os_and_arch() {
                 sudo sh -c "scripts/${env}.sh ${os} ${version} minimal"
                 # echo "${env}.sh ${os} ${version} minimal"
                 return 0
-            elif [ "$os" == "ubuntu" ]; then
+            elif [[ "$os" == "ubuntu" ]]; then
                 # Ask the user for minimal or complete setup
                 while true; do
                     echo "Choose setup type for $os $version on $arch:"
