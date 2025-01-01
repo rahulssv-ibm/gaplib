@@ -30,7 +30,8 @@ RUN     cd /tmp/runner/src && \
         ./dev.sh test && \
         rm -rf /root/.dotnet /root/.nuget
 
-RUN     usermod -L ubuntu && \
+RUN     useradd -c "Action Runner" -m ubuntu && \
+        usermod -L ubuntu && \
         echo "ubuntu  ALL=(ALL)       NOPASSWD: ALL" >/etc/sudoers.d/ubuntu
 
 RUN     mkdir -p /opt/runner && \
