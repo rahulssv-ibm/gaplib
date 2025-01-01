@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e  # Exit on any error
+
 # Function to execute the script with passed environment variables
 run_script() {
     local script_path="$1"  # First argument is the combined path to the script

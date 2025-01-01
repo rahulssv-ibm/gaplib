@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e  # Exit on any error
-set -ox pipefail  # Fail if any command in a pipeline fails
 
 toolset_file_name="toolset-$(echo "$2" | sed 's/\.//g').json"
 image_folder="/imagegeneration"

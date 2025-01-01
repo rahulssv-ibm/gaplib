@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e  # Exit on any error
+set -o pipefail  # Fail if any command in a pipeline fails
 
 HELPERS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/helpers"
 
