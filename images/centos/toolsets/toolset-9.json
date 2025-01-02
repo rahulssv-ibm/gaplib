@@ -131,7 +131,6 @@
             "dpkg-dev",
             "fakeroot",
             "gnupg2",
-            "imagemagick",
             "iproute2",
             "iputils-ping",
             "lib32z1",
