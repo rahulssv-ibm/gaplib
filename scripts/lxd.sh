@@ -81,11 +81,11 @@ build_image() {
   msg "Copy the patch file into gha-builder"
   lxc file push ${BUILD_PREREQS_PATH}/../patches/${PATCH_FILE} "${BUILD_CONTAINER}/tmp/runner-sdk-8.patch"
   
-  msg "Create /imagegeneration directory into gha-builder"
-  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- mkdir -p /imagegeneration
+#   msg "Create /imagegeneration directory into gha-builder"
+#   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- mkdir -p /imagegeneration
 
   msg "Copy the /imagegeneration contents into the gha-builder"
-  lxc file push "/imagegeneration/." "${BUILD_CONTAINER}/imagegeneration" --recursive
+  lxc file push "/imagegeneration" "${BUILD_CONTAINER}/" --recursive
 
   msg "Copy the register-runner.sh script into gha-builder"
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/helpers/register-runner.sh "${BUILD_CONTAINER}/opt/register-runner.sh"
