@@ -30,6 +30,4 @@ export PATH=$PATH:$DOTNET_ROOT
   --url "https://github.com/${repo}" \
   --token "${token}"
 
-# start the runner to run job
-sudo systemctl daemon-reload
-sudo systemctl start gha-runner.service
+./run.sh

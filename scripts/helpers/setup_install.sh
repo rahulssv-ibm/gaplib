@@ -57,6 +57,7 @@ if [ "$SETUP" == "minimal" ]; then
         "install-git.sh"
         "install-git-lfs.sh"
         "install-github-cli.sh"
+        "install-snap.sh"
         "install-zstd.sh"
     )
 elif [ "$SETUP" == "complete" ]; then
@@ -116,6 +117,7 @@ elif [ "$SETUP" == "complete" ]; then
         "install-android-sdk.sh"
         "install-pypy.sh"
         "install-python.sh"
+        "install-snap.sh"
         "install-zstd.sh"
     )
     run_script "${INSTALLER_SCRIPT_FOLDER}/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"

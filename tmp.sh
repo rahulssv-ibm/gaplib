@@ -1,1 +1,0 @@
-dnf install -y --setopt=install_weak_deps=False acl aria2 binutils bison brotli coreutils file findutils flex ftp haveged lz4 m4 mediainfo netcat net-tools p7zip-full parallel pass patchelf pigz pollinate rsync shellcheck sphinxsearch sqlite3 ssh sshpass subversion sudo swig telnet time zip
