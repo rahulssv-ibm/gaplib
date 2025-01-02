@@ -15,7 +15,6 @@ echo "phased_updates=1" >> /etc/dnf/dnf.conf
 
 # Fix potential bad proxy or HTTP headers settings
 cat <<EOF >> /etc/dnf/dnf.conf
-proxy=_none_
 http_caching=none
 EOF
 
