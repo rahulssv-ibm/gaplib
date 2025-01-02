@@ -1,5 +1,6 @@
 #!/bin/bash
-set -xe  # Exit on any error
+
+set -x
 
 HELPERS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/helpers"
 
