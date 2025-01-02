@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -x
 
 HELPERS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/helpers"
@@ -151,13 +150,32 @@ prolog() {
 
   mkdir -p distro
 
-  X=`groups | grep -q lxd`
-  if [ $? -eq 1 ]; then
-      msg "Setting permissions"
-      sudo chmod 0666 /var/snap/lxd/common/lxd/unix.socket
-  fi
+#   X=`groups | grep -q lxd`
+#   if [ $? -eq 1 ]; then
+#       msg "Setting permissions"
+#       sudo chmod 0666 /var/snap/lxd/common/lxd/unix.socket
+#   fi
 }
+
 prolog
+while getopts "a:o:h:" opt
+do
+    case "${opt}" in
+        a)
+            ACTION_RUNNER=${OPTARG}
+            ;;
+        o)
+            EXPORT=${OPTARG}
+            ;;
+        h)
+            usage
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))
 run "$@"
 RC=$?
 exit ${RC}
