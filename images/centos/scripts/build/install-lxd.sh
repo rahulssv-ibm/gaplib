@@ -6,6 +6,6 @@
 source $HELPER_SCRIPTS/install.sh
 
 sudo snap install lxd
-cat lxd-preseed.yaml | lxd init --preseed
+lxd init --auto
 # lxc storage set default volume.block.filesystem xfs
 systemctl restart systemd-sysctl
