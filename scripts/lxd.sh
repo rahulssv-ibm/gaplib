@@ -103,8 +103,8 @@ build_image() {
   msg "Setting user ubuntu with sudo privileges"
   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' | sudo EDITOR='tee -a' visudo"
   
-#   msg "Running build-image.sh"
-#   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c  "/imagegeneration/helpers/setup_install.sh ${IMAGE_OS} ${IMAGE_VERSION} ${SETUP}"
+  msg "Running build-image.sh"
+  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c  "/imagegeneration/helpers/setup_install.sh ${IMAGE_OS} ${IMAGE_VERSION} ${SETUP}"
   RC=$?
 
   if [ ${RC} -eq 0 ]; then
@@ -122,7 +122,7 @@ build_image() {
       lxc snapshot "${BUILD_CONTAINER}" "build-snapshot"
       lxc publish "${BUILD_CONTAINER}/build-snapshot" -f --alias "${IMAGE_ALIAS}" \
             --compression none \
-            description="GitHub Actions ${OS_NAME} ${OS_VERSION} Runner for ${ARCH}"
+            description="GitHub Actions ${IMAGE_OS} ${IMAGE_VERSION} Runner for ${ARCH}"
   
       msg "Export the image to ${EXPORT} for use elsewhere"
       lxc image export "${IMAGE_ALIAS}" ${EXPORT}
@@ -155,12 +155,6 @@ prolog() {
   LXD_CONTAINER="${IMAGE_OS}:${IMAGE_VERSION}"
 
   mkdir -p distro
-
-#   X=`groups | grep -q lxd`
-#   if [ $? -eq 1 ]; then
-#       msg "Setting permissions"
-#       sudo chmod 0666 /var/snap/lxd/common/lxd/unix.socket
-#   fi
 }
 
 prolog
