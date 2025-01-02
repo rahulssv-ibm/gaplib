@@ -84,11 +84,11 @@ build_image() {
   msg "Create /imagegeneration directory into gha-builder"
   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- mkdir -p /imagegeneration
 
-  msg "Copy the supported packages list into the gha-builder"
+  msg "Copy the /imagegeneration into the gha-builder"
   lxc file push "/imagegeneration" "${BUILD_CONTAINER}/imagegeneration" --recursive
 
   msg "Copy the register-runner.sh script into gha-builder"
-  lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/register-runner.sh "${BUILD_CONTAINER}/opt/register-runner.sh"
+  lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/helpers/register-runner.sh "${BUILD_CONTAINER}/opt/register-runner.sh"
  
   msg "Copy the /etc/rc.local - required in case podman is used"
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/assets/rc.local "${BUILD_CONTAINER}/etc/rc.local"
