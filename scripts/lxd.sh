@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 HELPERS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/helpers"
 
@@ -149,8 +148,8 @@ prolog() {
   PATH=/snap/bin:${PATH}
   ACTION_RUNNER="https://github.com/actions/runner"
   EXPORT="distro/lxc-runner"
-  HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]')
-  HOST_OS_VERSION=$(grep -E 'VERSION_ID' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+  HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]' | awk '{print $1}')
+  HOST_OS_VERSION=$(cat /etc/os-release | grep -E 'VERSION_ID' | cut -d'=' -f2 | tr -d '"')
   HOST_INSTALLER_SCRIPT_FOLDER="${HELPERS_DIR}/../../images/${HOST_OS_NAME}/scripts/build"
   BUILD_HOME="/home"
   LXD_CONTAINER="${IMAGE_OS}:${IMAGE_VERSION}"

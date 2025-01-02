@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xe  # Exit on any error
+set -e  # Exit on any error
 
 toolset_file_name="toolset-$(echo "$2" | sed 's/\.//g').json"
 image_folder="/imagegeneration"

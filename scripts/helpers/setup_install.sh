@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xe  # Exit on any error
+set -e  # Exit on any error
 set -o pipefail  # Fail if any command in a pipeline fails
 
 CURRENT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
