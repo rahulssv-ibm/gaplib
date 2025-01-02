@@ -29,11 +29,11 @@ ensure_lxd() {
         echo "Installing LXD using snap..."
         if ! command -v snap &> /dev/null; then
             echo "Snap is not installed. Installing Snap..."
-            run_script "${INSTALLER_SCRIPT_FOLDER}/install-snap.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+            run_script "${HOST_INSTALLER_SCRIPT_FOLDER}/install-snap.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
             echo "Snap installed successfully."
         fi
         echo "Installing LXD using Snap..."
-        run_script "${INSTALLER_SCRIPT_FOLDER}/install-lxd.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+        run_script "${HOST_INSTALLER_SCRIPT_FOLDER}/install-lxd.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
         if command -v lxd &> /dev/null; then
             echo "LXD installed successfully."
         else
@@ -151,6 +151,7 @@ prolog() {
   EXPORT="distro/lxc-runner"
   HOST_OS_NAME=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]')
   HOST_OS_VERSION=$(grep -E 'VERSION_ID' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+  HOST_INSTALLER_SCRIPT_FOLDER="${HELPERS_DIR}/../../images/${HOST_OS_NAME}/scripts/build"
   BUILD_HOME="/home"
   LXD_CONTAINER="${IMAGE_OS}:${IMAGE_VERSION}"
 
