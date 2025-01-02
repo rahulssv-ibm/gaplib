@@ -18,9 +18,6 @@ cat <<EOF | sudo tee -a /etc/gitconfig
         directory = *
 EOF
 
-# Install Git-FTP
-sudo dnf install -y git-ftp
-
 # Document installed Git version
 git --version | sudo tee -a $HELPER_SCRIPTS/package-versions.txt
 
