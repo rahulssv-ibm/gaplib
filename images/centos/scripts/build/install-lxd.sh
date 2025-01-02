@@ -7,6 +7,7 @@ source $HELPER_SCRIPTS/install.sh
 
 sudo snap install lxd
 echo "Waiting for LXD daemon to start..."
+sudo systemctl restart systemd-sysctl
 sudo systemctl start snap.lxd.daemon
 sudo systemctl enable snap.lxd.daemon
 
@@ -18,4 +19,3 @@ else
   lxd init --auto
   echo "LXD is ready to use!"
 fi
-systemctl restart systemd-sysctl
