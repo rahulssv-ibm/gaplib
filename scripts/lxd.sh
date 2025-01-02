@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e  # Exit on any error
+set -xe  # Exit on any error
 
 HELPERS_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/helpers"
 
@@ -134,7 +134,7 @@ build_image() {
 }
 
 run() {
-  ensure_lxd
+  ensure_lxd "$@"
   build_image "$@"
   return $?
 }

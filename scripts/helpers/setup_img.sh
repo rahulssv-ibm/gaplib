@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e  # Exit on any error
+set -xe  # Exit on any error
 
 CURRENT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 IMGDIR="${CURRENT_DIR}/../../images/${IMAGE_OS}"
