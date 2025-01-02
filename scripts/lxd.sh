@@ -104,7 +104,7 @@ build_image() {
   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' | sudo EDITOR='tee -a' visudo"
   
   msg "Running build-image.sh"
-  lxc exec "${BUILD_CONTAINER}" --user 1000 --group 1000 -- /imagegeneration/helpers/setup_install.sh "${IMAGE_OS}" "${IMAGE_VERSION}" "${SETUP}"
+  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c  "/imagegeneration/helpers/setup_install.sh ${IMAGE_OS} ${IMAGE_VERSION} ${SETUP}"
   RC=$?
 
   if [ ${RC} -eq 0 ]; then
