@@ -18,7 +18,7 @@ patch_runner() {
     git clone -q ${RUNNERREPO}
     cd runner
     git checkout main -b build
-    git apply /home/ubuntu/runner-sdk-8.patch
+    git apply /tmp/runner-sdk-8.patch
     sed -i'' -e /version/s/8......\"$/8.0.100\"/ src/global.json
     return $?
 }
@@ -51,8 +51,8 @@ install_runner() {
     sudo mkdir -p /opt/runner 
     sudo tar -xf /tmp/runner/_package/*.tar.gz -C /opt/runner
     if [ $? -eq 0 ]; then
-        sudo chown ubuntu:ubuntu -R /opt/runner
-        sudo -u ubuntu /opt/runner/config.sh --version
+        sudo chown  runner:runner -R /opt/runner
+        sudo -u  runner /opt/runner/config.sh --version
     fi
     return $?
 }
@@ -62,9 +62,9 @@ pre_cleanup() {
 }
 
 post_cleanup() {
-    sudo rm -rf /home/ubuntu/build-image.sh /home/ubuntu/runner-sdk-8.patch \
+    sudo rm -rf /tmp/runner-sdk-8.patch \
            /tmp/preseed-yaml /home/ubuntu/.nuget \
-           /home/ubuntu/.local/share
+           /home/runner/.local/share
 }
 
 run() {
@@ -83,7 +83,6 @@ run() {
     return ${RC}
 }
 
-export HOME=/home/ubuntu
 ARCH=`uname -m`
 RUNNERREPO="https://github.com/actions/runner"
 while getopts "a:" opt

@@ -100,8 +100,8 @@ build_image() {
   lxc file push --mode 0644 "${BUILD_PREREQS_PATH}/assets/99synaptics" "${BUILD_CONTAINER}/etc/apt/apt.conf.d/99synaptics"
   lxc file push --mode 0644 "${BUILD_PREREQS_PATH}/assets/01-nodoc" "${BUILD_CONTAINER}/etc/dpkg/dpkg.cfg.d/01-nodoc"
 
-  msg "Setting user ubuntu with sudo privileges"
-  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' | sudo EDITOR='tee -a' visudo"
+  msg "Setting user runner with sudo privileges"
+  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c "useradd -c 'Action Runner' -m runner && usermod -L runner && echo 'runner  ALL=(ALL)       NOPASSWD: ALL' >/etc/sudoers.d/runner"
   
   msg "Running build-image.sh"
   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c  "/imagegeneration/helpers/setup_install.sh ${IMAGE_OS} ${IMAGE_VERSION} ${SETUP}"
