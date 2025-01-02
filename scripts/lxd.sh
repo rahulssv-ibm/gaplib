@@ -103,14 +103,20 @@ build_image() {
   msg "Setting user ubuntu with sudo privileges"
   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' | sudo EDITOR='tee -a' visudo"
   
-  msg "Running build-image.sh"
-  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c  "/imagegeneration/helpers/setup_install.sh ${IMAGE_OS} ${IMAGE_VERSION} ${SETUP}"
+#   msg "Running build-image.sh"
+#   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c  "/imagegeneration/helpers/setup_install.sh ${IMAGE_OS} ${IMAGE_VERSION} ${SETUP}"
   RC=$?
 
   if [ ${RC} -eq 0 ]; then
       # Until we are at lxc >= 5.19 we can't use the --reuse option on the publish command
+      # Check and delete the LXC image if it exists
       msg "Deleting old image"
-      lxc image delete ${IMAGE_ALIAS} 2>/dev/null
+      if lxc image list | grep -q "${IMAGE_ALIAS}"; then
+          lxc image delete "${IMAGE_ALIAS}" 2>/dev/null
+          msg "Image ${IMAGE_ALIAS} deleted successfully."
+      else
+          msg "No existing image with alias ${IMAGE_ALIAS} found."
+      fi
 
       msg "Runner build complete. Creating image snapshot."
       lxc snapshot "${BUILD_CONTAINER}" "build-snapshot"
