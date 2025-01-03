@@ -7,42 +7,42 @@ CURRENT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source ${CURRENT_DIR}/setup_vars.sh
 source ${CURRENT_DIR}/run_script.sh
 # Configure limits
-# run_script "${INSTALLER_SCRIPT_FOLDER}/configure-limits.sh" 
+run_script "${INSTALLER_SCRIPT_FOLDER}/configure-limits.sh" 
 
-# # Configure image data
-# run_script "${INSTALLER_SCRIPT_FOLDER}/configure-image-data.sh" "IMAGE_VERSION" "IMAGEDATA_FILE"
+# Configure image data
+run_script "${INSTALLER_SCRIPT_FOLDER}/configure-image-data.sh" "IMAGE_VERSION" "IMAGEDATA_FILE"
 
-# # Configure environment
-# run_script "${INSTALLER_SCRIPT_FOLDER}/configure-environment.sh" "IMAGE_OS" "IMAGE_VERSION" "HELPER_SCRIPTS"
+# Configure environment
+run_script "${INSTALLER_SCRIPT_FOLDER}/configure-environment.sh" "IMAGE_OS" "IMAGE_VERSION" "HELPER_SCRIPTS"
 
-# if [[ "$IMAGE_OS" == *"ubuntu"* ]]; then
-#     # Add apt wrapper to implement retries
-#     run_script "${INSTALLER_SCRIPT_FOLDER}/configure-apt-mock.sh"
-#     echo "Setting user ubuntu with sudo privileges"
+if [[ "$IMAGE_OS" == *"ubuntu"* ]]; then
+    # Add apt wrapper to implement retries
+    run_script "${INSTALLER_SCRIPT_FOLDER}/configure-apt-mock.sh"
+    echo "Setting user ubuntu with sudo privileges"
 
-#     # Install Configure apt
-#     run_script "${INSTALLER_SCRIPT_FOLDER}/configure-apt.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
+    # Install Configure apt
+    run_script "${INSTALLER_SCRIPT_FOLDER}/configure-apt.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
 
-#     run_script "${INSTALLER_SCRIPT_FOLDER}/install-apt-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${INSTALLER_SCRIPT_FOLDER}/install-apt-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-#     run_script "${INSTALLER_SCRIPT_FOLDER}/install-apt-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${INSTALLER_SCRIPT_FOLDER}/install-apt-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-#     run_script "${INSTALLER_SCRIPT_FOLDER}/configure-dpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
-# elif [[ "$IMAGE_OS" == *"centos"* ]]; then
-#     # Add apt wrapper to implement retries
-#     run_script "${INSTALLER_SCRIPT_FOLDER}/configure-yum-mock.sh"
-#     echo "Setting user ubuntu with sudo privileges"
+    run_script "${INSTALLER_SCRIPT_FOLDER}/configure-dpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+elif [[ "$IMAGE_OS" == *"centos"* ]]; then
+    # Add apt wrapper to implement retries
+    run_script "${INSTALLER_SCRIPT_FOLDER}/configure-yum-mock.sh"
+    echo "Setting user ubuntu with sudo privileges"
 
-#     # Install Configure apt
-#     run_script "${INSTALLER_SCRIPT_FOLDER}/configure-dnf.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
+    # Install Configure apt
+    run_script "${INSTALLER_SCRIPT_FOLDER}/configure-dnf.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
 
-#     run_script "${INSTALLER_SCRIPT_FOLDER}/install-dnf-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${INSTALLER_SCRIPT_FOLDER}/install-dnf-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-#     run_script "${INSTALLER_SCRIPT_FOLDER}/install-dnf-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
+    run_script "${INSTALLER_SCRIPT_FOLDER}/install-dnf-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER"
 
-#     run_script "${INSTALLER_SCRIPT_FOLDER}/configure-dnfpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" 
+    run_script "${INSTALLER_SCRIPT_FOLDER}/configure-dnfpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" 
 
-# fi
+fi
 
 # Initialize an empty array for script files
 SCRIPT_FILES=()
