@@ -76,9 +76,6 @@ build_image() {
       lxc delete -f ${BUILD_CONTAINER}
       return 2
   fi
-
-  msg "Copy the patch file into gha-builder"
-  lxc file push ${BUILD_PREREQS_PATH}/../patches/${PATCH_FILE} "${BUILD_CONTAINER}/tmp/runner-sdk-8.patch"
   
   msg "Copy the /imagegeneration contents into the gha-builder"
   lxc file push "/imagegeneration" "${BUILD_CONTAINER}/" --recursive

@@ -26,9 +26,6 @@ if [[ "$IMAGE_OS" == *"ubuntu"* ]]; then
   chmod -R 0644 /etc/dpkg/dpkg.cfg.d/01-nodoc
 fi
 
-msg "Copy the patch file into gha-builder"
-cp -r "${BUILD_PREREQS_PATH}/../patches/${PATCH_FILE}" "/tmp/runner-sdk-8.patch"
-
 msg "Copy the register-runner.sh script into gha-builder"
 cp -r ${BUILD_PREREQS_PATH}/helpers/register-runner.sh "/opt/register-runner.sh"
 chmod -R 0755 /opt/register-runner.sh

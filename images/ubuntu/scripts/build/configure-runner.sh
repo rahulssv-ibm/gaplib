@@ -18,7 +18,7 @@ patch_runner() {
     git clone -q ${RUNNERREPO}
     cd runner
     git checkout main -b build
-    git apply /tmp/runner-sdk-8.patch
+    git apply /imagegeneration/runner-sdk-8.patch
     sed -i'' -e /version/s/8......\"$/8.0.100\"/ src/global.json
     return $?
 }
@@ -62,7 +62,7 @@ pre_cleanup() {
 }
 
 post_cleanup() {
-    sudo rm -rf /tmp/runner-sdk-8.patch \
+    sudo rm -rf /imagegeneration/runner-sdk-8.patch \
            /tmp/preseed-yaml /home/ubuntu/.nuget \
            /home/runner/.local/share
 }
