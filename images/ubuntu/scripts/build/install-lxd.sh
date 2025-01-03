@@ -14,5 +14,6 @@ ensure_service_is_active snap.lxd.daemon
 
 # Initialize LXD
 echo "Initializing LXD..."
+lxc network create lxdbr0 ipv4.address=auto ipv4.nat=true ipv6.address=auto ipv6.nat=true
 sudo -i lxd init --auto
 echo "LXD is ready to use!"
