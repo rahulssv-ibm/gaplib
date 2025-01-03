@@ -14,5 +14,5 @@ ensure_service_is_active snap.lxd.daemon
 
 # Initialize LXD
 echo "Initializing LXD..."
-lxd init --auto
+sudo -i lxd init --auto
 echo "LXD is ready to use!"
