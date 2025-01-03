@@ -37,15 +37,8 @@ else
     echo "/snap/bin is already in the PATH."
 fi
 
-# Check snapd.seeded.service status
-echo "Checking snapd.seeded.service status..."
-if sudo systemctl is-active --quiet snapd.seeded.service; then
-    echo "snapd.seeded.service is already completed."
-else
-    sudo systemctl restart snapd.seeded.service
-    sudo systemctl restart snapd.service
-    echo "snapd.seeded.service has not completed. Waiting for it to finish..."
-    wait_for_service snapd.seeded.service 10  # Wait up to 60 seconds
-fi
+echo "Checking the status of snapd.seeded.service..."
+ensure_service_is_active snapd.seeded.service
+ensure_service_is_active snapd.service
 
 echo "Snapd setup and initialization completed successfully."

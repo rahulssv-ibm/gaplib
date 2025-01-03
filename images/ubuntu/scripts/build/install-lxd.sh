@@ -9,9 +9,8 @@ source $HELPER_SCRIPTS/install.sh
 echo "Installing LXD using snap..."
 sudo snap install lxd
 
-# Wait for LXD service to become active
-echo "Waiting for LXD service to be active..."
-wait_for_service snap.lxd.daemon 60  # Wait up to 60 seconds for LXD service to be active
+echo "Checking the status of snap.lxd.daemon..."
+ensure_service_is_active snap.lxd.daemon
 
 # Initialize LXD
 echo "Initializing LXD..."

@@ -240,21 +240,26 @@ use_checksum_comparison() {
     fi
 }
 
-# Function to wait for a service to start
-wait_for_service() {
-    local service=$1
-    local timeout=$2  # Timeout in seconds
-    local elapsed=0
+# Function to check the status of a service and restart it if necessary
+ensure_service_is_active() {
+    local service_name=$1
 
-    echo "Waiting for $service to become active..."
-    while ! sudo systemctl is-active --quiet "$service"; do
-        if [ $elapsed -ge $timeout ]; then
-            echo "Timeout reached while waiting for $service. Exiting."
-            exit 1
+    echo "Checking the status of the '$service_name' service..."
+
+    # Check if the service is already active
+    if sudo systemctl is-active --quiet "$service_name"; then
+        echo "'$service_name' service is already active and running."
+    else
+        echo "'$service_name' service is not active. Attempting to restart it..."
+        sudo systemctl restart "$service_name"
+        
+        # Wait and verify if the service becomes active after the restart
+        echo "Waiting for '$service_name' to become active..."
+        if sudo systemctl is-active --quiet "$service_name"; then
+            echo "'$service_name' service is now active."
+        else
+            echo "Failed to start the '$service_name' service after restart."
+            exit 1  # Exit the script if the service fails to start
         fi
-        echo "$service is not active. Retrying in 2 seconds..."
-        sleep 2
-        elapsed=$((elapsed + 2))
-    done
-    echo "$service is now active and running."
+    fi
 }
