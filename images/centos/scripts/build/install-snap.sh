@@ -42,13 +42,10 @@ echo "Checking snapd.seeded.service status..."
 if sudo systemctl is-active --quiet snapd.seeded.service; then
     echo "snapd.seeded.service is already completed."
 else
+    sudo systemctl restart snapd.seeded.service
+    sudo systemctl restart snapd.service
     echo "snapd.seeded.service has not completed. Waiting for it to finish..."
-    wait_for_service snapd.seeded.service 60  # Wait up to 60 seconds
+    wait_for_service snapd.seeded.service 10  # Wait up to 60 seconds
 fi
-
-# Restart snapd.service to ensure it is running
-echo "Restarting snapd.service..."
-sudo systemctl restart snapd.service
-wait_for_service snapd.service 60  # Wait up to 60 seconds
 
 echo "Snapd setup and initialization completed successfully."
