@@ -72,10 +72,9 @@ install_pypy() {
     rm -f $package_tar_temp_path
 }
 
-if [ "$ARCH" = "ppc64le" ] ; then 
+if [[ "$ARCH" == "ppc64le" ]]; then 
     apt-get update -y && apt-get install -y --no-install-recommends pypy
-
-elif [ "$ARCH" = "s390x" ]; then
+elif [[ "$ARCH" == "s390x" ]]; then
     # Installation PyPy
     pypy_versions_json=$(curl -fsSL https://downloads.python.org/pypy/versions.json)
     toolset_versions=$(get_toolset_value '.toolcache[] | select(.name | contains("PyPy")) | .versions[]')

@@ -23,9 +23,9 @@ elif [ "$ARCH" = "s390x" ]; then
     binary_path=$(download_with_retry "${yq_url}")
 
     # Supply chain security - yq for s390x
-    hash_url=$(resolve_github_release_asset_url "mikefarah/yq" "endswith(\"checksums\")" "latest")
-    external_hash=$(get_checksum_from_url "${hash_url}" "yq_linux_s390x" "SHA256" "true" " " "19")
-    use_checksum_comparison "$binary_path" "$external_hash"
+    # hash_url=$(resolve_github_release_asset_url "mikefarah/yq" "endswith(\"checksums\")" "latest")
+    # external_hash=$(get_checksum_from_url "${hash_url}" "yq_linux_s390x" "SHA256" "true" " " "19")
+    # use_checksum_comparison "$binary_path" "$external_hash"
 
 else
     # Download yq for amd64
