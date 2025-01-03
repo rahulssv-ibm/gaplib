@@ -37,10 +37,6 @@ msg "Copy the /etc/rc.local - required in case podman is used"
 cp -r ${BUILD_PREREQS_PATH}/assets/rc.local "/etc/rc.local"
 chmod -R 0755 /etc/rc.local
 
-msg "Copy the LXD preseed configuration"
-cp -r ${BUILD_PREREQS_PATH}/assets/lxd-preseed-dir.yaml "/tmp/lxd-preseed.yaml"
-chmod -R 0755 /tmp/lxd-preseed.yaml
-
 msg "Copy the gha-service unit file into gha-builder"
 cp -r ${BUILD_PREREQS_PATH}/assets/gha-runner.service "/etc/systemd/system/gha-runner.service"
 chmod -R 0755 /etc/systemd/system/gha-runner.service

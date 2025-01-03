@@ -88,10 +88,7 @@ build_image() {
  
   msg "Copy the /etc/rc.local - required in case podman is used"
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/assets/rc.local "${BUILD_CONTAINER}/etc/rc.local"
-  
-  msg "Copy the LXD preseed configuration"
-  lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/assets/lxd-preseed-dir.yaml "${BUILD_CONTAINER}/tmp/lxd-preseed.yaml"
-  
+   
   msg "Copy the gha-service unit file into gha-builder"
   lxc file push ${BUILD_PREREQS_PATH}/assets/gha-runner.service "${BUILD_CONTAINER}/etc/systemd/system/gha-runner.service"
 

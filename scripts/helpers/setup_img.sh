@@ -13,6 +13,7 @@ fi
 sudo mkdir -p "${installer_script_folder}"
 sudo cp -r ${IMGDIR}/scripts/helpers/. "${helper_script_folder}"
 sudo cp -r ${CURRENT_DIR}/. "${helper_script_folder}"
+sudo cp -r ${CURRENT_DIR}/../assets/. "${installer_script_folder}"
 sudo cp ${IMGDIR}/toolsets/${toolset_file_name} "${installer_script_folder}/toolset.json"
 sudo cp -r ${IMGDIR}/scripts/build/. "${installer_script_folder}"
 sudo cp -r ${IMGDIR}/assets/post-gen "${image_folder}"
