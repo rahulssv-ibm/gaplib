@@ -75,24 +75,8 @@ install_pypy() {
 if [[ "$ARCH" == "ppc64le" ]]; then 
     apt-get update -y && apt-get install -y --no-install-recommends pypy
 elif [[ "$ARCH" == "s390x" ]]; then
-    # Installation PyPy
-    pypy_versions_json=$(curl -fsSL https://downloads.python.org/pypy/versions.json)
-    toolset_versions=$(get_toolset_value '.toolcache[] | select(.name | contains("PyPy")) | .versions[]')
-
-    for toolset_version in $toolset_versions; do
-        latest_major_pypy_version=$(echo $pypy_versions_json |
-            jq -r --arg toolset_version $toolset_version '.[]
-            | select((.python_version | startswith($toolset_version)) and .stable == true).files[]
-            | select(.arch == "s390x" and .platform == "linux").download_url' | head -1)
-        if [[ -z "$latest_major_pypy_version" ]]; then
-            echo "Failed to get PyPy version '$toolset_version'"
-            exit 1
-        fi
-
-        install_pypy $latest_major_pypy_version
-    done
-
-    chown -R "$SUDO_USER:$SUDO_USER" "$AGENT_TOOLSDIRECTORY/PyPy"
+    # Placeholder for s390x-specific logic
+    echo "No actions defined for s390x architecture."
 else
     # Installation PyPy
     pypy_versions_json=$(curl -fsSL https://downloads.python.org/pypy/versions.json)
