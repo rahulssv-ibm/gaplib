@@ -12,7 +12,7 @@ curl -fsSL https://raw.githubusercontent.com/tj/n/master/bin/n -o ~/n
 bash ~/n $default_version
 
 if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then
-    npm install -g grunt gulp n typescript newman vercel webpack webpack-cli lerna yarn
+    npm install -g grunt gulp n typescript newman vercel webpack webpack-cli yarn
 else
     # Install node modules
     node_modules=$(get_toolset_value '.node_modules[].name')
