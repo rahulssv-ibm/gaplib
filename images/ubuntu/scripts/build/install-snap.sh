@@ -4,14 +4,51 @@
 ##  Desc:  Install snapd
 ################################################################################
 source $HELPER_SCRIPTS/install.sh
-apt-get -y install snapd
-sudo systemctl enable --now snapd.socket
-sudo ln -s /var/lib/snapd/snap /snap
-if [[ ":$PATH:" == *"/snap/bin"* ]]; then
-    echo "/snap/bin is already in the PATH"
+
+# Install snapd if not already installed
+echo "Installing snapd..."
+if ! dpkg -l | grep -q snapd; then
+    sudo apt-get update
+    sudo apt-get -y install snapd
 else
+    echo "snapd is already installed."
+fi
+
+# Enable and start snapd socket
+echo "Enabling and starting snapd.socket..."
+sudo systemctl enable --now snapd.socket
+
+# Create symbolic link for snap directory if not already exists
+if [ ! -L /snap ]; then
+    echo "Creating symbolic link for /snap..."
+    sudo ln -s /var/lib/snapd/snap /snap
+else
+    echo "Symbolic link for /snap already exists."
+fi
+
+# Ensure /snap/bin is in the PATH
+echo "Checking if /snap/bin is in the PATH..."
+if [[ "$PATH" != *"/snap/bin"* ]]; then
     echo "/snap/bin is not in the PATH. Adding it now..."
     export PATH=/snap/bin:$PATH
     echo "export PATH=/snap/bin:$PATH" >> ~/.bashrc  # Persist for future sessions
-    echo "/snap/bin has been added to the PATH"
+    echo "/snap/bin has been added to the PATH."
+else
+    echo "/snap/bin is already in the PATH."
 fi
+
+# Wait for snapd services to be ready
+echo "Checking snapd.seeded.service status..."
+if sudo systemctl is-active --quiet snapd.seeded.service; then
+    echo "snapd.seeded.service is already completed."
+else
+    echo "snapd.seeded.service has not completed. Waiting for it to finish..."
+    wait_for_service snapd.seeded.service 60  # Wait up to 60 seconds
+fi
+
+# Restart snapd.service to ensure it is running
+echo "Restarting snapd.service..."
+sudo systemctl restart snapd.service
+wait_for_service snapd.service 60  # Wait up to 60 seconds
+
+echo "Snapd setup and initialization completed successfully."

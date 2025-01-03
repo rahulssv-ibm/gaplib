@@ -239,3 +239,22 @@ use_checksum_comparison() {
         echo "Checksum verification passed"
     fi
 }
+
+# Function to wait for a service to start
+wait_for_service() {
+    local service=$1
+    local timeout=$2  # Timeout in seconds
+    local elapsed=0
+
+    echo "Waiting for $service to become active..."
+    while ! sudo systemctl is-active --quiet "$service"; do
+        if [ $elapsed -ge $timeout ]; then
+            echo "Timeout reached while waiting for $service. Exiting."
+            exit 1
+        fi
+        echo "$service is not active. Retrying in 2 seconds..."
+        sleep 2
+        elapsed=$((elapsed + 2))
+    done
+    echo "$service is now active and running."
+}
