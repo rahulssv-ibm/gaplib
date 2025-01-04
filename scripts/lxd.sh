@@ -23,9 +23,8 @@ msg() {
 }
 
 ensure_lxd() {
-    if ! command -v lxd &> /dev/null; then
+    if lxd --version >/dev/null 2>&1; then
         echo "LXD is not installed."
-        echo "Installing LXD using snap..."
         if ! command -v snap &> /dev/null; then
             echo "Snap is not installed. Installing Snap..."
             run_script "${HOST_INSTALLER_SCRIPT_FOLDER}/install-snap.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
