@@ -23,7 +23,7 @@ msg() {
 }
 
 ensure_lxd() {
-    if lxd --version >/dev/null 2>&1; then
+    if command -v lxd &> /dev/null; then
         echo "LXD is not installed."
         if ! command -v snap &> /dev/null; then
             echo "Snap is not installed. Installing Snap..."
