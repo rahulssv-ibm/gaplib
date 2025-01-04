@@ -18,13 +18,15 @@ Refer to GitHub's official documentation on self-hosted runners for detailed inf
 
 ### **Building the Runner Images**  
 
-Use the script `build-selfhosted.sh` to build OCI images for the runner.  
+Use the script `docker.sh` or `podman.sh` to build OCI images for the runner.  
 
 #### **Command Syntax**  
-```bash
-./build-selfhosted.sh [-b <buildtool>] [distro ...]
-```  
-
+```
+sudo ./scripts/docker.sh <os> <version> <setup_type>
+```
+```
+sudo ./scripts/podman.sh <os> <version> <setup_type>
+```
 #### **Parameters**  
 - **`-b <buildtool>`**: The tool to use for building images. Defaults to `podman` or `docker` based on availability. Specify explicitly if required.  
 - **`[distro ...]`**: Specify the distribution to build images for (`ubuntu`, `almalinux`, or `opensuse`). If omitted, images for all supported distributions are built.  

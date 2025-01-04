@@ -69,7 +69,7 @@ This section outlines the steps to build the components required for a GitHub-ho
 
 ### **Building the GitHub Actions Runner Image**
 
-After setting up LXD, execute the `setup-build-env.sh` script to build the components for the GitHub Actions runner.  
+After setting up LXD, execute the `lxd.sh` script to build the components for the GitHub Actions runner.  
 
 1. Navigate to the script's directory:  
    ```bash
@@ -77,9 +77,9 @@ After setting up LXD, execute the `setup-build-env.sh` script to build the compo
    ```
 
 2. Execute the build script:  
-   ```bash
-   bash setup-build-env.sh
    ```
+    sudo ./scripts/lxd.sh <os> <version> <setup_type>
+  ```
 
 The script will handle the required steps to configure the environment and build the LXD image used by the Actions runner.
 
