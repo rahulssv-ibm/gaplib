@@ -79,8 +79,7 @@ After setting up LXD, execute the `lxd.sh` script to build the components for th
 2. Execute the build script:  
    ```
     sudo ./scripts/lxd.sh <os> <version> <setup_type>
-  ```
-
+   ```
 The script will handle the required steps to configure the environment and build the LXD image used by the Actions runner.
 
 ---
