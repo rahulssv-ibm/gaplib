@@ -19,25 +19,26 @@ if [[ "$ARCH" == "ppc64le" ]]; then
     sudo sed "s/--no-absolute-filenames//" /usr/share/perl5/Alien/Package/Rpm.pm > /tmp/Rpm.pm
     sudo cp /tmp/Rpm.pm /usr/share/perl5/Alien/Package/Rpm.pm
 
-    MIRROR="https://mirror.lchs.network/pub/almalinux/9/AppStream/${ARCH}/os/Packages"
+    MIRROR="https://mirror.lchs.network/pub/almalinux/9.4/AppStream/${ARCH}/os/Packages"
     
     PKGS=(
-        "dotnet-apphost-pack-8.0-8.0.12-1.el9_5"
-        "dotnet-hostfxr-8.0-8.0.12-1.el9_5"
-        "dotnet-targeting-pack-8.0-8.0.12-1.el9_5"
-        "dotnet-templates-8.0-8.0.112-1.el9_5"
-        "dotnet-runtime-8.0-8.0.12-1.el9_5"
-        "dotnet-sdk-8.0-8.0.112-1.el9_5"
-        "dotnet-sdk-dbg-8.0-8.0.112-1.el9_5"
-        "aspnetcore-runtime-8.0-8.0.12-1.el9_5"
-        "aspnetcore-targeting-pack-8.0-8.0.12-1.el9_5"
+        "dotnet-host-8.0.10-1.el9_4"
+        "dotnet-apphost-pack-8.0-8.0.10-1.el9_4"
+        "dotnet-hostfxr-8.0-8.0.10-1.el9_4"
+        "dotnet-targeting-pack-8.0-8.0.10-1.el9_4"
+        "dotnet-templates-8.0-8.0.110-1.el9_4"
+        "dotnet-runtime-8.0-8.0.10-1.el9_4"
+        "dotnet-runtime-dbg-8.0-8.0.10-1.el9_4"
+        "dotnet-sdk-8.0-8.0.110-1.el9_4"
+        "dotnet-sdk-dbg-8.0-8.0.110-1.el9_4"
+        "aspnetcore-runtime-8.0-8.0.10-1.el9_4"
+        "aspnetcore-targeting-pack-8.0-8.0.10-1.el9_4"
     )
     
     echo "Retrieving .NET packages..."
     pushd /tmp >/dev/null 
     
-    for pkg in ${PKGS}
-    do
+    for pkg in "${PKGS[@]}"; do
         RPM="${pkg}.${ARCH}.rpm"
         wget -q ${MIRROR}/${RPM}
         echo -n "Converting ${RPM}... "
