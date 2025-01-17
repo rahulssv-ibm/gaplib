@@ -21,5 +21,15 @@ run_script() {
 
     # Print and execute the script with the environment variables
     echo "Executing: $script_path with environment variables: $env_vars_string"
-    sudo -E env ${env_vars_string} ${script_path}
+    
+    # Capture the updated PATH and any other environment changes
+    local updated_env
+    updated_env=$(sudo sh -c "${env_vars_string} source ${script_path}; env")
+
+    # Update the parent shell's environment variables
+    while IFS='=' read -r key value; do
+        if [[ "$key" != "_" ]]; then
+            export "$key=$value"
+        fi
+    done <<< "$updated_env"
 }
