@@ -17,7 +17,7 @@ if [[ "$ARCH" == "ppc64le" ]]; then
     sudo find /opt/dotnet -name "*.nupkg" -exec unzip {} -d /usr/share/dotnet/nupkg \;
     echo 'export PATH=$PATH:/usr/share/dotnet' >> ~/.bashrc
     source ~/.bashrc
-    exec bash
+    sleep 5
     dotnet --version
     # Install .NET
     # echo "Upgrading and installing packages"
