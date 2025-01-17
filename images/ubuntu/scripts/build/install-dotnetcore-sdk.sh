@@ -9,7 +9,7 @@ if [[ "$ARCH" == "ppc64le" ]]; then
     # Install .NET
     echo "Upgrading and installing packages"
     sudo DEBIAN_FRONTEND=noninteractive apt-get -qq update -y
-    sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install alien libicu70 -y
+    sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install alien -y
     
     if [ $? -ne 0 ]; then
         exit 32
@@ -34,32 +34,35 @@ if [[ "$ARCH" == "ppc64le" ]]; then
     )
     
     echo "Retrieving .NET packages..."
-    pushd /tmp >/dev/null || exit 1
+    pushd /tmp >/dev/null 
     
-    for pkg in "${PKGS[@]}"; do
+    for pkg in ${PKGS}
+    do
         RPM="${pkg}.${ARCH}.rpm"
-        echo "Downloading ${RPM}..."
-        wget -q "${MIRROR}/${RPM}" || { echo "Failed to download ${RPM}"; exit 2; }
-        
-        echo -n "Converting ${RPM} to .deb... "
-        sudo alien -d "${RPM}" &>/dev/null || { echo "Conversion failed for ${RPM}"; exit 3; }
-        rm -f "${RPM}"
+        wget -q ${MIRROR}/${RPM}
+        echo -n "Converting ${RPM}... "
+        sudo alien -d ${RPM} |& grep -v ^warning
+        if [ $? -ne 0 ]; then
+            return 2
+        fi
+        rm -f ${RPM}
     done
 
-    echo "Installing .NET packages..."
-    sudo DEBIAN_FRONTEND=noninteractive dpkg --install /tmp/*.deb || { echo "Installation failed"; exit 4; }
-    sudo rm -f /tmp/*.deb
-    popd >/dev/null || exit 1
-
-    if [[ "${SDK}" -ne 6 ]]; then
-        echo "Creating symbolic links for architecture ${ARCH}..."
-        pushd /usr/lib64/dotnet/packs >/dev/null || exit 1
-        sudo ln -sf Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.Runtime.linux-"${ARCH}"
-        sudo ln -sf Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.linux-"${ARCH}"
-        sudo ln -sf Microsoft.NETCore.App.Host.rhel.9-"${ARCH}" Microsoft.NETCore.App.Host.linux-"${ARCH}"
-        sudo ln -sf Microsoft.NETCore.App.Ref Microsoft.NETCore.App.Runtime.linux-"${ARCH}"
-        popd >/dev/null || exit 1
+    echo "Installing dotnet"
+    sudo DEBIAN_FRONTEND=noninteractive dpkg --install /tmp/*.deb
+    if [ $? -ne 0 ]; then
+        return 3
     fi
+    sudo rm -f /tmp/*.deb
+    popd >/dev/null
+
+    echo "Creating symbolic links for architecture ${ARCH}..."
+    pushd /usr/lib64/dotnet/packs >/dev/null 
+    sudo ln -sf Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.Runtime.linux-"${ARCH}"
+    sudo ln -sf Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.linux-"${ARCH}"
+    sudo ln -sf Microsoft.NETCore.App.Host.rhel.9-"${ARCH}" Microsoft.NETCore.App.Host.linux-"${ARCH}"
+    sudo ln -sf Microsoft.NETCore.App.Ref Microsoft.NETCore.App.Runtime.linux-"${ARCH}"
+    popd >/dev/null
 
     echo "Using SDK version: $(dotnet --version)"
 elif [[ "$ARCH" == "s390x" ]]; then
