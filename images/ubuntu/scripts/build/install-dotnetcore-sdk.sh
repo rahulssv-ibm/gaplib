@@ -5,7 +5,64 @@ source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/os.sh
 
-if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
+if [[ "$ARCH" == "ppc64le" ]]; then 
+    # Install .NET
+    echo "Upgrading and installing packages"
+    sudo DEBIAN_FRONTEND=noninteractive apt-get -qq update -y
+    sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install alien libicu70 -y
+    
+    if [ $? -ne 0 ]; then
+        exit 32
+    fi
+    sudo apt autoclean
+
+    sudo sed "s/--no-absolute-filenames//" /usr/share/perl5/Alien/Package/Rpm.pm > /tmp/Rpm.pm
+    sudo cp /tmp/Rpm.pm /usr/share/perl5/Alien/Package/Rpm.pm
+
+    MIRROR="https://mirror.lchs.network/pub/almalinux/9/AppStream/${ARCH}/os/Packages"
+    
+    PKGS=(
+        "dotnet-apphost-pack-8.0-8.0.12-1.el9_5"
+        "dotnet-hostfxr-8.0-8.0.12-1.el9_5"
+        "dotnet-targeting-pack-8.0-8.0.12-1.el9_5"
+        "dotnet-templates-8.0-8.0.112-1.el9_5"
+        "dotnet-runtime-8.0-8.0.12-1.el9_5"
+        "dotnet-sdk-8.0-8.0.112-1.el9_5"
+        "dotnet-sdk-dbg-8.0-8.0.112-1.el9_5"
+        "aspnetcore-runtime-8.0-8.0.12-1.el9_5"
+        "aspnetcore-targeting-pack-8.0-8.0.12-1.el9_5"
+    )
+    
+    echo "Retrieving .NET packages..."
+    pushd /tmp >/dev/null || exit 1
+    
+    for pkg in "${PKGS[@]}"; do
+        RPM="${pkg}.${ARCH}.rpm"
+        echo "Downloading ${RPM}..."
+        wget -q "${MIRROR}/${RPM}" || { echo "Failed to download ${RPM}"; exit 2; }
+        
+        echo -n "Converting ${RPM} to .deb... "
+        sudo alien -d "${RPM}" &>/dev/null || { echo "Conversion failed for ${RPM}"; exit 3; }
+        rm -f "${RPM}"
+    done
+
+    echo "Installing .NET packages..."
+    sudo DEBIAN_FRONTEND=noninteractive dpkg --install /tmp/*.deb || { echo "Installation failed"; exit 4; }
+    sudo rm -f /tmp/*.deb
+    popd >/dev/null || exit 1
+
+    if [[ "${SDK}" -ne 6 ]]; then
+        echo "Creating symbolic links for architecture ${ARCH}..."
+        pushd /usr/lib64/dotnet/packs >/dev/null || exit 1
+        sudo ln -sf Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.Runtime.linux-"${ARCH}"
+        sudo ln -sf Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.linux-"${ARCH}"
+        sudo ln -sf Microsoft.NETCore.App.Host.rhel.9-"${ARCH}" Microsoft.NETCore.App.Host.linux-"${ARCH}"
+        sudo ln -sf Microsoft.NETCore.App.Ref Microsoft.NETCore.App.Runtime.linux-"${ARCH}"
+        popd >/dev/null || exit 1
+    fi
+
+    echo "Using SDK version: $(dotnet --version)"
+elif [[ "$ARCH" == "s390x" ]]; then
     echo "Installing dotnet for architecture: $ARCH"
     apt-get install -y dotnet-sdk-8.0
 else
