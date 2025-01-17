@@ -15,6 +15,7 @@ if [[ "$ARCH" == "ppc64le" ]]; then
     find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C /usr/share/dotnet \;
     mkdir -p /usr/share/dotnet/nupkg
     find /opt/dotnet -name "*.nupkg" -exec unzip {} -d /usr/share/dotnet/nupkg \;
+    export PATH=$PATH:/usr/share/dotnet
     echo 'export PATH=$PATH:/usr/share/dotnet' >> ~/.bashrc
     source ~/.bashrc
     dotnet --version
