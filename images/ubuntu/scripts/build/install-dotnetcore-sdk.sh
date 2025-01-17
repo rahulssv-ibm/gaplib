@@ -6,18 +6,17 @@ source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/os.sh
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
-    sudo apt update
-    sudo apt install unzip -y
+    apt update
+    apt install unzip -y
 
     unzip /imagegeneration/installers/output_8.0.100.zip -d /tmp
     cp -r /tmp/output_8.0.100/. /opt/dotnet
-    sudo mkdir -p /usr/share/dotnet
-    sudo find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C /usr/share/dotnet \;
-    sudo mkdir -p /usr/share/dotnet/nupkg
-    sudo find /opt/dotnet -name "*.nupkg" -exec unzip {} -d /usr/share/dotnet/nupkg \;
+    mkdir -p /usr/share/dotnet
+    find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C /usr/share/dotnet \;
+    mkdir -p /usr/share/dotnet/nupkg
+    find /opt/dotnet -name "*.nupkg" -exec unzip {} -d /usr/share/dotnet/nupkg \;
     echo 'export PATH=$PATH:/usr/share/dotnet' >> ~/.bashrc
     source ~/.bashrc
-    sleep 5
     dotnet --version
     # Install .NET
     # echo "Upgrading and installing packages"
