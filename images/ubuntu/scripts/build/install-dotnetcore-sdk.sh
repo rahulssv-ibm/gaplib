@@ -11,12 +11,12 @@ if [[ "$ARCH" == "ppc64le" ]]; then
 
     unzip /imagegeneration/installers/output_8.0.100.zip -d /tmp
     cp -r /tmp/output_8.0.100/. /opt/dotnet
-    mkdir -p /usr/share/dotnet
-    find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C /usr/share/dotnet \;
-    mkdir -p /usr/share/dotnet/nupkg
-    find /opt/dotnet -name "*.nupkg" -exec unzip {} -d /usr/share/dotnet/nupkg \;
-    export PATH=$PATH:/usr/share/dotnet
-    echo 'export PATH=$PATH:/usr/share/dotnet' >> ~/.bashrc
+    mkdir -p /usr/local/bin/dotnet
+    find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C /usr/local/bin/dotnet \;
+    mkdir -p /usr/local/bin/dotnet/nupkg
+    find /opt/dotnet -name "*.nupkg" -exec unzip {} -d /usr/local/bin/dotnet/nupkg \;
+    export PATH=$PATH:/usr/local/bin/dotnet
+    echo "export PATH=$PATH:/usr/local/bin/dotnet" >> ~/.bashrc
     source ~/.bashrc
     dotnet --version
     # Install .NET
