@@ -28,7 +28,7 @@ run_script() {
 
     # Update the parent shell's environment variables
     while IFS='=' read -r key value; do
-        if [[ "$key" != "_" ]]; then
+        if [[ "$key" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
             export "$key=$value"
         fi
     done <<< "$updated_env"
