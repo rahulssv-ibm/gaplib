@@ -22,9 +22,9 @@ run_script() {
     # Print and execute the script with the environment variables
     echo "Executing: $script_path with environment variables: $env_vars_string"
     
-    # Capture the updated PATH and any other environment changes
+    # Capture the updated environment by using '.' instead of 'source'
     local updated_env
-    updated_env=$(sudo sh -c "${env_vars_string} source ${script_path}; env")
+    updated_env=$(sudo sh -c "${env_vars_string} . ${script_path}; env")
 
     # Update the parent shell's environment variables
     while IFS='=' read -r key value; do
