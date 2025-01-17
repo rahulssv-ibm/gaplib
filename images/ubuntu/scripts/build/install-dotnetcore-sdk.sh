@@ -6,66 +6,78 @@ source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/os.sh
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
+    sudo apt update
+    sudo apt install unzip -y
+
+    unzip /imagegeneration/installers/output_8.0.100.zip -d /tmp
+    cp -r /tmp/output_8.0.100/. /opt/dotnet
+    sudo mkdir -p /usr/share/dotnet
+    sudo find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C /usr/share/dotnet \;
+    sudo mkdir -p /usr/share/dotnet/nupkg
+    sudo find /opt/dotnet -name "*.nupkg" -exec unzip {} -d /usr/share/dotnet/nupkg \;
+    echo 'export PATH=$PATH:/usr/share/dotnet' >> ~/.bashrc
+    source ~/.bashrc
+    dotnet --version
     # Install .NET
-    echo "Upgrading and installing packages"
-    sudo DEBIAN_FRONTEND=noninteractive apt-get -qq update -y
-    sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install alien -y
+    # echo "Upgrading and installing packages"
+    # sudo DEBIAN_FRONTEND=noninteractive apt-get -qq update -y
+    # sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install alien -y
     
-    if [ $? -ne 0 ]; then
-        exit 32
-    fi
-    sudo apt autoclean
+    # if [ $? -ne 0 ]; then
+    #     exit 32
+    # fi
+    # sudo apt autoclean
 
-    sudo sed "s/--no-absolute-filenames//" /usr/share/perl5/Alien/Package/Rpm.pm > /tmp/Rpm.pm
-    sudo cp /tmp/Rpm.pm /usr/share/perl5/Alien/Package/Rpm.pm
+    # sudo sed "s/--no-absolute-filenames//" /usr/share/perl5/Alien/Package/Rpm.pm > /tmp/Rpm.pm
+    # sudo cp /tmp/Rpm.pm /usr/share/perl5/Alien/Package/Rpm.pm
 
-    MIRROR="https://mirror.lchs.network/pub/almalinux/9.4/AppStream/${ARCH}/os/Packages"
+    # MIRROR="https://mirror.lchs.network/pub/almalinux/9.4/AppStream/${ARCH}/os/Packages"
     
-    PKGS=(
-        "dotnet-host-8.0.10-1.el9_4"
-        "dotnet-apphost-pack-8.0-8.0.10-1.el9_4"
-        "dotnet-hostfxr-8.0-8.0.10-1.el9_4"
-        "dotnet-targeting-pack-8.0-8.0.10-1.el9_4"
-        "dotnet-templates-8.0-8.0.110-1.el9_4"
-        "dotnet-runtime-8.0-8.0.10-1.el9_4"
-        "dotnet-runtime-dbg-8.0-8.0.10-1.el9_4"
-        "dotnet-sdk-8.0-8.0.110-1.el9_4"
-        "dotnet-sdk-dbg-8.0-8.0.110-1.el9_4"
-        "aspnetcore-runtime-8.0-8.0.10-1.el9_4"
-        "aspnetcore-targeting-pack-8.0-8.0.10-1.el9_4"
-    )
+    # PKGS=(
+    #     "dotnet-host-8.0.10-1.el9_4"
+    #     "dotnet-apphost-pack-8.0-8.0.10-1.el9_4"
+    #     "dotnet-hostfxr-8.0-8.0.10-1.el9_4"
+    #     "dotnet-targeting-pack-8.0-8.0.10-1.el9_4"
+    #     "dotnet-templates-8.0-8.0.110-1.el9_4"
+    #     "dotnet-runtime-8.0-8.0.10-1.el9_4"
+    #     "dotnet-runtime-dbg-8.0-8.0.10-1.el9_4"
+    #     "dotnet-sdk-8.0-8.0.110-1.el9_4"
+    #     "dotnet-sdk-dbg-8.0-8.0.110-1.el9_4"
+    #     "aspnetcore-runtime-8.0-8.0.10-1.el9_4"
+    #     "aspnetcore-targeting-pack-8.0-8.0.10-1.el9_4"
+    # )
     
-    echo "Retrieving .NET packages..."
-    pushd /tmp >/dev/null 
+    # echo "Retrieving .NET packages..."
+    # pushd /tmp >/dev/null 
     
-    for pkg in "${PKGS[@]}"; do
-        RPM="${pkg}.${ARCH}.rpm"
-        wget -q ${MIRROR}/${RPM}
-        echo -n "Converting ${RPM}... "
-        sudo alien -d ${RPM} |& grep -v ^warning
-        if [ $? -ne 0 ]; then
-            return 2
-        fi
-        rm -f ${RPM}
-    done
+    # for pkg in "${PKGS[@]}"; do
+    #     RPM="${pkg}.${ARCH}.rpm"
+    #     wget -q ${MIRROR}/${RPM}
+    #     echo -n "Converting ${RPM}... "
+    #     sudo alien -d ${RPM} |& grep -v ^warning
+    #     if [ $? -ne 0 ]; then
+    #         return 2
+    #     fi
+    #     rm -f ${RPM}
+    # done
 
-    echo "Installing dotnet"
-    sudo DEBIAN_FRONTEND=noninteractive dpkg --install /tmp/*.deb
-    if [ $? -ne 0 ]; then
-        return 3
-    fi
-    sudo rm -f /tmp/*.deb
-    popd >/dev/null
+    # echo "Installing dotnet"
+    # sudo DEBIAN_FRONTEND=noninteractive dpkg --install /tmp/*.deb
+    # if [ $? -ne 0 ]; then
+    #     return 3
+    # fi
+    # sudo rm -f /tmp/*.deb
+    # popd >/dev/null
 
-    echo "Creating symbolic links for architecture ${ARCH}..."
-    pushd /usr/lib64/dotnet/packs >/dev/null 
-    sudo ln -sf Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.Runtime.linux-"${ARCH}"
-    sudo ln -sf Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.linux-"${ARCH}"
-    sudo ln -sf Microsoft.NETCore.App.Host.rhel.9-"${ARCH}" Microsoft.NETCore.App.Host.linux-"${ARCH}"
-    sudo ln -sf Microsoft.NETCore.App.Ref Microsoft.NETCore.App.Runtime.linux-"${ARCH}"
-    popd >/dev/null
+    # echo "Creating symbolic links for architecture ${ARCH}..."
+    # pushd /usr/lib64/dotnet/packs >/dev/null 
+    # sudo ln -sf Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.Runtime.linux-"${ARCH}"
+    # sudo ln -sf Microsoft.AspNetCore.App.Ref Microsoft.AspNetCore.App.linux-"${ARCH}"
+    # sudo ln -sf Microsoft.NETCore.App.Host.rhel.9-"${ARCH}" Microsoft.NETCore.App.Host.linux-"${ARCH}"
+    # sudo ln -sf Microsoft.NETCore.App.Ref Microsoft.NETCore.App.Runtime.linux-"${ARCH}"
+    # popd >/dev/null
 
-    echo "Using SDK version: $(dotnet --version)"
+    # echo "Using SDK version: $(dotnet --version)"
 elif [[ "$ARCH" == "s390x" ]]; then
     echo "Installing dotnet for architecture: $ARCH"
     apt-get install -y dotnet-sdk-8.0
