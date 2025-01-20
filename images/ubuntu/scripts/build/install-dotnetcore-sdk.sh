@@ -6,22 +6,34 @@ source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/os.sh
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
+    # sudo apt update
+    # sudo apt install -y libssl-dev libicu-dev libcurl4 zlib1g
+    # sudo apt install -y tar unzip
+
+    # unzip /imagegeneration/installers/output_8.0.100.zip -d /tmp
+    # cp -r /tmp/output_8.0.100/. /opt/dotnet
+
+    # mkdir -p ~/dotnet
+    # cd ~/dotnet
+    # find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C ~/dotnet \;
+    # mkdir -p ~/dotnet/nupkg
+    # find /opt/dotnet -name "*.nupkg" -exec unzip {} -d ~/dotnet/nupkg \;
+    # echo 'export PATH=$HOME/dotnet:$PATH' >> ~/.bashrc
+    # source ~/.bashrc
+    # sudo ln -s $HOME/dotnet/dotnet /usr/local/bin/dotnet
+    # dotnet --version
     sudo apt update
     sudo apt install -y libssl-dev libicu-dev libcurl4 zlib1g
     sudo apt install -y tar unzip
-
     unzip /imagegeneration/installers/output_8.0.100.zip -d /tmp
     cp -r /tmp/output_8.0.100/. /opt/dotnet
-
-    mkdir -p ~/dotnet
-    cd ~/dotnet
-    tar -xvf /opt/dotnet/dotnet-sdk-8.0.100-linux-ppc64le.tar.gz -C ~/dotnet
-    tar -xvf /opt/dotnet/dotnet-runtime-8.0.0-linux-ppc64le.tar.gz -C ~/dotnet
-    echo 'export PATH=$HOME/dotnet:$PATH' >> ~/.bashrc
-    source ~/.bashrc
-    sudo ln -s $HOME/dotnet/dotnet /usr/local/bin/dotnet
-    dotnet --version
-    
+    cd /opt/dotnet
+    mkdir .dotnet
+    find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C .dotnet \; 
+    export DOTNET_ROOT=$(pwd)/.dotnet
+    export PATH=$PATH:$DOTNET_ROOT
+    ln -s /opt/dotnet/.dotnet/dotnet /usr/local/bin/dotnet
+    sudo dotnet --version
     # apt update
     # apt install unzip -y
 
