@@ -31,7 +31,6 @@ if [[ "$ARCH" == "ppc64le" ]]; then
     mkdir .dotnet
     find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C .dotnet \; 
     set_etc_environment_variable DOTNET_ROOT /opt/dotnet/.dotnet
-    set_etc_environment_variable DOTNET_NOLOGO 1
     set_etc_environment_variable DOTNET_SKIP_FIRST_TIME_EXPERIENCE 1
     set_etc_environment_variable DOTNET_NOLOGO 1
     set_etc_environment_variable DOTNET_MULTILEVEL_LOOKUP 0
