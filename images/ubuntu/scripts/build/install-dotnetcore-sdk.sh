@@ -19,6 +19,7 @@ if [[ "$ARCH" == "ppc64le" ]]; then
     tar -xvf /opt/dotnet/dotnet-runtime-8.0.0-linux-ppc64le.tar.gz -C ~/dotnet
     echo 'export PATH=$HOME/dotnet:$PATH' >> ~/.bashrc
     source ~/.bashrc
+    sudo ln -s $HOME/dotnet/dotnet /usr/local/bin/dotnet
     dotnet --version
     
     # apt update
