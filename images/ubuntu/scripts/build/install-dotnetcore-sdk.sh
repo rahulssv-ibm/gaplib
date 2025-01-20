@@ -30,10 +30,14 @@ if [[ "$ARCH" == "ppc64le" ]]; then
     cd /opt/dotnet
     mkdir .dotnet
     find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C .dotnet \; 
-    export DOTNET_ROOT=$(pwd)/.dotnet
-    export PATH=$PATH:$DOTNET_ROOT
+    set_etc_environment_variable DOTNET_ROOT /opt/dotnet/.dotnet
+    set_etc_environment_variable DOTNET_NOLOGO 1
+    set_etc_environment_variable DOTNET_SKIP_FIRST_TIME_EXPERIENCE 1
+    set_etc_environment_variable DOTNET_NOLOGO 1
+    set_etc_environment_variable DOTNET_MULTILEVEL_LOOKUP 0
+    prepend_etc_environment_path '/opt/dotnet/.dotnet'
     ln -s /opt/dotnet/.dotnet/dotnet /usr/local/bin/dotnet
-    sudo dotnet --version
+    dotnet --version
     # apt update
     # apt install unzip -y
 
