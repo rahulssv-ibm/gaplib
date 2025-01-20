@@ -19,17 +19,7 @@ run_script() {
     # Convert the env_vars array into a space-separated string for export
     local env_vars_string="${env_vars[*]}"
 
-    # Print and execute the script with the environment variables using bash
+    # Print and execute the script with the environment variables
     echo "Executing: $script_path with environment variables: $env_vars_string"
-    
-    # Use bash instead of sh, which supports the 'source' command
-    local updated_env
-    updated_env=$(sudo bash -c "${env_vars_string} source ${script_path}; env")
-
-    # Update the parent shell's environment variables
-    while IFS='=' read -r key value; do
-        if [[ "$key" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
-            export "$key=$value"
-        fi
-    done <<< "$updated_env"
+    sudo sh -c "${env_vars_string} ${script_path}"
 }

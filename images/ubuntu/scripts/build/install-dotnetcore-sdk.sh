@@ -6,19 +6,34 @@ source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/os.sh
 
 if [[ "$ARCH" == "ppc64le" ]]; then 
-    apt update
-    apt install unzip -y
+    sudo apt update
+    sudo apt install -y libssl-dev libicu-dev libcurl4 zlib1g
+    sudo apt install -y tar unzip
 
     unzip /imagegeneration/installers/output_8.0.100.zip -d /tmp
     cp -r /tmp/output_8.0.100/. /opt/dotnet
-    mkdir -p /usr/local/bin/dotnet
-    find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C /usr/local/bin/dotnet \;
-    mkdir -p /usr/local/bin/dotnet/nupkg
-    find /opt/dotnet -name "*.nupkg" -exec unzip {} -d /usr/local/bin/dotnet/nupkg \;
-    export PATH=$PATH:/usr/local/bin/dotnet
-    echo "export PATH=$PATH:/usr/local/bin/dotnet" >> ~/.bashrc
+
+    mkdir -p ~/dotnet
+    cd ~/dotnet
+    tar -xvf /opt/dotnet/dotnet-sdk-8.0.100-linux-ppc64le.tar.gz -C ~/dotnet
+    tar -xvf /opt/dotnet/dotnet-runtime-8.0.0-linux-ppc64le.tar.gz -C ~/dotnet
+    echo 'export PATH=$HOME/dotnet:$PATH' >> ~/.bashrc
     source ~/.bashrc
     dotnet --version
+    
+    # apt update
+    # apt install unzip -y
+
+    # unzip /imagegeneration/installers/output_8.0.100.zip -d /tmp
+    # cp -r /tmp/output_8.0.100/. /opt/dotnet
+    # mkdir -p /usr/local/bin/dotnet
+    # find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C /usr/local/bin/dotnet \;
+    # mkdir -p /usr/local/bin/dotnet/nupkg
+    # find /opt/dotnet -name "*.nupkg" -exec unzip {} -d /usr/local/bin/dotnet/nupkg \;
+    # export PATH=$PATH:/usr/local/bin/dotnet
+    # echo "export PATH=$PATH:/usr/local/bin/dotnet" >> ~/.bashrc
+    # source ~/.bashrc
+    # dotnet --version
     # Install .NET
     # echo "Upgrading and installing packages"
     # sudo DEBIAN_FRONTEND=noninteractive apt-get -qq update -y
