@@ -27,7 +27,8 @@ if [[ "$ARCH" == "ppc64le" ]]; then
     sudo apt install -y tar unzip
     # unzip /imagegeneration/installers/output_8.0.100.zip -d /tmp
     # cp -r /tmp/output_8.0.100/. /opt/dotnet
-    cp -r  /imagegeneration/installers/dotnet-sdk-8.0.112-ubuntu.24.04-ppc64le.tar.gz /opt/dotnet
+    mkdir /opt/dotnet
+    cp -r  /imagegeneration/installers/dotnet-sdk-8.0.112-ubuntu.24.04-ppc64le.tar.gz /opt/dotnet/.
     cd /opt/dotnet
     mkdir .dotnet
     find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C .dotnet \; 
@@ -121,7 +122,8 @@ else
     sudo apt install -y tar unzip
     # unzip /imagegeneration/installers/output_8.0.100.zip -d /tmp
     # cp -r /tmp/output_8.0.100/. /opt/dotnet
-    cp -r  /imagegeneration/installers/dotnet-sdk-8.0.112-ubuntu.24.04-x64.tar.gz /opt/dotnet
+    mkdir /opt/dotnet
+    cp -r  /imagegeneration/installers/dotnet-sdk-8.0.112-ubuntu.24.04-x64.tar.gz /opt/dotnet/.
     cd /opt/dotnet
     mkdir .dotnet
     find /opt/dotnet -name "*.tar.gz" -exec tar -xvf {} -C .dotnet \; 
