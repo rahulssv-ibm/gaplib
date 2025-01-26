@@ -23,3 +23,7 @@ jobs:
           ./dev.sh package Release linux-ppc64le
           cd ../_package
           ls
+      - uses: actions/upload-artifact@v4
+        with:
+          name: runner-ppc64le
+          path: ~/work/gaplib/gaplib/runner/_package/actions-runner-linux-ppc64le-2.322.0.tar.gz
