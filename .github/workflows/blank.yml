@@ -16,7 +16,7 @@ jobs:
           git clone -q https://github.com/actions/runner.git
           cd runner
           git checkout main -b build
-          git apply ../patches/runner-main-sdk8-ppc64le.patch
+          git apply ../build-files/patches/runner-main-sdk8-ppc64le.patch
           sed -i'' -e /version/s/8......\"$/8.0.100\"/ src/global.json
           cd src
           ./dev.sh layout Release linux-ppc64le
