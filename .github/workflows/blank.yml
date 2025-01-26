@@ -1,0 +1,25 @@
+name: Build Runner
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-24.04
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: |
+          git clone -q https://github.com/actions/runner.git
+          cd runner
+          git checkout main -b build
+          git apply ../patches/runner-main-sdk8-ppc64le.patch
+          sed -i'' -e /version/s/8......\"$/8.0.100\"/ src/global.json
+          cd src
+          ./dev.sh layout Release linux-ppc64le
+          ./dev.sh package Release linux-ppc64le
+          ./dev.sh test Release linux-ppc64le
+          ls
