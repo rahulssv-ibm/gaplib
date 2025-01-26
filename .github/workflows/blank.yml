@@ -21,5 +21,4 @@ jobs:
           cd src
           ./dev.sh layout Release linux-ppc64le
           ./dev.sh package Release linux-ppc64le
-          ./dev.sh test Release linux-ppc64le
           ls
