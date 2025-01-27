@@ -109,33 +109,6 @@ index 2c20d1b1..63957a5d 100644
  #else
              public static readonly Architecture PlatformArchitecture = Architecture.X64;
  #endif
-diff --git a/src/Runner.Common/HostTraceListener.cs b/src/Runner.Common/HostTraceListener.cs
-index c1953d88..8fb36429 100644
---- a/src/Runner.Common/HostTraceListener.cs
-+++ b/src/Runner.Common/HostTraceListener.cs
-@@ -49,7 +49,7 @@ namespace GitHub.Runner.Common
-         {
-             ArgUtil.NotNullOrEmpty(logFile, nameof(logFile));
-             Directory.CreateDirectory(Path.GetDirectoryName(logFile));
--            Stream logStream = new FileStream(logFile, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, bufferSize: 4096);
-+            Stream logStream = new FileStream(logFile, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, bufferSize: 65536);
-             Writer = new StreamWriter(logStream);
-         }
- 
-@@ -188,11 +188,11 @@ namespace GitHub.Runner.Common
-             Stream logStream;
-             if (File.Exists(logFile))
-             {
--                logStream = new FileStream(logFile, FileMode.Append, FileAccess.Write, FileShare.Read, bufferSize: 4096);
-+                logStream = new FileStream(logFile, FileMode.Append, FileAccess.Write, FileShare.Read, bufferSize: 65536);
-             }
-             else
-             {
--                logStream = new FileStream(logFile, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, bufferSize: 4096);
-+                logStream = new FileStream(logFile, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, bufferSize: 65536);
-             }
- 
-             return new StreamWriter(logStream);
 diff --git a/src/Runner.Common/Runner.Common.csproj b/src/Runner.Common/Runner.Common.csproj
 index 6c463562..933385ed 100644
 --- a/src/Runner.Common/Runner.Common.csproj
@@ -180,44 +153,6 @@ index afd52812..149f7bf1 100644
      <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
      <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
      <Version>$(Version)</Version>
-diff --git a/src/Runner.Listener/SelfUpdater.cs b/src/Runner.Listener/SelfUpdater.cs
-index 6ebeebd8..c726d47c 100644
---- a/src/Runner.Listener/SelfUpdater.cs
-+++ b/src/Runner.Listener/SelfUpdater.cs
-@@ -331,11 +331,11 @@ namespace GitHub.Runner.Listener
- 
-                             Trace.Info($"Downloading {packageDownloadUrl}");
- 
--                            using (FileStream fs = new(archiveFile, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
-+                            using (FileStream fs = new(archiveFile, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 65536, useAsync: true))
-                             using (Stream result = await httpClient.GetStreamAsync(packageDownloadUrl))
-                             {
--                                //81920 is the default used by System.IO.Stream.CopyTo and is under the large object heap threshold (85k).
--                                await result.CopyToAsync(fs, 81920, downloadCts.Token);
-+                                //1310720 is the default used by System.IO.Stream.CopyTo and is under the large object heap threshold (85k).
-+                                await result.CopyToAsync(fs, 1310720, downloadCts.Token);
-                                 await fs.FlushAsync(downloadCts.Token);
-                                 downloadSize = fs.Length;
-                             }
-diff --git a/src/Runner.Listener/SelfUpdaterV2.cs b/src/Runner.Listener/SelfUpdaterV2.cs
-index b64619b6..5d93e6e3 100644
---- a/src/Runner.Listener/SelfUpdaterV2.cs
-+++ b/src/Runner.Listener/SelfUpdaterV2.cs
-@@ -290,11 +290,11 @@ namespace GitHub.Runner.Listener
-                         {
-                             Trace.Info($"Downloading {packageDownloadUrl}");
- 
--                            using (FileStream fs = new(archiveFile, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
-+                            using (FileStream fs = new(archiveFile, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 65536, useAsync: true))
-                             using (Stream result = await httpClient.GetStreamAsync(packageDownloadUrl))
-                             {
--                                //81920 is the default used by System.IO.Stream.CopyTo and is under the large object heap threshold (85k).
--                                await result.CopyToAsync(fs, 81920, downloadCts.Token);
-+                                //1310720 is the default used by System.IO.Stream.CopyTo and is under the large object heap threshold (85k).
-+                                await result.CopyToAsync(fs, 1310720, downloadCts.Token);
-                                 await fs.FlushAsync(downloadCts.Token);
-                                 downloadSize = fs.Length;
-                             }
 diff --git a/src/Runner.PluginHost/Runner.PluginHost.csproj b/src/Runner.PluginHost/Runner.PluginHost.csproj
 index 81a8d2e4..d50bf39b 100644
 --- a/src/Runner.PluginHost/Runner.PluginHost.csproj
@@ -232,24 +167,6 @@ index 81a8d2e4..d50bf39b 100644
      <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
      <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
      <Version>$(Version)</Version>
-diff --git a/src/Runner.Plugins/Artifact/FileContainerServer.cs b/src/Runner.Plugins/Artifact/FileContainerServer.cs
-index d924ae59..18120a28 100644
---- a/src/Runner.Plugins/Artifact/FileContainerServer.cs
-+++ b/src/Runner.Plugins/Artifact/FileContainerServer.cs
-@@ -18,10 +18,10 @@ namespace GitHub.Runner.Plugins.Artifact
- {
-     public class FileContainerServer
-     {
--        private const int _defaultFileStreamBufferSize = 4096;
-+        private const int _defaultFileStreamBufferSize = 65536;
- 
--        //81920 is the default used by System.IO.Stream.CopyTo and is under the large object heap threshold (85k). 
--        private const int _defaultCopyBufferSize = 81920;
-+        //1310720 is the default used by System.IO.Stream.CopyTo and is under the large object heap threshold (85k). 
-+        private const int _defaultCopyBufferSize = 1310720;
- 
-         private readonly ConcurrentQueue<string> _fileUploadQueue = new();
-         private readonly ConcurrentQueue<DownloadInfo> _fileDownloadQueue = new();
 diff --git a/src/Runner.Plugins/Runner.Plugins.csproj b/src/Runner.Plugins/Runner.Plugins.csproj
 index a786cf1c..1a7cf064 100644
 --- a/src/Runner.Plugins/Runner.Plugins.csproj
@@ -278,37 +195,6 @@ index 55dbf126..63a90f92 100644
      <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
      <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
      <Version>$(Version)</Version>
-diff --git a/src/Runner.Worker/ActionManager.cs b/src/Runner.Worker/ActionManager.cs
-index 47a66dd1..2186fc6e 100644
---- a/src/Runner.Worker/ActionManager.cs
-+++ b/src/Runner.Worker/ActionManager.cs
-@@ -49,10 +49,10 @@ namespace GitHub.Runner.Worker
- 
-     public sealed class ActionManager : RunnerService, IActionManager
-     {
--        private const int _defaultFileStreamBufferSize = 4096;
-+        private const int _defaultFileStreamBufferSize = 65536;
- 
--        //81920 is the default used by System.IO.Stream.CopyTo and is under the large object heap threshold (85k).
--        private const int _defaultCopyBufferSize = 81920;
-+        //1310720 is the default used by System.IO.Stream.CopyTo and is under the large object heap threshold (85k).
-+        private const int _defaultCopyBufferSize = 1310720;
- 
-         private readonly Dictionary<Guid, ContainerInfo> _cachedActionContainers = new();
-         public Dictionary<Guid, ContainerInfo> CachedActionContainers => _cachedActionContainers;
-diff --git a/src/Runner.Worker/ExecutionContext.cs b/src/Runner.Worker/ExecutionContext.cs
-index dfe92523..9ba74452 100644
---- a/src/Runner.Worker/ExecutionContext.cs
-+++ b/src/Runner.Worker/ExecutionContext.cs
-@@ -129,7 +129,7 @@ namespace GitHub.Runner.Worker
-     {
-         private const int _maxCountPerIssueType = 10;
-         private const int _throttlingDelayReportThreshold = 10 * 1000; // Don't report throttling with less than 10 seconds delay
--        private const int _maxIssueMessageLength = 4096; // Don't send issue with huge message since we can't forward them from actions to check annotation.
-+        private const int _maxIssueMessageLength = 65536; // Don't send issue with huge message since we can't forward them from actions to check annotation.
-         private const int _maxIssueCountInTelemetry = 3; // Only send the first 3 issues to telemetry
-         private const int _maxIssueMessageLengthInTelemetry = 256; // Only send the first 256 characters of issue message to telemetry
- 
 diff --git a/src/Runner.Worker/Runner.Worker.csproj b/src/Runner.Worker/Runner.Worker.csproj
 index 53c1610d..b41f0295 100644
 --- a/src/Runner.Worker/Runner.Worker.csproj
@@ -323,19 +209,6 @@ index 53c1610d..b41f0295 100644
      <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
      <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
      <Version>$(Version)</Version>
-diff --git a/src/Sdk/Common/Common/Utility/HashAlgorithmExtensions.cs b/src/Sdk/Common/Common/Utility/HashAlgorithmExtensions.cs
-index dce4e07e..6bb58bcb 100644
---- a/src/Sdk/Common/Common/Utility/HashAlgorithmExtensions.cs
-+++ b/src/Sdk/Common/Common/Utility/HashAlgorithmExtensions.cs
-@@ -9,7 +9,7 @@ namespace GitHub.Services.Common
-     {
-         public static async Task<byte[]> ComputeHashAsync(this HashAlgorithm hashAlg, Stream inputStream)
-         {
--            byte[] buffer = new byte[4096];
-+            byte[] buffer = new byte[65536];
- 
-             while (true)
-             {
 diff --git a/src/Sdk/Sdk.csproj b/src/Sdk/Sdk.csproj
 index 5f2c3fd5..dcf15d88 100644
 --- a/src/Sdk/Sdk.csproj
@@ -353,18 +226,9 @@ index 5f2c3fd5..dcf15d88 100644
          <NoWarn>NU1701;NU1603;SYSLIB0050;SYSLIB0051</NoWarn>
          <Version>$(Version)</Version>
 diff --git a/src/Sdk/WebApi/WebApi/ResultsHttpClient.cs b/src/Sdk/WebApi/WebApi/ResultsHttpClient.cs
-index d206306f..bf252696 100644
+index d206306f..49230891 100644
 --- a/src/Sdk/WebApi/WebApi/ResultsHttpClient.cs
 +++ b/src/Sdk/WebApi/WebApi/ResultsHttpClient.cs
-@@ -411,7 +411,7 @@ namespace GitHub.Services.Results.Client
-             }
- 
-             // Upload the file
--            using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
-+            using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 65536, true))
-             {
-                 await UploadBlockFileAsync(uploadUrlResponse.SummaryUrl, uploadUrlResponse.BlobStorageType, fileStream, cancellationToken);
-             }
 @@ -426,7 +426,7 @@ namespace GitHub.Services.Results.Client
              if (firstBlock && finalize)
              {
@@ -431,23 +295,6 @@ index 5115a6bb..001dd486 100644
  using System;
  using System.Collections.Generic;
  using System.IO;
-diff --git a/src/Test/L0/Worker/ExecutionContextL0.cs b/src/Test/L0/Worker/ExecutionContextL0.cs
-index 7357212d..9fb0b3cc 100644
---- a/src/Test/L0/Worker/ExecutionContextL0.cs
-+++ b/src/Test/L0/Worker/ExecutionContextL0.cs
-@@ -198,9 +198,9 @@ namespace GitHub.Runner.Common.Tests.Worker
-                 ec.Complete();
- 
-                 // Assert.
--                jobServerQueue.Verify(x => x.QueueTimelineRecordUpdate(It.IsAny<Guid>(), It.Is<TimelineRecord>(t => t.Issues.Where(i => i.Type == IssueType.Error).Single().Message.Length <= 4096)), Times.AtLeastOnce);
--                jobServerQueue.Verify(x => x.QueueTimelineRecordUpdate(It.IsAny<Guid>(), It.Is<TimelineRecord>(t => t.Issues.Where(i => i.Type == IssueType.Warning).Single().Message.Length <= 4096)), Times.AtLeastOnce);
--                jobServerQueue.Verify(x => x.QueueTimelineRecordUpdate(It.IsAny<Guid>(), It.Is<TimelineRecord>(t => t.Issues.Where(i => i.Type == IssueType.Notice).Single().Message.Length <= 4096)), Times.AtLeastOnce);
-+                jobServerQueue.Verify(x => x.QueueTimelineRecordUpdate(It.IsAny<Guid>(), It.Is<TimelineRecord>(t => t.Issues.Where(i => i.Type == IssueType.Error).Single().Message.Length <= 65536)), Times.AtLeastOnce);
-+                jobServerQueue.Verify(x => x.QueueTimelineRecordUpdate(It.IsAny<Guid>(), It.Is<TimelineRecord>(t => t.Issues.Where(i => i.Type == IssueType.Warning).Single().Message.Length <= 65536)), Times.AtLeastOnce);
-+                jobServerQueue.Verify(x => x.QueueTimelineRecordUpdate(It.IsAny<Guid>(), It.Is<TimelineRecord>(t => t.Issues.Where(i => i.Type == IssueType.Notice).Single().Message.Length <= 65536)), Times.AtLeastOnce);
-             }
-         }
- 
 diff --git a/src/Test/L0/Worker/StepHostL0.cs b/src/Test/L0/Worker/StepHostL0.cs
 index 47a5d334..cb2fbbc3 100644
 --- a/src/Test/L0/Worker/StepHostL0.cs
