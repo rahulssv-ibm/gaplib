@@ -1,5 +1,5 @@
 diff --git a/src/Directory.Build.props b/src/Directory.Build.props
-index 9db5fac..277ca63 100644
+index 9c069b12..c11d7d5f 100644
 --- a/src/Directory.Build.props
 +++ b/src/Directory.Build.props
 @@ -44,6 +44,13 @@
@@ -17,7 +17,7 @@ index 9db5fac..277ca63 100644
    <!-- Set TRACE/DEBUG vars -->
    <PropertyGroup>
 diff --git a/src/Misc/externals.sh b/src/Misc/externals.sh
-index 2a0db24..3f00e12 100755
+index 9523a796..bf183839 100755
 --- a/src/Misc/externals.sh
 +++ b/src/Misc/externals.sh
 @@ -177,3 +177,11 @@ fi
@@ -33,7 +33,7 @@ index 2a0db24..3f00e12 100755
 +    acquireExternalTool "$NODE_URL/v${NODE20_VERSION}/node-v${NODE20_VERSION}-linux-ppc64le.tar.gz" node20 fix_nested_dir
 +fi
 diff --git a/src/Misc/layoutroot/config.sh b/src/Misc/layoutroot/config.sh
-index 14cc6ba..92eecfe 100755
+index 14cc6bab..5d319ca1 100755
 --- a/src/Misc/layoutroot/config.sh
 +++ b/src/Misc/layoutroot/config.sh
 @@ -20,25 +20,28 @@ then
@@ -83,10 +83,10 @@ index 14cc6ba..92eecfe 100755
  
      if ! [ -x "$(command -v ldconfig)" ]; then
 diff --git a/src/Runner.Common/Constants.cs b/src/Runner.Common/Constants.cs
-index 2c20d1b..d795f22 100644
+index 041b5be9..af2f4d45 100644
 --- a/src/Runner.Common/Constants.cs
 +++ b/src/Runner.Common/Constants.cs
-@@ -58,7 +58,9 @@ namespace GitHub.Runner.Common
+@@ -59,7 +59,9 @@ namespace GitHub.Runner.Common
              X86,
              X64,
              Arm,
@@ -97,7 +97,7 @@ index 2c20d1b..d795f22 100644
          }
  
          public static class Runner
-@@ -81,6 +83,10 @@ namespace GitHub.Runner.Common
+@@ -82,6 +84,10 @@ namespace GitHub.Runner.Common
              public static readonly Architecture PlatformArchitecture = Architecture.Arm;
  #elif ARM64
              public static readonly Architecture PlatformArchitecture = Architecture.Arm64;
@@ -109,7 +109,7 @@ index 2c20d1b..d795f22 100644
              public static readonly Architecture PlatformArchitecture = Architecture.X64;
  #endif
 diff --git a/src/Runner.Common/Runner.Common.csproj b/src/Runner.Common/Runner.Common.csproj
-index 6c46356..e2796ff 100644
+index 6c463562..e2796ffa 100644
 --- a/src/Runner.Common/Runner.Common.csproj
 +++ b/src/Runner.Common/Runner.Common.csproj
 @@ -7,6 +7,9 @@
@@ -123,7 +123,7 @@ index 6c46356..e2796ff 100644
  
    <ItemGroup>
 diff --git a/src/Runner.Common/Util/VarUtil.cs b/src/Runner.Common/Util/VarUtil.cs
-index 97273a1..f9704d6 100644
+index 97273a1a..d7d56637 100644
 --- a/src/Runner.Common/Util/VarUtil.cs
 +++ b/src/Runner.Common/Util/VarUtil.cs
 @@ -53,6 +53,10 @@ namespace GitHub.Runner.Common.Util
@@ -138,7 +138,7 @@ index 97273a1..f9704d6 100644
                          throw new NotSupportedException(); // Should never reach here.
                  }
 diff --git a/src/Runner.Listener/Runner.Listener.csproj b/src/Runner.Listener/Runner.Listener.csproj
-index afd5281..ecc1c74 100644
+index afd52812..ecc1c74d 100644
 --- a/src/Runner.Listener/Runner.Listener.csproj
 +++ b/src/Runner.Listener/Runner.Listener.csproj
 @@ -10,6 +10,9 @@
@@ -152,7 +152,7 @@ index afd5281..ecc1c74 100644
  
    <ItemGroup>
 diff --git a/src/Runner.Worker/Runner.Worker.csproj b/src/Runner.Worker/Runner.Worker.csproj
-index 53c1610..d338297 100644
+index 53c1610d..d3382973 100644
 --- a/src/Runner.Worker/Runner.Worker.csproj
 +++ b/src/Runner.Worker/Runner.Worker.csproj
 @@ -10,6 +10,9 @@
@@ -166,7 +166,7 @@ index 53c1610..d338297 100644
  
    <ItemGroup>
 diff --git a/src/Sdk/Sdk.csproj b/src/Sdk/Sdk.csproj
-index 7ba7394..59b4c89 100644
+index 41f63ce3..4c8709fd 100644
 --- a/src/Sdk/Sdk.csproj
 +++ b/src/Sdk/Sdk.csproj
 @@ -11,6 +11,9 @@
@@ -180,7 +180,7 @@ index 7ba7394..59b4c89 100644
  
      <ItemGroup>
 diff --git a/src/Test/L0/ConstantGenerationL0.cs b/src/Test/L0/ConstantGenerationL0.cs
-index f3c1b8f..43225f4 100644
+index f3c1b8f9..43225f4b 100644
 --- a/src/Test/L0/ConstantGenerationL0.cs
 +++ b/src/Test/L0/ConstantGenerationL0.cs
 @@ -20,6 +20,8 @@ namespace GitHub.Runner.Common.Tests
@@ -193,7 +193,7 @@ index f3c1b8f..43225f4 100644
                  "osx-arm64"
              };
 diff --git a/src/Test/L0/Listener/SelfUpdaterL0.cs b/src/Test/L0/Listener/SelfUpdaterL0.cs
-index 26ba65e..57de718 100644
+index be095ce9..0dc29521 100644
 --- a/src/Test/L0/Listener/SelfUpdaterL0.cs
 +++ b/src/Test/L0/Listener/SelfUpdaterL0.cs
 @@ -1,4 +1,4 @@
@@ -203,7 +203,7 @@ index 26ba65e..57de718 100644
  using System.Collections.Generic;
  using System.IO;
 diff --git a/src/Test/L0/Listener/SelfUpdaterV2L0.cs b/src/Test/L0/Listener/SelfUpdaterV2L0.cs
-index 5115a6b..15e7ab2 100644
+index 5115a6bb..15e7ab27 100644
 --- a/src/Test/L0/Listener/SelfUpdaterV2L0.cs
 +++ b/src/Test/L0/Listener/SelfUpdaterV2L0.cs
 @@ -1,4 +1,4 @@
@@ -213,7 +213,7 @@ index 5115a6b..15e7ab2 100644
  using System.Collections.Generic;
  using System.IO;
 diff --git a/src/Test/L0/Worker/StepHostL0.cs b/src/Test/L0/Worker/StepHostL0.cs
-index 47a5d33..be0ab5e 100644
+index 47a5d334..be0ab5e8 100644
 --- a/src/Test/L0/Worker/StepHostL0.cs
 +++ b/src/Test/L0/Worker/StepHostL0.cs
 @@ -31,7 +31,7 @@ namespace GitHub.Runner.Common.Tests.Worker
@@ -226,7 +226,7 @@ index 47a5d33..be0ab5e 100644
          [Trait("Level", "L0")]
          [Trait("Category", "Worker")]
 diff --git a/src/dev.sh b/src/dev.sh
-index 795c135..ec9572c 100755
+index 34b428f0..490bcdc1 100755
 --- a/src/dev.sh
 +++ b/src/dev.sh
 @@ -54,6 +54,8 @@ elif [[ "$CURRENT_PLATFORM" == 'linux' ]]; then
@@ -310,7 +310,7 @@ index 795c135..ec9572c 100755
  heading "Dotnet SDK Version"
  dotnet --version
 diff --git a/src/dir.proj b/src/dir.proj
-index 056a312..8370922 100644
+index 056a312e..8370922e 100644
 --- a/src/dir.proj
 +++ b/src/dir.proj
 @@ -41,8 +41,18 @@
@@ -334,3 +334,4 @@ index 056a312..8370922 100644
          <Exec Command="%22$(DesktopMSBuild)%22 Runner.Service/Windows/RunnerService.csproj /p:Configuration=$(BUILDCONFIG) /p:PackageRuntime=$(PackageRuntime) /p:OutputPath=%22$(MSBuildProjectDirectory)/../_layout/bin%22" ConsoleToMSBuild="true" Condition="'$(PackageRuntime)' == 'win-x64' Or '$(PackageRuntime)' == 'win-x86' Or '$(PackageRuntime)' == 'win-arm64'" />
      </Target>
  
+# From upstream commit: c1095ae2d100886a7865f466357f09ef30dec1b9
