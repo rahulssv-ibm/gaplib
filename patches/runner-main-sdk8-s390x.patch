@@ -226,7 +226,7 @@ index 47a5d334..be0ab5e8 100644
          [Trait("Level", "L0")]
          [Trait("Category", "Worker")]
 diff --git a/src/dev.sh b/src/dev.sh
-index 34b428f0..490bcdc1 100755
+index 2a008cbd..b4315c65 100755
 --- a/src/dev.sh
 +++ b/src/dev.sh
 @@ -54,6 +54,8 @@ elif [[ "$CURRENT_PLATFORM" == 'linux' ]]; then
@@ -334,4 +334,4 @@ index 056a312e..8370922e 100644
          <Exec Command="%22$(DesktopMSBuild)%22 Runner.Service/Windows/RunnerService.csproj /p:Configuration=$(BUILDCONFIG) /p:PackageRuntime=$(PackageRuntime) /p:OutputPath=%22$(MSBuildProjectDirectory)/../_layout/bin%22" ConsoleToMSBuild="true" Condition="'$(PackageRuntime)' == 'win-x64' Or '$(PackageRuntime)' == 'win-x86' Or '$(PackageRuntime)' == 'win-arm64'" />
      </Target>
  
-# From upstream commit: 5106d6578ebfd10264bf72cc4c844f60c74a9444
+# From upstream commit: 27d9c886ab9a45e0013cb462529ac85d581f8c41
