@@ -36,7 +36,7 @@ build_runner() {
     ./dev.sh package Release
 
     msg "Running tests"
-    ./dev.sh test Release 
+    ./dev.sh test
 }
 
 install_runner() {
