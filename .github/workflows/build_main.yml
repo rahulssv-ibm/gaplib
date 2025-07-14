@@ -38,13 +38,13 @@ jobs:
           os: macOS-latest
           devScript: ./dev.sh
 
-        - runtime: win-x64
-          os: windows-latest
-          devScript: ./dev
+        # - runtime: win-x64
+        #   os: windows-latest
+        #   devScript: ./dev
 
-        - runtime: win-arm64
-          os: windows-latest
-          devScript: ./dev
+        # - runtime: win-arm64
+        #   os: windows-latest
+        #   devScript: ./dev
 
         - runtime: linux-ppc64le
           os: ubuntu-24.04-ppc64le

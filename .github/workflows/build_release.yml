@@ -38,13 +38,14 @@ jobs:
           os: macOS-latest
           devScript: ./dev.sh
 
-        - runtime: win-x64
-          os: windows-latest
-          devScript: ./dev
+        # Uncomment the following lines if you want to build for Windows (clone is failing)
+        # - runtime: win-x64
+        #   os: windows-latest
+        #   devScript: ./dev
 
-        - runtime: win-arm64
-          os: windows-latest
-          devScript: ./dev
+        # - runtime: win-arm64
+        #   os: windows-latest
+        #   devScript: ./dev
 
         - runtime: linux-ppc64le
           os: ubuntu-24.04-ppc64le
