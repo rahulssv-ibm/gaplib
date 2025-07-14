@@ -347,10 +347,10 @@ index 948d27be..5d6b970d 100755
  heading "Dotnet SDK Version"
  dotnet --version
 diff --git a/src/dir.proj b/src/dir.proj
-index 056a312e..37ff77b7 100644
+index 056a312e..3f9a3679 100644
 --- a/src/dir.proj
 +++ b/src/dir.proj
-@@ -41,14 +41,23 @@
+@@ -41,8 +41,17 @@
      </ItemGroup>
  
      <Target Name="Build" DependsOnTargets="GenerateConstant">
@@ -370,12 +370,4 @@ index 056a312e..37ff77b7 100644
          <Exec Command="%22$(DesktopMSBuild)%22 Runner.Service/Windows/RunnerService.csproj /p:Configuration=$(BUILDCONFIG) /p:PackageRuntime=$(PackageRuntime) /p:OutputPath=%22$(MSBuildProjectDirectory)/../_layout/bin%22" ConsoleToMSBuild="true" Condition="'$(PackageRuntime)' == 'win-x64' Or '$(PackageRuntime)' == 'win-x86' Or '$(PackageRuntime)' == 'win-arm64'" />
      </Target>
  
-     <Target Name="Test" DependsOnTargets="GenerateConstant">
-         <Exec Command="dotnet build Test/Test.csproj -c $(BUILDCONFIG) /p:PackageRuntime=$(PackageRuntime)" ConsoleToMSBuild="true" />
--        <Exec Command="dotnet test Test/Test.csproj -c $(BUILDCONFIG) --no-build --logger:trx" ConsoleToMSBuild="true" />
-+        <Exec Command="dotnet test Test/Test.csproj -c $(BUILDCONFIG) --no-build --logger:trx" ConsoleToMSBuild="true" ContinueOnError="true" />
-     </Target>
- 
-     <Target Name="Layout" DependsOnTargets="Clean;Build">
-
 # From upstream commit: 0d24afa114c2ee4b6451e35f2ba2cb9b96955789

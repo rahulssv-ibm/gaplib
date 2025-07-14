@@ -16,7 +16,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: [ubuntu-24.04-s390x, ubuntu-24.04-ppc64le]
+    runs-on: ubuntu-24.04
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -30,7 +30,7 @@ jobs:
           cd /tmp
           git clone --branch main --depth 2 https://github.com/actions/runner.git
           cd runner
-          git apply --whitespace=nowarn /var/tmp/imagegeneration/runner-sdk-8.patch
+          git apply --whitespace=nowarn --allow-empty /var/tmp/imagegeneration/runner-sdk-8.patch
           sed -i'' -e '/version/s/8......"$/8.0.100"/' src/global.json
       
       - name: Building runner binary
