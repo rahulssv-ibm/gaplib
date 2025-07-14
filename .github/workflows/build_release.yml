@@ -108,9 +108,3 @@ jobs:
           name: runner-package-${{ matrix.runtime }}
           path: |
             /tmp/runner/_package
-      
-      - name: Installing runner
-        run: |
-          mkdir -p /tmp/runner/runner-package-${{ matrix.runtime }}
-          sudo tar -xf /tmp/runner/_package/*.tar.gz -C /tmp/runner/runner-package-${{ matrix.runtime }}
-          sudo /tmp/runner/runner-package-${{ matrix.runtime }}/config.sh --version
