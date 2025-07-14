@@ -15,34 +15,102 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        runtime: [ linux-x64, linux-arm64, linux-arm, win-x64, win-arm64, osx-x64, osx-arm64, linux-ppc64le, linux-s390x ]
+        include:
+        - runtime: linux-x64
+          os: ubuntu-latest
+          devScript: ./dev.sh
+
+        - runtime: linux-arm64
+          os: ubuntu-latest
+          devScript: ./dev.sh
+
+        - runtime: linux-arm
+          os: ubuntu-latest
+          devScript: ./dev.sh
+
+        - runtime: osx-x64
+          os: macOS-latest
+          devScript: ./dev.sh
+
+        - runtime: osx-arm64
+          os: macOS-latest
+          devScript: ./dev.sh
+
+        - runtime: win-x64
+          os: windows-latest
+          devScript: ./dev
+
+        - runtime: win-arm64
+          os: windows-latest
+          devScript: ./dev
+
+        - runtime: linux-ppc64le
+          os: ubuntu-24.04-ppc64le
+          devScript: ./dev.sh
+
+        - runtime: linux-s390x
+          os: ubuntu-24.04-s390x
+          devScript: ./dev.sh
+
+    runs-on: ${{ matrix.os }}
+    # Steps represent a sequence of tasks that will be executed as part of the job
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
       # Runs a single command using the runners shell
-      - name: Cloning repo and Patching runner
+      - name: Cloning repo
+        run: |
+          git clone --tags -q https://github.com/actions/runner.git
+        working-directory: /tmp
+
+      - name: Copy patches
         run: |
           mkdir -p /var/tmp/imagegeneration/
-          cp patches/runner-sdk8-$(uname -m).patch /var/tmp/imagegeneration/runner-sdk-8.patch
-          cd /tmp
-          git clone --tags -q https://github.com/actions/runner.git
-          cd runner
+          cp patches/runner-main-sdk8-$(uname -m).patch /var/tmp/imagegeneration/runner-sdk-8.patch
+        if: matrix.runtime == 'linux-ppc64le' && matrix.runtime == 'linux-s390x' 
+
+      - name: Patching runner
+        run: |
           git checkout $(git tag --sort=-v:refname | grep '^v[0-9]' | head -n1)
           git apply --whitespace=nowarn --allow-empty /var/tmp/imagegeneration/runner-sdk-8.patch
           sed -i'' -e '/version/s/8......"$/8.0.100"/' src/global.json
-      
-      - name: Building runner binary
+        working-directory: /tmp/runner
+        if: matrix.runtime == 'linux-ppc64le' && matrix.runtime == 'linux-s390x' 
+        
+      - name: Build & Layout Release
         run: |
-          cd /tmp/runner/src
-          sudo ./dev.sh layout Release
-          sudo ./dev.sh package Release
-          sudo ./dev.sh test Release
+          ${{ matrix.devScript }} layout Release ${{ matrix.runtime }}
+        working-directory: /tmp/runner/src
+
+      # Run tests
+      - name: L0
+        run: |
+          ${{ matrix.devScript }} test
+        working-directory: /tmp/runner/src
+        if: matrix.runtime != 'linux-arm64' && matrix.runtime != 'linux-arm' && matrix.runtime != 'osx-arm64' && matrix.runtime != 'win-arm64'
+
+      # Create runner package tar.gz/zip
+      - name: Package Release
+        run: |
+          ${{ matrix.devScript }} package Release ${{ matrix.runtime }}
+        working-directory: /tmp/runner/src
+
+      # Upload runner package tar.gz/zip as artifact
+      - name: Publish Artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-package-${{ matrix.runtime }}
+          path: |
+            /tmp/runner/_package
       
       - name: Installing runner
         run: |
-          mkdir -p /opt/runner
-          tar -xf /tmp/runner/_package/*.tar.gz -C /opt/runner
-          /opt/runner/config.sh --version
+          mkdir -p /tmp/runner/runner-package-${{ matrix.runtime }}
+          tar -xf /tmp/runner/_package/*.tar.gz -C /tmp/runner/runner-package-${{ matrix.runtime }}
+          /tmp/runner/runner-package-${{ matrix.runtime }}/config.sh --version
