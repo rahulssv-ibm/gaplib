@@ -44,8 +44,8 @@ ensure_lxd() {
 }
 
 build_image() {
-  
-  local IMAGE_ALIAS="${IMAGE_ALIAS:-${IMAGE_OS}-${IMAGE_VERSION}-${ARCH}}"
+
+  local IMAGE_ALIAS="${IMAGE_ALIAS:-${IMAGE_OS}-${IMAGE_VERSION}-${ARCH}${WORKER_TYPE}${WORKER_CPU}}"
 
   local BUILD_PREREQS_PATH="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
   if [ ! -d "${BUILD_PREREQS_PATH}" ]; then
@@ -107,12 +107,25 @@ build_image() {
 
       # Until we are at lxc >= 5.19 we can't use the --reuse option on the publish command
       # Check and delete the LXC image if it exists
-      msg "Deleting old image"
-      if lxc image list | grep -q "${IMAGE_ALIAS}"; then
-          lxc image delete "${IMAGE_ALIAS}" 2>/dev/null
-          msg "Image ${IMAGE_ALIAS} deleted successfully."
+      msg "Deleting old image (by fingerprint from alias ${IMAGE_ALIAS})"
+      # Check alias exists by querying image info (works for alias or fingerprint)
+      if lxc image info "${IMAGE_ALIAS}" >/dev/null 2>&1; then
+        # Extract fingerprint (the "Fingerprint:" line)
+        FINGERPRINT=$(lxc image info "${IMAGE_ALIAS}" | awk '/^Fingerprint:/ {print $2; exit}')
+        if [ -n "${FINGERPRINT}" ]; then
+            msg "Found fingerprint ${FINGERPRINT} for alias ${IMAGE_ALIAS}. Deleting image ${FINGERPRINT}..."
+            if lxc image delete "${FINGERPRINT}" 2>/dev/null; then
+                msg "Image (fingerprint ${FINGERPRINT}) deleted successfully."
+            else
+                msg "Failed to delete image with fingerprint ${FINGERPRINT} — you may need elevated privileges or the image may have already been removed."
+                exit 1
+            fi
+        else
+            msg "Could not determine fingerprint for alias ${IMAGE_ALIAS}."
+            exit 1
+        fi
       else
-          msg "No existing image with alias ${IMAGE_ALIAS} found."
+        msg "No existing image/alias named ${IMAGE_ALIAS} found."
       fi
 
       msg "Runner build complete. Creating image snapshot."
