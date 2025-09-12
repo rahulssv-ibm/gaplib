@@ -37,10 +37,15 @@ run_setup() {
     
     # Use an array for safer argument passing
     local script_args=("${os}" "${version}" "${worker_arg}" "${arch_arg}" "${setup_type}")
-    
-    printf -v cmd_str " '%s'" "${script_args[@]}"
-    # The 'sh -c' command expects a single string. The first argument after the string is $0 for the new shell.
-    sudo sh -c ". 'scripts/${env}.sh'${cmd_str}"
+
+    # The script to be run inside the new shell.
+    # It sources the target script and passes along all of its own arguments ("$@").
+    local inner_script=". 'scripts/${env}.sh' \"\$@\""
+
+    # Execute using sudo bash -c.
+    # The first argument after the script string ('bash') becomes $0 inside the new shell.
+    # The subsequent arguments ("${script_args[@]}") become $1, $2, $3, etc.
+    sudo bash -c "${inner_script}" bash "${script_args[@]}"
 }
 
 

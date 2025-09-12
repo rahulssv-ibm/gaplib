@@ -38,6 +38,6 @@ msg "Copy the gha-service unit file into gha-builder"
 cp -r ${BUILD_PREREQS_PATH}/assets/gha-runner.service "/etc/systemd/system/gha-runner.service"
 chmod -R 0755 /etc/systemd/system/gha-runner.service
 
-sudo sh -c 'id -u runner >/dev/null 2>&1 || (useradd -c "Action Runner" -m runner && usermod -L runner && echo "runner  ALL=(ALL)       NOPASSWD: ALL" >/etc/sudoers.d/runner)'
+sudo bash -c 'id -u runner >/dev/null 2>&1 || (useradd -c "Action Runner" -m runner && usermod -L runner && echo "runner  ALL=(ALL)       NOPASSWD: ALL" >/etc/sudoers.d/runner)'
 
-sudo sh -c "${HELPER_SCRIPTS}/setup_install.sh ${IMAGE_OS} ${IMAGE_VERSION} ${SETUP}"
+sudo bash -c "${HELPER_SCRIPTS}/setup_install.sh ${IMAGE_OS} ${IMAGE_VERSION} ${SETUP}"

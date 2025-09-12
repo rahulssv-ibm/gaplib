@@ -21,5 +21,5 @@ run_script() {
 
     # Print and execute the script with the environment variables
     echo "Executing: $script_path with environment variables: $env_vars_string"
-    sudo sh -c "${env_vars_string} ${script_path}"
+    sudo bash -c "${env_vars_string} ${script_path}"
 }
