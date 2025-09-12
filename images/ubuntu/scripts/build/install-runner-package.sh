@@ -10,7 +10,7 @@ SRC=$(readlink -f "${BASH_SOURCE[0]}")
 DIR=$(dirname "${SRC}")
 
 if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" || "$ARCH" == "x86_64" ]]; then 
-    sudo sh -c "${DIR}/configure-runner.sh"
+    sudo bash -c "${DIR}/configure-runner.sh"
 # else
 #     # Download the runner package
 #     download_url=$(resolve_github_release_asset_url "actions/runner" 'test("actions-runner-linux-x64-[0-9]+\\.[0-9]+\\.[0-9]+\\.tar\\.gz$")' "latest")

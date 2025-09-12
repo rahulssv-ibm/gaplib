@@ -10,7 +10,7 @@ source $HELPER_SCRIPTS/os.sh
 export RUSTUP_HOME=/etc/skel/.rustup
 export CARGO_HOME=/etc/skel/.cargo
 
-curl -fsSL https://sh.rustup.rs | sh -s -- -y --default-toolchain=stable --profile=minimal
+curl -fsSL https://sh.rustup.rs | bash -s -- -y --default-toolchain=stable --profile=minimal
 
 # Initialize environment variables
 source $CARGO_HOME/env

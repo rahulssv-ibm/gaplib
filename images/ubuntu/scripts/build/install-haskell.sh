@@ -23,7 +23,7 @@ else
     set_etc_environment_variable "GHCUP_INSTALL_BASE_PREFIX" $GHCUP_INSTALL_BASE_PREFIX
 
     # Install GHCup
-    curl --proto '=https' --tlsv1.2 -fsSL https://get-ghcup.haskell.org | sh > /dev/null 2>&1 || true
+    curl --proto '=https' --tlsv1.2 -fsSL https://get-ghcup.haskell.org | bash > /dev/null 2>&1 || true
     export PATH="$ghcup_bin:$PATH"
     prepend_etc_environment_path $ghcup_bin
 

@@ -44,6 +44,7 @@ ensure_lxd() {
 }
 
 build_image() {
+  set -e
 
   local IMAGE_ALIAS="${IMAGE_ALIAS:-${IMAGE_OS}-${IMAGE_VERSION}-${ARCH}${WORKER_TYPE}${WORKER_CPU}}"
 
@@ -56,14 +57,26 @@ build_image() {
   local BUILD_CONTAINER
   BUILD_CONTAINER="gha-builder-$(date +%s)"
 
-  msg "Launching build container ${LXD_CONTAINER}"
-  lxc launch "${LXD_CONTAINER}" "${BUILD_CONTAINER}" 
+  # Trap INT (Ctrl+C), TERM (kill), and EXIT signals to guarantee cleanup.
+  trap "{
+      msg \"Signal caught! Executing cleanup for container ${BUILD_CONTAINER}...\"
+      # Check if the container still exists before trying to stop it.
+      if lxc info \"${BUILD_CONTAINER}\" &>/dev/null; then
+          msg \"Stopping container ${BUILD_CONTAINER} to trigger deletion...\"
+          lxc stop -f \"${BUILD_CONTAINER}\"
+      else
+          msg \"Container ${BUILD_CONTAINER} already gone.\"
+      fi
+  }" INT TERM EXIT
+
+  msg "Launching ephemeral build container ${BUILD_CONTAINER} from image ${LXD_CONTAINER}"
+  lxc launch "${LXD_CONTAINER}" "${BUILD_CONTAINER}" --ephemeral
   lxc ls
-  
+
   # give container some time to wake up and remap the filesystem
   for ((i = 0; i < 90; i++))
   do
-      CHECK=`lxc exec ${BUILD_CONTAINER} -- stat ${BUILD_HOME} 2>/dev/null`
+      CHECK=$(lxc exec ${BUILD_CONTAINER} -- stat ${BUILD_HOME} 2>/dev/null || true)
       if [ -n "${CHECK}" ]; then
           break
       fi
@@ -72,10 +85,9 @@ build_image() {
 
   if [ -z "${CHECK}" ]; then
       msg "Unable to start the build container" >&2
-      lxc delete -f ${BUILD_CONTAINER}
       return 2
   fi
-  
+
   msg "Copy the ${image_folder} contents into the gha-builder"
   lxc file push "${image_folder}" "${BUILD_CONTAINER}/var/tmp/" --recursive
   lxc exec ${BUILD_CONTAINER} ls /tmp
@@ -85,7 +97,7 @@ build_image() {
  
   msg "Copy the /etc/rc.local - required in case podman is used"
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/assets/rc.local "${BUILD_CONTAINER}/etc/rc.local"
-   
+    
   msg "Copy the gha-service unit file into gha-builder"
   lxc file push ${BUILD_PREREQS_PATH}/assets/gha-runner.service "${BUILD_CONTAINER}/etc/systemd/system/gha-runner.service"
 
@@ -94,61 +106,53 @@ build_image() {
   lxc file push --mode 0644 "${BUILD_PREREQS_PATH}/assets/01-nodoc" "${BUILD_CONTAINER}/etc/dpkg/dpkg.cfg.d/01-nodoc"
 
   msg "Setting user runner with sudo privileges"
-  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c "useradd -c 'Action Runner' -m -s /bin/bash runner && usermod -L runner && echo 'runner ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/runner && chmod 440 /etc/sudoers.d/runner"
-  
+  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- bash -c "useradd -c 'Action Runner' -m -s /bin/bash runner && usermod -L runner && echo 'runner ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/runner && chmod 440 /etc/sudoers.d/runner"
+
   msg "Running build-image.sh"
-  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- sh -c  "${helper_script_folder}/setup_install.sh ${IMAGE_OS} ${IMAGE_VERSION} ${SETUP}"
-  RC=$?
-
-  if [ ${RC} -eq 0 ]; then
-      msg "Clearing APT cache"
-      lxc exec "${BUILD_CONTAINER}" -- apt-get -y -qq clean
-      lxc exec "${BUILD_CONTAINER}" -- rm -rf ${image_folder}
-
-      # Until we are at lxc >= 5.19 we can't use the --reuse option on the publish command
-      # Check and delete the LXC image if it exists
-      msg "Deleting old image (by fingerprint from alias ${IMAGE_ALIAS})"
-      # Check alias exists by querying image info (works for alias or fingerprint)
-      if lxc image info "${IMAGE_ALIAS}" >/dev/null 2>&1; then
-        # Extract fingerprint (the "Fingerprint:" line)
-        FINGERPRINT=$(lxc image info "${IMAGE_ALIAS}" | awk '/^Fingerprint:/ {print $2; exit}')
-        if [ -n "${FINGERPRINT}" ]; then
-            msg "Found fingerprint ${FINGERPRINT} for alias ${IMAGE_ALIAS}. Deleting image ${FINGERPRINT}..."
-            if lxc image delete "${FINGERPRINT}" 2>/dev/null; then
-                msg "Image (fingerprint ${FINGERPRINT}) deleted successfully."
-            else
-                msg "Failed to delete image with fingerprint ${FINGERPRINT} — you may need elevated privileges or the image may have already been removed."
-                exit 1
-            fi
-        else
-            msg "Could not determine fingerprint for alias ${IMAGE_ALIAS}."
-            exit 1
-        fi
-      else
-        msg "No existing image/alias named ${IMAGE_ALIAS} found."
-      fi
-
-      msg "Runner build complete. Creating image snapshot."
-      lxc snapshot "${BUILD_CONTAINER}" "build-snapshot"
-      lxc publish "${BUILD_CONTAINER}/build-snapshot" -f --alias "${IMAGE_ALIAS}" \
-            --compression none \
-            description="GitHub Actions ${IMAGE_OS} ${IMAGE_VERSION} Runner for ${ARCH}" \
-            --property build.commit="${BUILD_SHA}" \
-            --property build.date="${BUILD_DATE}"
+  if ! lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- \
+      bash -c 'exec "$@"' _ "${helper_script_folder}/setup_install.sh" "${IMAGE_OS}" "${IMAGE_VERSION}" "${WORKER_TYPE}" "${WORKER_CPU}" "${SETUP}"; then
+      
+      msg "!!! The installation script inside the container failed. Triggering cleanup. !!!" >&2
+      return 1 # Exit with an error code to trigger the trap and signal failure
+  fi
   
-      msg "Export the image to ${EXPORT} for use elsewhere"
-      lxc image export "${IMAGE_ALIAS}" ${EXPORT}
+  msg "Clearing APT cache"
+  lxc exec "${BUILD_CONTAINER}" -- apt-get -y -qq clean
+  lxc exec "${BUILD_CONTAINER}" -- rm -rf ${image_folder}
 
-      msg "Priming the filesystem by launching the newly built container"
-      lxc launch "${IMAGE_ALIAS}" "primer"
-      lxc rm -f primer
+  msg "Deleting old image (by fingerprint from alias ${IMAGE_ALIAS})"
+  if lxc image info "${IMAGE_ALIAS}" >/dev/null 2>&1; then
+    FINGERPRINT=$(lxc image info "${IMAGE_ALIAS}" | awk '/^Fingerprint:/ {print $2; exit}')
+    if [ -n "${FINGERPRINT}" ]; then
+        msg "Found fingerprint ${FINGERPRINT} for alias ${IMAGE_ALIAS}. Deleting image ${FINGERPRINT}..."
+        lxc image delete "${FINGERPRINT}"
+        msg "Image (fingerprint ${FINGERPRINT}) deleted successfully."
+    else
+        msg "Could not determine fingerprint for alias ${IMAGE_ALIAS}." >&2
+        exit 1
+    fi
   else
-      msg "Build process failed with RC: ${RC} - review log to determine cause of failure" >&2
+    msg "No existing image/alias named ${IMAGE_ALIAS} found."
   fi
 
-  lxc delete -f "${BUILD_CONTAINER}"
+  msg "Runner build complete. Creating image snapshot."
+  lxc snapshot "${BUILD_CONTAINER}" "build-snapshot"
+  lxc publish "${BUILD_CONTAINER}/build-snapshot" -f --alias "${IMAGE_ALIAS}" \
+            --compression none \
+            description="GitHub Actions ${IMAGE_OS} ${IMAGE_VERSION} Runner for ${ARCH}" \
+            properties.build.commit="${BUILD_SHA}" \
+            properties.build.date="${BUILD_DATE}"
+ 
+  msg "Export the image to ${EXPORT} for use elsewhere"
+  lxc image export "${IMAGE_ALIAS}" ${EXPORT}
 
-  return ${RC}
+  msg "Priming the filesystem by launching the newly built container"
+  lxc launch "${IMAGE_ALIAS}" "primer"
+  lxc rm -f primer
+  
+  # Before exiting successfully, clear the trap so it doesn't run again on the main script's exit.
+  trap - INT TERM EXIT
+  return 0
 }
 
 run() {
