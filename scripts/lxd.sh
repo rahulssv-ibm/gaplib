@@ -152,6 +152,7 @@ build_image() {
   
   # Before exiting successfully, clear the trap so it doesn't run again on the main script's exit.
   trap - INT TERM EXIT
+  lxc delete -f "${BUILD_CONTAINER}"
   return 0
 }
 
