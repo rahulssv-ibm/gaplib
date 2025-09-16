@@ -22,8 +22,8 @@ RUN     cd /tmp && \
         sed -i'' -e /version/s/8......\"$/8.0.100\"/ src/global.json
 
 RUN     cd /tmp/runner/src && \
-        ./dev.sh layout && \
-        ./dev.sh package && \
+        ./dev.sh layout Release && \
+        ./dev.sh package Release && \
         ./dev.sh test && \
         rm -rf /root/.dotnet /root/.nuget
 
