@@ -90,7 +90,7 @@ build_image() {
 
   msg "Copy the ${image_folder} contents into the gha-builder"
   lxc file push "${image_folder}" "${BUILD_CONTAINER}/var/tmp/" --recursive
-  lxc exec ${BUILD_CONTAINER} ls /tmp
+  lxc exec ${BUILD_CONTAINER} ls ${image_folder}
 
   msg "Copy the register-runner.sh script into gha-builder"
   lxc file push --mode 0755 ${BUILD_PREREQS_PATH}/helpers/register-runner.sh "${BUILD_CONTAINER}/opt/register-runner.sh"
