@@ -6,7 +6,7 @@
 source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/os.sh
 
-mv -f /var/tmp/imagegeneration/post-generation /opt
+mv -f "${IMAGE_FOLDER}/post-generation" /opt
 
 echo "chmod -R 777 /opt"
 chmod -R 777 /opt
