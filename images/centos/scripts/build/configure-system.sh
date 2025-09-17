@@ -9,7 +9,7 @@ source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/os.sh
 
 # Move post-generation files to /opt
-mv -f /imagegeneration/post-generation /opt
+mv -f "${IMAGE_FOLDER}/post-generation" /opt
 
 # Adjust permissions
 echo "chmod -R 777 /opt"

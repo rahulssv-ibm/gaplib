@@ -20,7 +20,7 @@ patch_runner() {
     git clone --tags -q "${RUNNERREPO}"
     cd runner
     git checkout $(git tag --sort=-v:refname | grep '^v[0-9]' | head -n1)
-    git apply --whitespace=nowarn /var/tmp/imagegeneration/runner-sdk-8.patch
+    git apply --whitespace=nowarn ${IMAGE_FOLDER}/runner-sdk-8.patch
     sed -i'' -e '/version/s/8......"$/8.0.100"/' src/global.json
 }
 
@@ -58,7 +58,7 @@ pre_cleanup() {
 }
 
 post_cleanup() {
-    sudo rm -rf /var/tmp/imagegeneration/runner-sdk-8.patch \
+    sudo rm -rf ${IMAGE_FOLDER}/runner-sdk-8.patch \
            /tmp/preseed-yaml /home/ubuntu/.nuget \
            /home/runner/.local/share
 }
