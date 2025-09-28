@@ -116,6 +116,9 @@ build_image() {
       return 1 # Exit with an error code to trigger the trap and signal failure
   fi
   
+  msg "Adding runner user to required groups"
+  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- bash -c "usermod -aG adm,users,systemd-journal,docker runner"
+
   msg "Clearing APT cache"
   lxc exec "${BUILD_CONTAINER}" -- apt-get -y -qq clean
   lxc exec "${BUILD_CONTAINER}" -- rm -rf ${image_folder}
