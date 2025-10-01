@@ -1,8 +1,6 @@
-# **DISCLAIMER**:
-
-This repository is now archived in-favor of https://github.com/ppc64le/gaplib. Please use that to be on the latest runner images. Thank you!
-
 # **GapLib**
+
+Github Actions on Power LXD Image Builder
 
 GapLib is a robust collection of setup scripts for configuring custom GitHub Actions runners. These scripts are designed to seamlessly adapt to updates in `actions/runner`, ensuring compatibility and optimal performance across diverse environments, including **VM (host machine)**, **LXD**, **Docker**, and **Podman**.
 
