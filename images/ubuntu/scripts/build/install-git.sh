@@ -3,6 +3,7 @@
 ##  File:  install-git.sh
 ##  Desc:  Install Git and Git-FTP
 ################################################################################
+
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 

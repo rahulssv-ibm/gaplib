@@ -3,6 +3,7 @@
 ##  File:  configure-environment.sh
 ##  Desc:  Configure system and environment
 ################################################################################
+
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/etc-environment.sh
@@ -33,11 +34,6 @@ set_etc_environment_variable "AGENT_TOOLSDIRECTORY" "${AGENT_TOOLSDIRECTORY}"
 set_etc_environment_variable "RUNNER_TOOL_CACHE" "${AGENT_TOOLSDIRECTORY}"
 chmod -R 777 $AGENT_TOOLSDIRECTORY
 
-# https://github.com/orgs/community/discussions/47563
-echo 'net.ipv6.conf.all.disable_ipv6=1' | tee -a /etc/sysctl.conf
-echo 'net.ipv6.conf.default.disable_ipv6=1' | tee -a /etc/sysctl.conf
-echo 'net.ipv6.conf.lo.disable_ipv6=1' | tee -a /etc/sysctl.conf
-
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html
 # https://www.suse.com/support/kb/doc/?id=000016692
 echo 'vm.max_map_count=262144' | tee -a /etc/sysctl.conf
@@ -60,10 +56,18 @@ echo 'ACTION=="add", SUBSYSTEM=="module", KERNEL=="nf_conntrack", RUN+="/usr/sbi
 if [[ -f /etc/default/motd-news ]]; then
     sed -i 's/ENABLED=1/ENABLED=0/g' /etc/default/motd-news
 fi
+# Remove fwupd if installed. We're running on VMs in Azure and the fwupd package is not needed.
+# Leaving it enable means periodic refreshes show in network traffic and firewall logs
+# Check if fwupd-refresh.timer exists in systemd
+if systemctl list-unit-files fwupd-refresh.timer &>/dev/null; then
+    echo "Masking fwupd-refresh.timer..."
+    systemctl mask fwupd-refresh.timer
+fi
 
+# This is a legacy check, leaving for earlier versions of Ubuntu
+# If fwupd config still exists, disable the motd updates
 if [[ -f "/etc/fwupd/daemon.conf" ]]; then
     sed -i 's/UpdateMotd=true/UpdateMotd=false/g' /etc/fwupd/daemon.conf
-    systemctl mask fwupd-refresh.timer
 fi
 
 # Disable to load providers
