@@ -15,15 +15,10 @@ elif [[ "$ARCH" == "s390x" ]]; then
     # Placeholder for s390x-specific logic
     echo "No actions defined for s390x architecture."
 else
-    if is_ubuntu20; then
-        toolset_version=$(get_toolset_value '.ocCli.version')
-        download_url="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/$toolset_version/openshift-client-linux-$toolset_version.tar.gz"
-    else 
 
-        # Install the oc CLI
-        download_url="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz"   
-    fi
-
+    # Install the oc CLI
+    download_url="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz"
+    
     archive_path=$(download_with_retry "$download_url")
 
     tar xzf "$archive_path" -C "/usr/local/bin" oc
