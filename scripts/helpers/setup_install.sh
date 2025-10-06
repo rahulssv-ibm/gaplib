@@ -108,7 +108,7 @@ elif [ "$SETUP" == "complete" ]; then
         "install-pulumi.sh"
         "install-ruby.sh"
         "install-rlang.sh"
-        # "install-rust.sh"
+        "install-rust.sh"
         "install-julia.sh"
         "install-selenium.sh"
         "install-terraform.sh"
