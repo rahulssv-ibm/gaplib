@@ -31,7 +31,6 @@ APT::Get::AutomaticRemove "0";
 APT::Get::HideAutoRemove "1";
 EOF
 
-echo "ARCH is $ARCH"
 # Install libicu70 package for Ubuntu 24
 if  is_ubuntu24 && [ "$ARCH" != "ppc64le" ] && [ "$ARCH" != "s390x" ]; then
   wget https://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu70_70.1-2_amd64.deb
