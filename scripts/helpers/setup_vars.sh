@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e  # Exit on any error
+set -a    # Automatically export all variables
 
 # Default environment variable values
 ARCH=${ARCH:-$(uname -m)}
