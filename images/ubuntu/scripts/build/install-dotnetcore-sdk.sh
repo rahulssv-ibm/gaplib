@@ -9,10 +9,10 @@ source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/os.sh
 
-if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
-    echo "Installing dotnet for architecture: $ARCH"
-    install_dpkgs dotnet-sdk-8.0
-else
+# if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
+#     echo "Installing dotnet for architecture: $ARCH"
+#     install_dpkgs dotnet-sdk-8.0
+# else
     dotnet_versions=$(get_toolset_value '.dotnet.versions[]')
     dotnet_tools=$(get_toolset_value '.dotnet.tools[].name')
     
@@ -76,4 +76,4 @@ else
         echo "Installing dotnet tool $dotnet_tool"
         dotnet tool install $dotnet_tool --tool-path '/etc/skel/.dotnet/tools'
     done
-fi
+# fi
