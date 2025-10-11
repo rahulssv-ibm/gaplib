@@ -37,13 +37,12 @@ source $HELPER_SCRIPTS/os.sh
         apt-get install --no-install-recommends libicu74
     fi
     
-    # Install .NET SDKs and Runtimes
-    mkdir -p /usr/share/dotnet
-    
     if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
         echo "Installing dotnet for architecture: $ARCH"
         install_dpkgs dotnet-sdk-8.0
     else
+        # Install .NET SDKs and Runtimes
+        mkdir -p /usr/share/dotnet
         sdks=()
         for version in ${dotnet_versions[@]}; do
             release_url="https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/${version}/releases.json"
@@ -63,10 +62,9 @@ source $HELPER_SCRIPTS/os.sh
             echo "Installing .NET SDK $sdk"
             $install_script_path --version $sdk --install-dir /usr/share/dotnet --no-path
         done
+        ## Dotnet installer doesn't create symlinks to executable or modify PATH
+        ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
     fi
-    
-    ## Dotnet installer doesn't create symlinks to executable or modify PATH
-    ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
     
     set_etc_environment_variable DOTNET_SKIP_FIRST_TIME_EXPERIENCE 1
     set_etc_environment_variable DOTNET_NOLOGO 1
