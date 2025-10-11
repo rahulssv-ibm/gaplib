@@ -51,8 +51,8 @@ SCRIPT_FILES=()
 if [ "$SETUP" == "minimal" ]; then
     # List of scripts to be executed
     SCRIPT_FILES=(
-        "install-dotnetcore-sdk.sh"
-        "install-runner-package.sh"
+        # "install-dotnetcore-sdk.sh"
+        # "install-runner-package.sh"
         # "install-actions-cache.sh"
         # "install-git.sh"
         # "install-git-lfs.sh"
@@ -64,10 +64,10 @@ if [ "$SETUP" == "minimal" ]; then
 elif [ "$SETUP" == "complete" ]; then
     # List of scripts to be executed
     SCRIPT_FILES=(
-        "install-dotnetcore-sdk.sh"
-        "install-runner-package.sh"
+        # "install-dotnetcore-sdk.sh"
+        # "install-runner-package.sh"
         # "install-actions-cache.sh"
-        # "install-azcopy.sh"
+        "install-azcopy.sh"
         # "install-azure-cli.sh"
         # "install-azure-devops-cli.sh"
         # "install-bicep.sh"
