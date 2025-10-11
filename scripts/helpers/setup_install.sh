@@ -68,7 +68,7 @@ elif [ "$SETUP" == "complete" ]; then
         # "install-runner-package.sh"
         # "install-actions-cache.sh"
         # "install-azcopy.sh"
-        "install-azure-cli.sh"
+        # "install-azure-cli.sh"
         # "install-azure-devops-cli.sh"
         # "install-bicep.sh"
         # "install-aliyun-cli.sh"
