@@ -17,8 +17,8 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 # Install dotnet dependencies
 # https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-decision#dependencies
-apt-get update
-apt-get install --no-install-recommends \
+update_dpkgs
+install_dpkgs --no-install-recommends \
     ca-certificates \
     libc6 \
     libgcc-s1 \
@@ -29,11 +29,11 @@ apt-get install --no-install-recommends \
     zlib1g
 
 if is_ubuntu22; then
-    apt-get install --no-install-recommends libicu70
+    install_dpkgs --no-install-recommends libicu70
 fi
 
 if is_ubuntu24; then
-    apt-get install --no-install-recommends libicu74
+    install_dpkgs --no-install-recommends libicu74
 fi
 
 if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
