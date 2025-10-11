@@ -10,12 +10,13 @@ source $HELPER_SCRIPTS/install.sh
 SRC=$(readlink -f "${BASH_SOURCE[0]}")
 DIR=$(dirname "${SRC}")
 
-if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" || "$ARCH" == "x86_64" ]]; then 
+if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
     source "${DIR}/configure-runner.sh"
-    # download_url=$(resolve_github_release_asset_url "actions/runner" 'test("actions-runner-linux-x64-[0-9]+\\.[0-9]{3}\\.[0-9]+\\.tar\\.gz$")' "latest")
-    # archive_name="${download_url##*/}"
-    # archive_path=$(download_with_retry "$download_url")
-    # 
-    # mkdir -p /opt/runner-cache
-    # mv "$archive_path" "/opt/runner-cache/$archive_name"
+else
+    download_url=$(resolve_github_release_asset_url "actions/runner" 'test("actions-runner-linux-x64-[0-9]+\\.[0-9]{3}\\.[0-9]+\\.tar\\.gz$")' "latest")
+    archive_name="${download_url##*/}"
+    archive_path=$(download_with_retry "$download_url")
+    
+    mkdir -p /opt/runner-cache
+    mv "$archive_path" "/opt/runner-cache/$archive_name"
 fi
