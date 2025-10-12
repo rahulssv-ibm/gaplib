@@ -8,15 +8,13 @@
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-if [[ "$ARCH" == "ppc64le" ]]; then 
-    install_dpkgs cmake 
-elif [[ "$ARCH" == "s390x" ]]; then
-    install_dpkgs cmake
+# Test to see if the software in question is already installed, if not install it
+echo "Checking to see if the installer script has already been run"
+if command -v cmake; then
+	echo "cmake is already installed"
 else
-	# Test to see if the software in question is already installed, if not install it
-	echo "Checking to see if the installer script has already been run"
-	if command -v cmake; then
-		echo "cmake is already installed"
+	if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then
+		install_dpkgs cmake 
 	else
 		# Download script to install CMake
 		download_url=$(resolve_github_release_asset_url "Kitware/CMake" "endswith(\"inux-x86_64.sh\")" "latest")
@@ -32,5 +30,4 @@ else
 		&& ./cmakeinstall.sh --prefix=/usr/local --exclude-subdir \
 		&& rm cmakeinstall.sh
 	fi
-
 fi
