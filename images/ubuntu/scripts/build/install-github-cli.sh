@@ -9,12 +9,9 @@
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-if [[ "$ARCH" == "ppc64le" ]]; then 
-    # Placeholder for ppc64le-specific logic
-    echo "No actions defined for ppc64le architecture."
-elif [[ "$ARCH" == "s390x" ]]; then
-    # Placeholder for s390x-specific logic
-    echo "No actions defined for s390x architecture."
+if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then
+    # Placeholder for ARCH-specific logic
+    echo "No actions defined for $ARCH architecture."
 else
     # Download GitHub CLI
     gh_cli_url=$(resolve_github_release_asset_url "cli/cli" "contains(\"linux\") and contains(\"amd64\") and endswith(\".deb\")" "latest")

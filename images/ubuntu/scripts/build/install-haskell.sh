@@ -7,12 +7,9 @@
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/etc-environment.sh
 
-if [[ "$ARCH" == "ppc64le" ]]; then 
-    # Placeholder for ppc64le-specific logic
-    echo "No actions defined for ppc64le architecture."
-elif [[ "$ARCH" == "s390x" ]]; then
-    # Placeholder for s390x-specific logic
-    echo "No actions defined for s390x architecture."
+if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then
+    # Placeholder for ARCH-specific logic
+    echo "No actions defined for $ARCH architecture."
 else
     # Any nonzero value for non-interactive installation
     export BOOTSTRAP_HASKELL_NONINTERACTIVE=1

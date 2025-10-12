@@ -9,12 +9,9 @@
 source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/install.sh
 
-if [[ "$ARCH" == "ppc64le" ]]; then 
-    # Placeholder for ppc64le-specific logic
-    echo "No actions defined for ppc64le architecture."
-elif [[ "$ARCH" == "s390x" ]]; then
-    # Placeholder for s390x-specific logic
-    echo "No actions defined for s390x architecture."
+if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then
+    # Placeholder for ARCH-specific logic
+    echo "No actions defined for $ARCH architecture."
 else
     # Install the Homebrew on Linux
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"

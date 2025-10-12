@@ -8,12 +8,9 @@
 source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/os.sh
 
-if [[ "$ARCH" == "ppc64le" ]]; then 
-    # Placeholder for ppc64le-specific logic
-    echo "No actions defined for ppc64le architecture."
-elif [[ "$ARCH" == "s390x" ]]; then
-    # Placeholder for s390x-specific logic
-    echo "No actions defined for s390x architecture."
+if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
+    # Placeholder for ARCH-specific logic
+    echo "No actions defined for $ARCH architecture."
 else
     # Install libssl1.1 dependency
     if is_ubuntu22; then

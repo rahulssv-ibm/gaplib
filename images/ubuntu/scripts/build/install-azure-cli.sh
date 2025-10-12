@@ -4,12 +4,9 @@
 ##  Desc:  Install Azure CLI (az)
 ################################################################################
 
-if [[ "$ARCH" == "ppc64le" ]]; then 
-    # Placeholder for ppc64le-specific logic
-    echo "No actions defined for ppc64le architecture."
-elif [[ "$ARCH" == "s390x" ]]; then
-    # Placeholder for s390x-specific logic
-    echo "No actions defined for s390x architecture."
+if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then
+    # Placeholder for ARCH-specific logic
+    echo "No actions defined for $ARCH architecture."
 else
     # Install Azure CLI (instructions taken from https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
     curl -fsSL https://aka.ms/InstallAzureCLIDeb | sudo bash
