@@ -208,12 +208,20 @@
             {
                 "plugin": "buildx",
                 "version": "latest",
-                "asset": "linux-amd64"
+                "asset_map": {
+                    "x86_64": "linux-amd64",
+                    "ppc64le": "linux-ppc64le",
+                    "s390x": "linux-s390x"
+                }
             },
             {
                 "plugin": "compose",
-                "version": "2.38.2",
-                "asset": "linux-x86_64"
+                "version": "2.29.0",
+                "asset_map": {
+                    "x86_64": "linux-x86_64",
+                    "ppc64le": "linux-ppc64le",
+                    "s390x": "linux-s390x"
+                }
             }
         ]
     },
