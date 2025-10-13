@@ -49,7 +49,7 @@ SCRIPT_FILES=()
 
 # Define scripts for each setup type
 if [ "$SETUP" == "minimal" ]; then
-    # List of scripts to be executed
+    # List of scripts to be executed for a minimal setup
     SCRIPT_FILES=(
         "install-actions-cache.sh"
         "install-dotnetcore-sdk.sh"
@@ -116,7 +116,7 @@ elif [ "$SETUP" == "complete" ]; then
             "install-zstd.sh"
             "install-ninja.sh"
         )
-    else if [[ "$IMAGE_VERSION" == *"22.04"* ]]; then
+    elif [[ "$IMAGE_VERSION" == *"22.04"* ]]; then
         # List of scripts to be executed
         SCRIPT_FILES=(
             "install-actions-cache.sh"
@@ -182,7 +182,7 @@ elif [ "$SETUP" == "complete" ]; then
             "install-ninja.sh"
         )
     else
-        echo "Invalid IMAGE_VERSION value for complete setup. Please set IMAGE_VERSION to '22.04' or '24.04'."
+        echo "Invalid IMAGE_VERSION value for complete setup. Please set IMAGE_VERSION to contain '22.04' or '24.04'."
         exit 1
     fi
     
