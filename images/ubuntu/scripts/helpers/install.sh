@@ -245,8 +245,6 @@ use_checksum_comparison() {
 ensure_service_is_active() {
     local service="$1"
     # 'systemctl is-active' is quiet and returns 0 if active.
-    # The '||' operator executes the second command only if the first one fails.
-    # 'set -e' ensures the script will exit if 'systemctl restart' fails.
     if ! systemctl is-active --quiet "$service"; then
         echo "Service '$service' is not running. Attempting to start it..."
         systemctl restart "$service"

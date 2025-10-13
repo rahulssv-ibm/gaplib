@@ -9,9 +9,6 @@ source $HELPER_SCRIPTS/install.sh
 echo "Installing LXD version 5.21 using snap..."
 sudo snap install lxd --channel="5.21/stable"
 
-echo "Printing LXD info..."
-lxc info
-
 echo "Checking list of refreshable snaps..."
 sudo snap refresh --list
 
