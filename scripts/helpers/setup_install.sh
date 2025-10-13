@@ -23,11 +23,11 @@ if [[ "$IMAGE_OS" == *"ubuntu"* ]]; then
     # Install Configure apt
     run_script "${INSTALLER_SCRIPT_FOLDER}/configure-apt.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS"
 
-    # run_script "${INSTALLER_SCRIPT_FOLDER}/install-apt-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+    run_script "${INSTALLER_SCRIPT_FOLDER}/install-apt-vital.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 
-    # run_script "${INSTALLER_SCRIPT_FOLDER}/install-apt-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+    run_script "${INSTALLER_SCRIPT_FOLDER}/install-apt-common.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 
-    # run_script "${INSTALLER_SCRIPT_FOLDER}/configure-dpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+    run_script "${INSTALLER_SCRIPT_FOLDER}/configure-dpkg.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 elif [[ "$IMAGE_OS" == *"centos"* ]]; then
     # Add apt wrapper to implement retries
     run_script "${INSTALLER_SCRIPT_FOLDER}/configure-yum-mock.sh"
@@ -186,10 +186,6 @@ elif [ "$SETUP" == "complete" ]; then
         echo "Invalid IMAGE_VERSION value for complete setup. Please set IMAGE_VERSION to contain '22.04' or '24.04'."
         exit 1
     fi
-    
-    run_script "${INSTALLER_SCRIPT_FOLDER}/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
-
-    run_script "${INSTALLER_SCRIPT_FOLDER}/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 else
     echo "Invalid SETUP value. Please set SETUP to 'minimal' or 'complete'."
     exit 1
@@ -202,6 +198,10 @@ for SCRIPT_FILE in "${SCRIPT_FILES[@]}"; do
 done
 
 run_script "${INSTALLER_SCRIPT_FOLDER}/install-docker.sh" "DOCKERHUB_PULL_IMAGES" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+    
+run_script "${INSTALLER_SCRIPT_FOLDER}/install-pipx-packages.sh" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
+
+run_script "${INSTALLER_SCRIPT_FOLDER}/install-homebrew.sh" "DEBIAN_FRONTEND" "HELPER_SCRIPTS" "INSTALLER_SCRIPT_FOLDER" "ARCH"
 
 run_script "${INSTALLER_SCRIPT_FOLDER}/configure-snap.sh" "HELPER_SCRIPTS" "ARCH"
 
