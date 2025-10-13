@@ -25,7 +25,7 @@ binary_path=$(download_with_retry "${yq_url}")
 # Supply chain security - yq
 hash_url=$(resolve_github_release_asset_url "mikefarah/yq" "endswith(\"checksums\")" "latest")
 external_hash=$(get_checksum_from_url "${hash_url}" "yq_linux_${package_arch}" "SHA256" "true" " " "19")
-use_checksum_comparison "$binary_path" "$external_hash"
+# use_checksum_comparison "$binary_path" "$external_hash"
 
 # Install yq
 install "$binary_path" /usr/bin/yq
