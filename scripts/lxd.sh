@@ -118,8 +118,8 @@ build_image() {
   fi
 
   msg "Adding runner user to required groups"
-  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- bash -c "usermod -aG adm,users,systemd-journal,docker runner"
-
+  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- bash -c "usermod -aG adm,users,systemd-journal,docker,lxd runner"
+  
   msg "Clearing APT cache"
   lxc exec "${BUILD_CONTAINER}" -- apt-get -y -qq clean
   lxc exec "${BUILD_CONTAINER}" -- rm -rf ${image_folder}
