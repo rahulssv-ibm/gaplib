@@ -14,11 +14,11 @@ case "$ARCH" in
         install_dpkgs --no-install-recommends pypy
         exit 0
         ;;
-    "s390x")
-        package_arch="$ARCH"
-        ;;
-    "x86_64" | *) # Default to x86_64
+    "x86_64")
         package_arch="x64"
+        ;;
+    "s390x" | *)
+        package_arch="$ARCH"
         ;;
 esac
 

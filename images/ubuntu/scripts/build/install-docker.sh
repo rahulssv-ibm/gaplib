@@ -8,6 +8,16 @@
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
+# Set architecture-specific variables using a case statement for clarity
+case "$ARCH" in
+    "x86_64")
+        package_arch="amd64"
+        ;;
+    *)
+        package_arch="$ARCH"
+        ;;
+esac
+
 REPO_URL="https://download.docker.com/linux/ubuntu"
 GPG_KEY="/usr/share/keyrings/docker.gpg"
 REPO_PATH="/etc/apt/sources.list.d/docker.list"
@@ -90,7 +100,7 @@ fi
 if [[ "$ARCH" != "ppc64le" && "$ARCH" != "s390x" ]]; then 
     # Download amazon-ecr-credential-helper
     aws_latest_release_url="https://api.github.com/repos/awslabs/amazon-ecr-credential-helper/releases/latest"
-    aws_helper_url=$(curl -fsSL "${aws_latest_release_url}" | jq -r '.body' | awk -F'[()]' '/linux-amd64/ {print $2}')
+    aws_helper_url=$(curl -fsSL "${aws_latest_release_url}" | jq -r '.body' | awk -v arch="$package_arch" -F'[()]' '$0 ~ "linux-" arch {print $2}')
     aws_helper_binary_path=$(download_with_retry "$aws_helper_url")
 
     # Supply chain security - amazon-ecr-credential-helper

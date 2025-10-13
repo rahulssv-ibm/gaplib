@@ -9,15 +9,15 @@ source $HELPER_SCRIPTS/install.sh
 
 # Set architecture-specific variables using a case statement for clarity
 case "$ARCH" in
-    "ppc64le")
-        package_arch="$ARCH"
+    "x86_64")
+        package_arch="amd64"
         ;;
     "s390x")
         echo "Packer is not officially available for the s390x architecture."
         exit 0
         ;;
-    "x86_64" | *) # Default to x86_64
-        package_arch="amd64"
+    "ppc64le" | *)
+        package_arch="$ARCH"
         ;;
 esac
 

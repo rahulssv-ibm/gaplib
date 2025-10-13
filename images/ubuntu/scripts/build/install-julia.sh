@@ -17,11 +17,12 @@ case "$ARCH" in
         echo "Julia is not officially available for the s390x architecture."
         exit 0
         ;;
-    "x86_64" | *) # Default to x86_64
-        triplet="x86_64-linux-gnu"
-        tar_arch_suffix="linux-x86_64"
+    "x86_64" | *)
+        triplet="$ARCH-linux-gnu"
+        tar_arch_suffix="linux-$ARCH"
         ;;
 esac
+
 # get the latest julia version
 json=$(curl -fsSL "https://julialang-s3.julialang.org/bin/versions.json")
 julia_version=$(echo $json | jq -r --arg triplet "$triplet" '.[].files[] | select(.triplet==$triplet and (.version | contains("-") | not)).version' | sort -V | tail -n1)

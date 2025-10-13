@@ -18,11 +18,11 @@ create_java_environment_variable() {
             local install_path_pattern="/usr/lib/jvm/temurin-${java_version}-jdk-ppc64el"
             java_version_path="/usr/lib/jvm/temurin-${java_version}-jdk-ppc64el"
             ;;
-        "s390x")
-            local install_path_pattern="/usr/lib/jvm/temurin-${java_version}-jdk-s390x"
-            ;;
-        "x86_64" | *) # Default to x86_64
+        "x86_64")
             local install_path_pattern="/usr/lib/jvm/temurin-${java_version}-jdk-amd64"
+            ;;
+        "s390x" | *)
+            local install_path_pattern="/usr/lib/jvm/temurin-${java_version}-jdk-${ARCH}"
             ;;
     esac
 

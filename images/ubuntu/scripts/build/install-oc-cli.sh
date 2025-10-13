@@ -10,11 +10,11 @@ source $HELPER_SCRIPTS/install.sh
 
 # Set architecture-specific variables using a case statement for clarity
 case "$ARCH" in
-    "ppc64le" | "s390x")
-        package_arch="$ARCH"
-        ;;
-    "x86_64" | *) # Default to x86_64
+    "x86_64")
         package_arch="amd64"
+        ;;
+    "ppc64le" | "s390x" | *)
+        package_arch="$ARCH"
         ;;
 esac
 

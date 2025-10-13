@@ -6,19 +6,25 @@
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/install.sh
 
-if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then
-    # Placeholder for ARCH-specific logic
-    echo "No actions defined for $ARCH architecture."
-else
-    # install R
-    os_label=$(lsb_release -cs)
+# Set architecture-specific variables using a case statement for clarity
+case "$ARCH" in
+    "ppc64le" | "s390x")
+        echo "No actions defined for $ARCH architecture."
+        exit 0
+        ;;
+    *)
+        ;;
+esac
 
-    wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | gpg --dearmor > /usr/share/keyrings/rlang.gpg
-    echo "deb [signed-by=/usr/share/keyrings/rlang.gpg] https://cloud.r-project.org/bin/linux/ubuntu $os_label-cran40/" > /etc/apt/sources.list.d/rlang.list
+# install R
+os_label=$(lsb_release -cs)
 
-    update_dpkgs
-    install_dpkgs r-base
+wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | gpg --dearmor > /usr/share/keyrings/rlang.gpg
+echo "deb [signed-by=/usr/share/keyrings/rlang.gpg] https://cloud.r-project.org/bin/linux/ubuntu $os_label-cran40/" > /etc/apt/sources.list.d/rlang.list
 
-    rm /etc/apt/sources.list.d/rlang.list
-    rm /usr/share/keyrings/rlang.gpg
-fi
+update_dpkgs
+install_dpkgs r-base
+
+rm /etc/apt/sources.list.d/rlang.list
+rm /usr/share/keyrings/rlang.gpg
+
