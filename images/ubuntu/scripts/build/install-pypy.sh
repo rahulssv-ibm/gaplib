@@ -14,10 +14,15 @@ case "$ARCH" in
         install_dpkgs --no-install-recommends pypy
         exit 0
         ;;
+    "s390x")
+        # /tmp/pypy3.9-v7.3.16-s390x/bin/pypy3: error while loading shared libraries: libffi.so.6: cannot open shared object file:
+        echo "No actions defined for $ARCH architecture."
+        exit 0
+        ;;
     "x86_64")
         package_arch="x64"
         ;;
-    "s390x" | *)
+    *)
         package_arch="$ARCH"
         ;;
 esac
