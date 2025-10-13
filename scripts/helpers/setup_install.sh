@@ -62,7 +62,7 @@ if [ "$SETUP" == "minimal" ]; then
         "install-zstd.sh"
     )
 elif [ "$SETUP" == "complete" ]; then
-    if [[ "$IMAGE_VERSION" == *"24.04"* ]]; then
+    if [[ "$IMAGE_VERSION" == "24.04" ]]; then
         # List of scripts to be executed
         SCRIPT_FILES=(
             "install-actions-cache.sh"
@@ -116,7 +116,7 @@ elif [ "$SETUP" == "complete" ]; then
             "install-zstd.sh"
             "install-ninja.sh"
         )
-    elif [[ "$IMAGE_VERSION" == *"22.04"* ]]; then
+    elif [[ "$IMAGE_VERSION" == "22.04" ]]; then
         # List of scripts to be executed
         SCRIPT_FILES=(
             "install-actions-cache.sh"
