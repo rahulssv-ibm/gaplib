@@ -6,15 +6,20 @@
 
 set -e
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/etc-environment.sh
-source $HELPER_SCRIPTS/os.sh
-source $HELPER_SCRIPTS/install.sh
+# shellcheck disable=SC1091
+source "$HELPER_SCRIPTS"/os.sh
+# shellcheck disable=SC1091
+source "$HELPER_SCRIPTS"/install.sh
 
 # Install Python, Python 3, pip, pip3
 install_dpkgs --no-install-recommends python3 python3-dev python3-pip python3-venv
 
 if is_ubuntu24; then
 # Create temporary workaround to allow user to continue using pip
+    # shellcheck disable=SC2024
     sudo cat <<EOF > /etc/pip.conf
 [global]
 break-system-packages = true
@@ -41,4 +46,5 @@ if ! command -v pipx; then
 fi
 
 # Adding this dir to PATH will make installed pip commands are immediately available.
+# shellcheck disable=SC2016
 prepend_etc_environment_path '$HOME/.local/bin'

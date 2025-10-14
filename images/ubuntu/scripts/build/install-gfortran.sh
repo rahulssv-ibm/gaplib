@@ -5,10 +5,13 @@
 ################################################################################
 
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/install.sh
 
 versions=$(get_toolset_value '.gfortran.versions[]')
 
+# shellcheck disable=SC2048
 for version in ${versions[*]}; do
     echo "Installing $version..."
     install_dpkgs $version 

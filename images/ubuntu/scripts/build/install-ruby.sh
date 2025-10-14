@@ -5,6 +5,8 @@
 ################################################################################
 
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
 
@@ -33,6 +35,7 @@ if [[ ! -d $ruby_path ]]; then
     mkdir -p $ruby_path
 fi
 
+# shellcheck disable=SC2068
 for toolset_version in ${toolset_versions[@]}; do
     download_url=$(resolve_github_release_asset_url "ruby/ruby-builder" "test(\"ruby-${toolset_version}-ubuntu-${platform_version}-${arch}.tar.gz\")" "${toolset_version}" "false" "true")
     package_tar_name="${download_url##*/}"

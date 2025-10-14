@@ -6,6 +6,8 @@
 ################################################################################
 
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/install.sh
 
 KOTLIN_ROOT="/usr/share"

@@ -6,6 +6,8 @@
 ################################################################################
 
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/install.sh
 
 # Download zstd
@@ -22,7 +24,9 @@ use_checksum_comparison "$archive_path" "$external_hash"
 install_dpkgs liblz4-dev
 tar xzf "$archive_path" -C /tmp
 
+# shellcheck disable=SC2046
 make -C "/tmp/${release_name}/contrib/pzstd" -j $(nproc) all
+# shellcheck disable=SC2046
 make -C "/tmp/${release_name}" -j $(nproc) zstd-release
 
 for copyprocess in zstd zstdless zstdgrep; do

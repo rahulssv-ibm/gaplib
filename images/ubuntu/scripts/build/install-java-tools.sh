@@ -5,6 +5,8 @@
 ################################################################################
 
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/etc-environment.sh
 
@@ -53,6 +55,7 @@ install_open_jdk() {
     
     java_toolcache_path="${AGENT_TOOLSDIRECTORY}/Java_Temurin-Hotspot_jdk"
 
+    # shellcheck disable=SC2002
     full_java_version=$(cat "${java_version_path}/release" | grep "^SEMANTIC" | cut -d "=" -f 2 | tr -d "\"" | tr "+" "-")
 
     # If there is no semver in java release, then extract java version from -fullversion
@@ -90,11 +93,14 @@ update_dpkgs
 
 # While Ubuntu 24.04 binaries are not released in the Adoptium repo, we will not install Java
 defaultVersion=$(get_toolset_value '.java.default')
+# shellcheck disable=SC2207
 jdkVersionsToInstall=($(get_toolset_value ".java.versions[]"))
 
+# shellcheck disable=SC2068
 for jdkVersionToInstall in ${jdkVersionsToInstall[@]}; do
     install_open_jdk ${jdkVersionToInstall}
 
+    # shellcheck disable=SC2053
     if [[ ${jdkVersionToInstall} == ${defaultVersion} ]]
     then
         create_java_environment_variable ${jdkVersionToInstall} True

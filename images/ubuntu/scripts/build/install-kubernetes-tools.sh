@@ -6,6 +6,8 @@
 ################################################################################
 
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/install.sh
 
 # Set architecture-specific variables using a case statement for clarity
@@ -22,6 +24,7 @@ if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then
     export version="latest"
     install_dpkgs golang
     sudo go install sigs.k8s.io/kind@$version # v0.22.0
+    # shellcheck disable=SC2046
     sudo cp $(sudo go env GOPATH)/bin/kind /usr/local/bin/
     kind version
 else

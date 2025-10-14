@@ -5,6 +5,8 @@
 ################################################################################
 
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/os.sh
 
@@ -27,4 +29,5 @@ fi
 rm -rf ${CARGO_HOME}/registry/*
 
 # Update /etc/environment
+# shellcheck disable=SC2016
 prepend_etc_environment_path '$HOME/.cargo/bin'

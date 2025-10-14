@@ -5,6 +5,8 @@
 ##  Maintainer: #actions-runtime and @TingluoHuang
 ################################################################################
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/etc-environment.sh
 

@@ -3,7 +3,8 @@
 ##  File:  install-lxd.sh
 ##  Desc:  Install lxd
 ################################################################################
-source $HELPER_SCRIPTS/install.sh
+# shellcheck disable=SC1091
+source "$HELPER_SCRIPTS"/install.sh
 
 # Install 5.21 LTS LXD version using snap
 echo "Installing LXD version 5.21 using snap..."
@@ -20,5 +21,6 @@ sudo snap refresh --hold lxd
 
 # Initialize LXD
 echo "Initializing LXD..."
-cat $INSTALLER_SCRIPT_FOLDER/lxd-preseed.yaml | sudo -i lxd init --preseed
+# shellcheck disable=SC2002
+cat "$INSTALLER_SCRIPT_FOLDER"/lxd-preseed.yaml | sudo -i lxd init --preseed
 echo "LXD is ready to use!"

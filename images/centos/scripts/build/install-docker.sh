@@ -5,6 +5,8 @@
 ##  Supply chain security: amazon-ecr-credential-helper - dynamic checksum validation
 ################################################################################
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/install.sh
 
 # Set architecture-specific variables using a case statement for clarity

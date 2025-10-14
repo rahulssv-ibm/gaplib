@@ -5,6 +5,8 @@
 ################################################################################
 
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
 source $HELPER_SCRIPTS/etc-environment.sh
@@ -19,6 +21,7 @@ case "$ARCH" in
         package_arch="amd64"
         ;;
     *)
+        # shellcheck disable=SC2034
         package_arch="$ARCH"
         ;;
 esac
@@ -28,12 +31,16 @@ add_filtered_installation_components() {
     shift
     local tools_array=("$@")
 
+    # shellcheck disable=SC2068
     for item in ${tools_array[@]}; do
         # Take the last argument after splitting string by ';'' and '-''
+        # shellcheck disable=SC2116
         item_version=$(echo "${item##*[-;]}")
 
         # Semver 'comparison'. Add item to components array, if item's version is greater than or equal to minimum version
+        # shellcheck disable=SC2059
         if [[ "$(printf "${minimum_version}\n${item_version}\n" | sort -V | head -n1)" == "$minimum_version" ]]; then
+            # shellcheck disable=SC2206
             components+=($item)
         fi
     done
@@ -61,6 +68,7 @@ mkdir -p ${ANDROID_SDK_ROOT}
 # Download the latest command line tools so that we can accept all of the licenses.
 # See https://developer.android.com/studio/#command-tools
 cmdline_tools_package=$(get_toolset_value '.android."cmdline-tools"')
+# shellcheck disable=SC2154
 if [[ $cmdline_tools_version == "latest" ]]; then
     REPOSITORY_XML_URL="https://dl.google.com/android/repository/repository2-1.xml"
     repository_xml_file=$(download_with_retry "$REPOSITORY_XML_URL")
@@ -94,10 +102,13 @@ fi
 minimum_build_tool_version=$(get_toolset_value '.android.build_tools_min_version')
 minimum_platform_version=$(get_toolset_value '.android.platform_min_version')
 android_ndk_major_default=$(get_toolset_value '.android.ndk.default')
+# shellcheck disable=SC2207
 android_ndk_major_versions=($(get_toolset_value '.android.ndk.versions[]'))
+# shellcheck disable=SC2206
 android_ndk_major_latest=(${android_ndk_major_versions[-1]})
 
 ndk_default_full_version=$(get_full_ndk_version $android_ndk_major_default)
+# shellcheck disable=SC2128
 ndk_latest_full_version=$(get_full_ndk_version $android_ndk_major_latest)
 ANDROID_NDK=${ANDROID_SDK_ROOT}/ndk/${ndk_default_full_version}
 # ANDROID_NDK, ANDROID_NDK_HOME, and ANDROID_NDK_ROOT variables should be set as many customer builds depend on them https://github.com/actions/runner-images/issues/5879
@@ -117,8 +128,12 @@ for ndk_major_version in "${android_ndk_major_versions[@]}"; do
     components+=("ndk;$ndk_full_version")
 done
 
+# shellcheck disable=SC2207
 available_platforms=($($SDKMANAGER --list | sed -n '/Available Packages:/,/^$/p' | grep "platforms;android-[0-9]" | cut -d"|" -f 1))
+# shellcheck disable=SC2207
 all_build_tools=($($SDKMANAGER --list | grep "build-tools;" | cut -d"|" -f 1 | sort -u))
+# shellcheck disable=SC2116
+# shellcheck disable=SC2068
 available_build_tools=$(echo ${all_build_tools[@]//*rc[0-9]/})
 
 add_filtered_installation_components $minimum_platform_version "${available_platforms[@]}"
@@ -128,6 +143,7 @@ add_filtered_installation_components $minimum_build_tool_version "${available_bu
 components+=("platform-tools")
 
 # Install components
+# shellcheck disable=SC2068
 echo "y" | $SDKMANAGER ${components[@]}
 
 # Add required permissions

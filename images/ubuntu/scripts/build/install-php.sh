@@ -5,6 +5,8 @@
 ################################################################################
 
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/etc-environment.sh
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
@@ -87,6 +89,7 @@ sudo mv composer.phar /usr/bin/composer
 php -r "unlink('composer-setup.php');"
 
 # Add composer bin folder to path
+# shellcheck disable=SC2016
 prepend_etc_environment_path '$HOME/.config/composer/vendor/bin'
 
 #Create composer folder for user to preserve folder permissions

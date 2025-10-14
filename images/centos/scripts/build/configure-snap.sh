@@ -4,6 +4,8 @@
 ##  Desc:  Configure snap
 ################################################################################
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/etc-environment.sh
 
 # Update /etc/environment to include /snap/bin in PATH

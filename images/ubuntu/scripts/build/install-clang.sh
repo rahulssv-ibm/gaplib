@@ -5,6 +5,8 @@
 ################################################################################
 
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/install.sh
 
 install_clang() {
@@ -28,7 +30,9 @@ set_default_clang() {
 versions=$(get_toolset_value '.clang.versions[]')
 default_clang_version=$(get_toolset_value '.clang.default_version')
 
+# shellcheck disable=SC2048
 for version in ${versions[*]}; do
+    # shellcheck disable=SC2053
     if [[ $version != $default_clang_version ]]; then
         install_clang $version
     fi

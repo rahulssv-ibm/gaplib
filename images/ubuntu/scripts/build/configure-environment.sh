@@ -5,6 +5,8 @@
 ################################################################################
 
 # Source the helpers for use with the script
+# shellcheck disable=SC1091
+# shellcheck disable=SC2086
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/etc-environment.sh
 
@@ -17,6 +19,7 @@ set_etc_environment_variable "ACCEPT_EULA" "Y"
 
 # This directory is supposed to be created in $HOME and owned by user(https://github.com/actions/runner-images/issues/491)
 mkdir -p /etc/skel/.config/configstore
+# shellcheck disable=SC2016
 set_etc_environment_variable "XDG_CONFIG_HOME" '$HOME/.config'
 
 # Change waagent entries to use /mnt for swap file
