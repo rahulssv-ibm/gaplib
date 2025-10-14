@@ -18,23 +18,7 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 # Install dotnet dependencies
 # https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-decision#dependencies
 update_dnfpkgs
-install_dnfpkgs --no-install-recommends \
-    ca-certificates \
-    libc6 \
-    libgcc-s1 \
-    libgssapi-krb5-2 \
-    liblttng-ust1 \
-    libssl3 \
-    libstdc++6 \
-    zlib1g
-
-if is_ubuntu22; then
-    install_dnfpkgs --no-install-recommends libicu70
-fi
-
-if is_ubuntu24; then
-    install_dnfpkgs --no-install-recommends libicu74
-fi
+install_dnfpkgs ca-certificates
 
 if [[ "$ARCH" == "ppc64le" || "$ARCH" == "s390x" ]]; then 
     echo "Installing dotnet for architecture: $ARCH"
