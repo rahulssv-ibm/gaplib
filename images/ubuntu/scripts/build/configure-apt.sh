@@ -20,6 +20,9 @@ echo "APT::Acquire::Retries \"10\";" > /etc/apt/apt.conf.d/80-retries
 # Configure apt to always assume Y
 echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 
+# Configure apt to force IPv4
+echo "Acquire::ForceIPv4 \"true\";" > /etc/apt/apt.conf.d/99force-ipv4
+
 # APT understands a field called Phased-Update-Percentage which can be used to control the rollout of a new version. It is an integer between 0 and 100.
 # In case you have multiple systems that you want to receive the same set of updates, 
 # you can set APT::Machine-ID to a UUID such that they all phase the same, 
