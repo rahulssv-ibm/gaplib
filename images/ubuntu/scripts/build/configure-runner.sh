@@ -45,14 +45,6 @@ install_runner() {
     header "Installing runner"
     sudo mkdir -p /opt/runner-cache
     sudo tar -xf /tmp/runner/_package/*.tar.gz -C /opt/runner-cache
-
-    # Create runner user if not exists
-    if ! id -u runner >/dev/null 2>&1; then
-        sudo useradd -r -m -L -d /home/runner -s /bin/bash runner
-    fi
-
-    sudo chown -R runner:runner /opt/runner-cache
-    sudo -u runner /opt/runner-cache/config.sh --version
 }
 
 pre_cleanup() {
