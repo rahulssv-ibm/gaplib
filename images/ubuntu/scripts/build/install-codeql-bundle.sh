@@ -12,9 +12,15 @@ source "$HELPER_SCRIPTS"/install.sh
 case "$ARCH" in
     "x86_64")
         package_arch="x64"
+        bundle_platform_name="linux64"
+        ;;
+    "aarch64")
+        package_arch="aarch64"
+        bundle_platform_name="linux-aarch64"
         ;;
     *)
-        package_arch="$ARCH"
+        echo "No actions defined for $ARCH architecture."
+        exit 0
         ;;
 esac
 
@@ -41,7 +47,7 @@ bundle_tag_name="codeql-bundle-v$bundle_version"
 echo "Downloading CodeQL bundle $bundle_version..."
 # Note that this is the all-platforms CodeQL bundle, to support scenarios where customers run
 # different operating systems within containers.
-codeql_archive=$(download_with_retry "https://github.com/github/codeql-action/releases/download/$bundle_tag_name/codeql-bundle-linux64.tar.gz")
+codeql_archive=$(download_with_retry "https://github.com/github/codeql-action/releases/download/$bundle_tag_name/codeql-bundle-${bundle_platform_name}.tar.gz")
 
 codeql_toolcache_path="$AGENT_TOOLSDIRECTORY/CodeQL/$bundle_version/${package_arch}"
 mkdir -p "$codeql_toolcache_path"
