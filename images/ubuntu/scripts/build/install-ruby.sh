@@ -23,6 +23,17 @@ fi
 # Install Ruby requirements
 install_dpkgs libz-dev openssl libssl-dev
 
+# Set architecture-specific variables using a case statement for clarity
+# shellcheck disable=SC2153
+case "$ARCH" in
+    "ppc64le" | "s390x")
+        echo "Skipping Ruby installation from toolset on $ARCH architecture."
+        exit 0
+        ;;
+    *)
+        ;;
+esac
+
 echo "Install Ruby from toolset..."
 toolset_versions=$(get_toolset_value '.toolcache[] | select(.name | contains("Ruby")) | .versions[]')
 platform_version=$(get_toolset_value '.toolcache[] | select(.name | contains("Ruby")) | .platform_version')
