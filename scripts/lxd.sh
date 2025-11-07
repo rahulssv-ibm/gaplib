@@ -139,10 +139,7 @@ build_image() {
   lxc file push --mode 0644 "${BUILD_PREREQS_PATH}/assets/99synaptics" "${BUILD_CONTAINER}/etc/apt/apt.conf.d/99synaptics"
   lxc file push --mode 0644 "${BUILD_PREREQS_PATH}/assets/01-nodoc" "${BUILD_CONTAINER}/etc/dpkg/dpkg.cfg.d/01-nodoc"
 
-  msg "Setting user runner with sudo privileges"
-  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- bash -c "useradd -c 'Action Runner' -m -s /bin/bash runner && usermod -L runner && echo 'runner ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/runner && chmod 440 /etc/sudoers.d/runner"
-
-  msg "Running build-image.sh"
+  msg "Running setup_install.sh (as root)"
   # shellcheck disable=SC1073
   # shellcheck disable=SC2154
   if ! lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- \
@@ -152,12 +149,14 @@ build_image() {
     return 1 # Exit with an error code to trigger the trap and signal failure
   fi
 
+  msg "Setting user runner with sudo privileges"
+  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- bash -c "useradd -c 'Action Runner' -m -s /bin/bash runner && usermod -L runner && echo 'runner ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/runner && chmod 440 /etc/sudoers.d/runner"
+
   msg "Adding runner user to required groups"
   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- bash -c "usermod -aG adm,users,systemd-journal,docker,lxd runner"
   
-  msg "Clearing APT cache"
-  lxc exec "${BUILD_CONTAINER}" -- apt-get -y -qq clean
-  lxc exec "${BUILD_CONTAINER}" -- rm -rf "${image_folder}"
+  msg "Running post-generation scripts (as root)"
+  lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- bash -c "find /opt/post-generation -mindepth 1 -maxdepth 1 -type f -name '*.sh' -exec bash {} \;"
 
   # --------------------- CRITICAL SECTION START ---------------------
   # The following operations (delete, snapshot, publish) are not safe to run in parallel.

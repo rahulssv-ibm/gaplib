@@ -42,6 +42,10 @@ msg "Copy the gha-service unit file into gha-builder"
 cp -r "${BUILD_PREREQS_PATH}"/assets/gha-runner.service "/etc/systemd/system/gha-runner.service"
 chmod -R 0755 /etc/systemd/system/gha-runner.service
 
-sudo bash -c 'id -u runner >/dev/null 2>&1 || (useradd -c "Action Runner" -m runner && usermod -L runner && echo "runner  ALL=(ALL)       NOPASSWD: ALL" >/etc/sudoers.d/runner)'
+sudo bash -c 'exec "$@"' _ "${HELPER_SCRIPTS}/setup_install.sh" "${IMAGE_OS}" "${IMAGE_VERSION}" "${WORKER_TYPE}" "${WORKER_CPU}" "${SETUP}"
 
-sudo bash -c "${HELPER_SCRIPTS}/setup_install.sh ${IMAGE_OS} ${IMAGE_VERSION} ${SETUP}"
+sudo bash -c 'id -u runner >/dev/null 2>&1 || (useradd -c "Action Runner" -m -s /bin/bash runner && usermod -L runner && echo "runner ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/runner && chmod 440 /etc/sudoers.d/runner)'
+
+sudo bash -c "usermod -aG adm,users,systemd-journal,docker,lxd runner"
+
+sudo su -c "find /opt/post-generation -mindepth 1 -maxdepth 1 -type f -name '*.sh' -exec bash {} \;"

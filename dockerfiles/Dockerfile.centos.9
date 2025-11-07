@@ -1,16 +1,21 @@
 # FROM    quay.io/centos/centos:stream9
 FROM    almalinux:9
 
-ARG     RUNNERREPO="https://github.com/actions/runner" RUNNERPATCH SDK=8 SDK_VERSION ARCH
+ARG     RUNNERREPO="https://github.com/actions/runner" 
+ARG     RUNNERPATCH
+ARG     SDK=8
+ARG     ARCH
 
 RUN     echo "tsflags=nodocs" >>/etc/dnf/dnf.conf
 
 RUN     dnf update -y -q && \
-        dnf install -y -q wget git which langpacks-en glibc-all-langpacks sudo shadow-utils tar
-        
-RUN     dnf install -y -q dotnet-sdk-${SDK}.0 && \
-        SDK_VERSION=`dotnet --version` && \
-        echo "Using SDK - ${SDK_VERSION}"
+        dnf install -y -q \
+            wget git which langpacks-en glibc-all-langpacks sudo shadow-utils tar dotnet-sdk-${SDK}.0 \
+            cmake make automake autoconf m4 gcc gcc-c++ libtool epel-release && \
+        dnf clean all && \
+        rm -rf /var/cache/dnf/*
+
+RUN     echo "Using SDK - $(dotnet --version)"
 
 ADD    ${RUNNERPATCH} /tmp/runner.patch
 
@@ -34,16 +39,13 @@ RUN     useradd -c 'Action Runner' -m -s /bin/bash runner && \
 
 RUN     mkdir -p /opt/runner-cache && \
         tar -xf /tmp/runner/_package/*.tar.gz -C /opt/runner-cache && \
-        chown -R  runner:runner /opt/runner-cache && \
-        su -c "/opt/runner-cache/config.sh --version"  runner
+        chown -R runner:runner /opt/runner-cache && \
+        sudo -u runner /opt/runner-cache/config.sh --version
 
-RUN     dnf install -y -q cmake make automake autoconf m4 gcc gcc-c++ libtool epel-release
+RUN     rm -rf /tmp/runner /tmp/runner.patch
 
-RUN     rm -rf /tmp/runner /var/cache/dnf/* /tmp/runner.patch \
-        dnf clean all
-    
-USER     runner
+USER    runner
 
 EXPOSE  443
 
-CMD     /bin/bash
+CMD     ["/bin/bash"]
