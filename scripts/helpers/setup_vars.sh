@@ -14,6 +14,7 @@ usage() {
     echo ""
     echo "Flags:"
     echo "  --skip-lxd-img-export   Skip LXD image export"
+    echo "  --skip-lxd-img-primer   Skip LXD image primer"
     echo "  --skip-lxd-publish      Skip LXD publish"
     echo "  --skip-lxd-snapshot     Skip LXD snapshot"
     echo "  -h, --help              Show this help"
@@ -24,6 +25,7 @@ usage() {
 
 # Initialize Defaults ---
 SKIP_LXD_IMG_EXPORT=false
+SKIP_LXD_IMG_PRIMER=false
 SKIP_LXD_PUBLISH=false
 SKIP_LXD_SNAPSHOT=false
 ARCH=${ARCH:-$(uname -m)}
@@ -39,6 +41,10 @@ while [[ $# -gt 0 ]]; do
         --skip-lxd-img-export)
             # shellcheck disable=SC2034
             SKIP_LXD_IMG_EXPORT=true
+            ;;
+        --skip-lxd-img-primer)
+            # shellcheck disable=SC2034
+            SKIP_LXD_IMG_PRIMER=true
             ;;
         --skip-lxd-publish)
             # shellcheck disable=SC2034
