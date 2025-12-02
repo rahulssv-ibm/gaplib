@@ -200,20 +200,21 @@ build_image() {
 
           msg "Image published successfully."
 
+          # Primer logic
+          # shellcheck disable=SC2155
+          local PRIMER_CONTAINER="primer-$(date +%s)"
+          msg "Priming filesystem with temp container ${PRIMER_CONTAINER}..."
+          lxc launch "${IMAGE_ALIAS}" "${PRIMER_CONTAINER}"
+          lxc rm -f "${PRIMER_CONTAINER}"
+          msg "Filesystem primed successfully."
+
           # C. Export Image
           if [[ "${SKIP_LXD_IMG_EXPORT}" == "false" ]]; then
               EXPORT_PATH="${EXPORT}/${IMAGE_OS}-${IMAGE_VERSION}-${ARCH}${WORKER_TYPE}${WORKER_CPU}"
               msg "Exporting image to ${EXPORT_PATH}..."
               lxc image export "${IMAGE_ALIAS}" "${EXPORT_PATH}"
-              
-              # Primer logic
-              # shellcheck disable=SC2155
-              local PRIMER_CONTAINER="primer-$(date +%s)"
-              msg "Priming filesystem with temp container ${PRIMER_CONTAINER}..."
-              lxc launch "${IMAGE_ALIAS}" "${PRIMER_CONTAINER}"
-              lxc rm -f "${PRIMER_CONTAINER}"
+              msg "Image exported successfully to ${EXPORT_PATH}."
           fi
-
       else
           msg "Failed to acquire lock!" >&2
           exit 1
