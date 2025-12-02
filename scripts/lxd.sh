@@ -147,10 +147,13 @@ build_image() {
   lxc exec "${BUILD_CONTAINER}" --user 0 --group 0 -- bash -c "find /opt/post-generation -mindepth 1 -maxdepth 1 -type f -name '*.sh' -exec bash {} \;"
 
   # Logic Validation ---
-  # We cannot export if we don't publish.
-  if [[ "${SKIP_LXD_PUBLISH}" == "true" ]] && [[ "${SKIP_LXD_IMG_EXPORT}" == "false" ]]; then
-      msg "Warning: Cannot export image if publishing is skipped. Disabling export."
-      SKIP_LXD_IMG_EXPORT="true"
+  if [[ "${SKIP_LXD_PUBLISH}" == "true" ]]; then
+      # If Publish is skipped, we must ensure dependent steps are also skipped.
+      if [[ "${SKIP_LXD_IMG_EXPORT}" != "true" ]] || [[ "${SKIP_LXD_IMG_PRIMER}" != "true" ]]; then
+          msg "Warning: Cannot prime/export image if publishing is skipped. Disabling prime/export."
+          SKIP_LXD_IMG_EXPORT="true"
+          SKIP_LXD_IMG_PRIMER="true"
+      fi
   fi
 
   msg "Runner build complete."
@@ -200,15 +203,17 @@ build_image() {
 
           msg "Image published successfully."
 
-          # Primer logic
-          # shellcheck disable=SC2155
-          local PRIMER_CONTAINER="primer-$(date +%s)"
-          msg "Priming filesystem with temp container ${PRIMER_CONTAINER}..."
-          lxc launch "${IMAGE_ALIAS}" "${PRIMER_CONTAINER}"
-          lxc rm -f "${PRIMER_CONTAINER}"
-          msg "Filesystem primed successfully."
+          # C. Primer logic
+          if [[ "${SKIP_LXD_IMG_PRIMER}" == "false" ]]; then
+              # shellcheck disable=SC2155
+              local PRIMER_CONTAINER="primer-$(date +%s)"
+              msg "Priming filesystem with temp container ${PRIMER_CONTAINER}..."
+              lxc launch "${IMAGE_ALIAS}" "${PRIMER_CONTAINER}"
+              lxc rm -f "${PRIMER_CONTAINER}"
+              msg "Filesystem primed successfully."
+          fi
 
-          # C. Export Image
+          # D. Export Image
           if [[ "${SKIP_LXD_IMG_EXPORT}" == "false" ]]; then
               EXPORT_PATH="${EXPORT}/${IMAGE_OS}-${IMAGE_VERSION}-${ARCH}${WORKER_TYPE}${WORKER_CPU}"
               msg "Exporting image to ${EXPORT_PATH}..."
