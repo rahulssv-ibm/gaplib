@@ -39,7 +39,13 @@ for package in $components; do
     if [[ $version == "latest" ]]; then
         install_dpkgs --no-install-recommends "$package"
     else
-        version_string=$(apt-cache madison "$package" | awk '{ print $3 }' | grep "$version" | grep "$os_codename" | head -1)
+        version_string=$(apt-cache madison "$package" | grep "$version" | grep "$os_codename" | awk '{ print $3 }' | head -1)
+        
+        if [[ -z "$version_string" ]]; then
+            echo "Error: Could not find version $version for package $package on $os_codename"
+            exit 1
+        fi
+        
         install_dpkgs --no-install-recommends "${package}=${version_string}"
     fi
 done
